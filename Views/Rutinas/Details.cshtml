@@ -1,0 +1,96 @@
+﻿@model Tesina.Models.Rutina
+
+@{
+    ViewData["Title"] = "Detalles de Rutina";
+}
+
+<div class="container">
+    <h2 class="text-center mb-4">Detalles de la Rutina</h2>
+
+    <div class="card shadow-sm rounded mb-4">
+        <div class="card-body">
+            <h4 class="card-title">@Model.Nombre</h4>
+            <p><strong>Descripción:</strong> @Model.Descripcion</p>
+            <p><strong>Fecha de Creación:</strong> @Model.FechaCreacion.ToString("dd-MM-yyyy")</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm rounded">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Ejercicios Asignados</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.RutinaEjercicio != null && Model.RutinaEjercicio.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Ejercicio</th>
+                                <th>Series</th>
+                                <th>Repeticiones</th>
+                                <th>Descanso (seg)</th>
+                                <th>Día</th>
+                                <th>Explicacion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.RutinaEjercicio)
+                            {
+                                <tr>
+                                    <td>@item.Ejercicio?.Nombre</td>
+                                    <td>@item.Series</td>
+                                    <td>@item.Repeticiones</td>
+                                    <td>@item.DescansoSegundos</td>
+                                    <td>@item.DiaSemana</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(item.Ejercicio?.VideoURL))
+                                        {
+                                            <iframe width="250" height="140"
+                                                    src="@ConvertToEmbed(item.Ejercicio.VideoURL)"
+                                                    frameborder="0" allowfullscreen></iframe>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin video</span>
+                                        }
+                                    </td>
+
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No hay ejercicios asignados a esta rutina.</p>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.IdRutina" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+    </div>
+</div>
+@functions {
+    string ConvertToEmbed(string url)
+    {
+        if (string.IsNullOrEmpty(url)) return "";
+
+        if (url.Contains("youtube.com/watch?v="))
+        {
+            var videoId = url.Split("watch?v=")[1];
+            return $"https://www.youtube.com/embed/{videoId}";
+        }
+        else if (url.Contains("youtube.com/shorts/"))
+        {
+            var videoId = url.Split("shorts/")[1].Split("?")[0];
+            return $"https://www.youtube.com/embed/{videoId}";
+        }
+
+        return url;
+    }
+}

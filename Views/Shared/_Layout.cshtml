@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProyectoDiseñoSistemas</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ProyectoDiseñoSistemas.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownClientes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Clientes
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownClientes">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Index">Lista de Clientes</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Create">Agregar Cliente</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Expedientes" asp-action="Create">Agregar Medidas Corporales</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownEntrenadores" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Entrenadores
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownEntrenadores">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Entrenadores" asp-action="Index">Lista de Entrenadores</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Entrenadores" asp-action="Create">Agregar Entrenador</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownRutinas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Rutinas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownRutinas">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Rutinas" asp-action="Index">Lista de Rutinas</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Rutinas" asp-action="Create">Agregar Rutina</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownEjercicios" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Ejercicios
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownEjercicios">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Ejercicios" asp-action="Index">Lista de Ejercicios</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Ejercicios" asp-action="Create">Agregar Ejercicio</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownPlanNutricionales" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Plan Nutricional
+                            </a>
+                            <ul class=" dropdown-menu" aria-labelledby="navbarDropdownPlanNutricionales">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="PlanesNutricionales" asp-action="Index">Lista de Planes Nutricionales</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="PlanesNutricionales" asp-action="Create">Agregar Plan Nutricional</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                    
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container-fluid">
+            &copy; 2025 - Tesina Jose David - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

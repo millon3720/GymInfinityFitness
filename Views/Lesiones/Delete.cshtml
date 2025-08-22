@@ -1,0 +1,48 @@
+﻿@model Tesina.Models.Lesion
+
+@{
+    ViewData["Title"] = "Delete Lesion";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="text-center text-danger mb-4">
+                ¿Estás seguro de que deseas eliminar esta lesión?
+            </h2>
+
+            <div class="card shadow-sm rounded-3 mb-4">
+                <div class="card-body">
+                    <h4 class="mb-3 text-center">Lesión</h4>
+                    <dl class="row">
+                      
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Descripcion)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Descripcion)
+                        </dd>
+
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.FechaDiagnostico)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.FechaDiagnostico)
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" class="text-center">
+                <input type="hidden" asp-for="IdLesion" />
+                <input type="hidden" asp-for="IdUsuario" />
+                <button type="submit" class="btn btn-danger me-2"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar esta lesión?')"
+                        title="Eliminar">
+                    Eliminar
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>

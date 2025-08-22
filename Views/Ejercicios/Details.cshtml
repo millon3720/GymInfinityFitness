@@ -1,0 +1,30 @@
+﻿@model Tesina.Models.Ejercicio
+
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="container">
+    <h2 class="text-center mb-4">Detalles del Ejercicio</h2>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <strong>Nombre del Ejercicio:</strong><br />
+            @Model.Nombre
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <strong>Descripción:</strong><br />
+            @Model.Descripcion
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <strong>URL del Video:</strong><br />
+            <a href="@Model.VideoURL" target="_blank">@Model.VideoURL</a>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a asp-action="Edit" asp-route-id="@Model.IdEjercicio" class="btn btn-warning me-2">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+    </div>
+</div>

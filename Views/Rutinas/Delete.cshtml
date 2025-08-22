@@ -1,0 +1,47 @@
+﻿@model Tesina.Models.Rutina
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="text-center text-danger mb-4">¿Estás seguro de que deseas eliminar esta Rutina?</h2>
+
+            <div class="card shadow-sm rounded-3">
+                <div class="card-body">
+                    <h4 class="mb-3 text-center">Rutina</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Nombre)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Nombre)
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Descripcion)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Descripcion)
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.FechaCreacion)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.FechaCreacion)
+                        </dd>
+
+                    </dl>
+                </div>
+            </div>
+            <form asp-action="Delete" class="mt-4 text-center">
+                <input type="hidden" asp-for="IdRutina" />
+                <button type="submit" class="btn btn-danger me-2" onclick="return confirm('¿Estás seguro de que deseas eliminar esta Rutina?')" title="Eliminar">
+                    Eliminar
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>

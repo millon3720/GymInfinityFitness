@@ -1,0 +1,132 @@
+﻿@model WebApplication1.Models.RutinaCreateViewModel
+@{
+    ViewData["Title"] = "Editar Rutina";
+    var ejerciciosList = ViewBag.Ejercicios as SelectList;
+}
+
+<h2>Editar Rutina</h2>
+<hr />
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Rutina.IdRutina" />
+
+    <div class="form-group">
+        <label asp-for="Rutina.Nombre"></label>
+        <input asp-for="Rutina.Nombre" class="form-control" />
+        <span asp-validation-for="Rutina.Nombre" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Rutina.Descripcion"></label>
+        <textarea asp-for="Rutina.Descripcion" class="form-control"></textarea>
+        <span asp-validation-for="Rutina.Descripcion" class="text-danger"></span>
+    </div>
+
+    <hr />
+    <h4>Ejercicios de la Rutina</h4>
+    <div id="ejerciciosContainer">
+       @for (int i = 0; i < Model.Ejercicios.Count; i++)
+{
+    <div class="border p-3 mb-3 ejercicio-item">
+        <div class="row align-items-end">
+            <div class="col-md-4">
+                <label>Ejercicio</label>
+                <select asp-for="Ejercicios[i].IdEjercicio" asp-items="ViewBag.Ejercicios" class="form-control"></select>
+            </div>
+
+            <div class="col-md-2">
+                <label>Series</label>
+                <input type="number" name="Ejercicios[@i].Series" class="form-control" value="@Model.Ejercicios[i].Series" />
+            </div>
+
+            <div class="col-md-2">
+                <label>Repeticiones</label>
+                <input type="number" name="Ejercicios[@i].Repeticiones" class="form-control" value="@Model.Ejercicios[i].Repeticiones" />
+            </div>
+
+            <div class="col-md-2">
+                <label>Descanso (seg)</label>
+                <input type="number" name="Ejercicios[@i].DescansoSegundos" class="form-control" value="@Model.Ejercicios[i].DescansoSegundos" />
+            </div>
+            <div class="col-md-2">
+                <label>Día</label>
+               
+                <select asp-for="Ejercicios[@i].DiaSemana" asp-items="ViewBag.DiasSemana" class="form-select">
+                <option value="">Seleccione un día</option>
+                </select>
+            </div>
+                    
+            <div class="col-12 text-end mt-2">
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.ejercicio-item').remove()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+}
+
+    </div>
+
+    <button type="button" class="btn btn-secondary mt-2" onclick="agregarEjercicio()">Agregar Ejercicio</button>
+
+    <hr />
+    <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let index = @Model.Ejercicios.Count;
+        const ejercicios = @Html.Raw(Json.Serialize(ejerciciosList.Select(e => new { id = e.Value, nombre = e.Text })));
+
+        function agregarEjercicio() {
+            const container = document.getElementById("ejerciciosContainer");
+            let opciones = '';
+            ejercicios.forEach(e => {
+                opciones += `<option value="${e.id}">${e.nombre}</option>`;
+            });
+
+            const div = document.createElement("div");
+            div.classList.add("border", "p-3", "mb-3", "ejercicio-item");
+
+            div.innerHTML = `
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label>Ejercicio</label>
+                        <select name="Ejercicios[${index}].IdEjercicio" class="form-control">
+                            ${opciones}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Series</label>
+                        <input type="number" name="Ejercicios[${index}].Series" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Repeticiones</label>
+                        <input type="number" name="Ejercicios[${index}].Repeticiones" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Descanso (seg)</label>
+                        <input type="number" name="Ejercicios[${index}].DescansoSegundos" class="form-control" />
+                    </div>
+                     <div class="col-md-2">
+                        <label>Día</label>
+                            <select name="Ejercicios[${index}].DiaSemana" class="form-select">
+                                <option value="">Seleccione un día</option>
+                                <option value="Lunes">Lunes</option>
+                                <option value="Martes">Martes</option>
+                                <option value="Miércoles">Miércoles</option>
+                                <option value="Jueves">Jueves</option>
+                                <option value="Viernes">Viernes</option>
+                                <option value="Sábado">Sábado</option>
+                                <option value="Domingo">Domingo</option>
+                            </select>
+                    </div>
+                    <div class="col-12 text-end mt-2">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.ejercicio-item').remove()">Eliminar</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            index++;
+        }
+    </script>
+}

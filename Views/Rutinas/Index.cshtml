@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Tesina.Models.Rutina>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">
+        <i class="bi bi-bar-chart-fill"></i> Lista de Rutinas
+    </h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-success" asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Crear Nueva Rutina
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                        <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
+                        <th>@Html.DisplayNameFor(model => model.FechaCreacion)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Nombre</td>
+                            <td>@item.Descripcion</td>
+                            <td>@item.FechaCreacion.ToShortDateString()</td>
+                            <td class="text-center">
+                                <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-route-id="@item.IdRutina" title="Editar">
+                                    Editar <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a class="btn btn-sm btn-primary me-1" asp-action="Details" asp-route-id="@item.IdRutina" title="Detalles">
+                                    Detalles <i class="bi bi-info-circle"></i>
+                                </a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdRutina" title="Eliminar">
+                                    Eliminar <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-5">
+            <i class="bi bi-exclamation-circle"></i> No hay rutinas registradas.
+        </div>
+    }
+</div>

@@ -1,0 +1,49 @@
+﻿@model Tesina.Models.Ejercicio
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+                <input type="hidden" asp-for="IdEjercicio" />
+
+                <div class="form-group mb-3">
+                    <h4 class="mb-4">Editar Ejercicio</h4>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Nombre" class="form-label"></label>
+                    <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Nombre del Ejercicio" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Descripcion" class="form-label"></label>
+                    <input asp-for="Descripcion" class="form-control form-control-lg" placeholder="Descripción" />
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="VideoURL" class="form-label"></label>
+                    <input asp-for="VideoURL" class="form-control form-control-lg" placeholder="URL del Video" />
+                    <span asp-validation-for="VideoURL" class="text-danger"></span>
+                </div>
+
+                <div class="d-grid gap-2 mb-4">
+                    <input type="submit" value="Guardar Cambios" class="btn btn-primary btn-lg" />
+                </div>
+            </form>
+
+            <div class="text-center mt-3">
+                <a asp-action="Index" class="btn btn-link">Volver a la lista</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
