@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class PlanesNutricionalesController : Controller
     {
@@ -34,21 +34,32 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            var planesNutricionales = await _context.PlanesNutricionales
-                .Include(p => p.Usuario)
-                .FirstOrDefaultAsync(m => m.IdPlan == id);
-            if (planesNutricionales == null)
+            var plan = await _context.PlanesNutricionales
+                .FirstOrDefaultAsync(p => p.IdPlan == id);
+
+            if (plan == null)
             {
                 return NotFound();
             }
 
-            return View(planesNutricionales);
+            var alimentos = await _context.AlimentosPlanNutricional
+                .Where(a => a.IdPlan == id)
+                .ToListAsync();
+
+            var viewModel = new PlanAlimenticioViewModel
+            {
+                Plan = plan,
+                Alimentos = alimentos
+            };
+
+            return View(viewModel);
         }
+
 
         // GET: PlanesNutricionales/Create
         public IActionResult Create()
         {
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula");
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto");
             return View();
         }
 
@@ -57,70 +68,113 @@ namespace WebApplication1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdPlan,IdUsuario,Descripcion,FechaAsignacion")] PlanesNutricionales planesNutricionales)
+        public async Task<IActionResult> Create(PlanAlimenticioViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(planesNutricionales);
+                // Crear el plan y asignar los alimentos
+                var plan = model.Plan;
+                plan.Alimentos = model.Alimentos; // Asignamos los alimentos
+
+                _context.Add(plan);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", planesNutricionales.IdUsuario);
-            return View(planesNutricionales);
+
+            // Reconstruir SelectList en caso de error
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", model.Plan.IdUsuario);
+            return View(model);
         }
+
 
         // GET: PlanesNutricionales/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var planesNutricionales = await _context.PlanesNutricionales.FindAsync(id);
-            if (planesNutricionales == null)
+            var plan = await _context.PlanesNutricionales
+                .Include(p => p.Alimentos)
+                .FirstOrDefaultAsync(p => p.IdPlan == id);
+
+            if (plan == null) return NotFound();
+
+            var viewModel = new PlanAlimenticioViewModel
             {
-                return NotFound();
-            }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", planesNutricionales.IdUsuario);
-            return View(planesNutricionales);
+                Plan = plan,
+                Alimentos = plan.Alimentos.ToList()
+            };
+
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", plan.IdUsuario);
+            return View(viewModel);
         }
 
-        // POST: PlanesNutricionales/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdPlan,IdUsuario,Descripcion,FechaAsignacion")] PlanesNutricionales planesNutricionales)
+        public async Task<IActionResult> Edit(int id, PlanAlimenticioViewModel model)
         {
-            if (id != planesNutricionales.IdPlan)
-            {
-                return NotFound();
-            }
+            if (id != model.Plan.IdPlan) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
+                var planDb = await _context.PlanesNutricionales
+                    .Include(p => p.Alimentos)
+                    .FirstOrDefaultAsync(p => p.IdPlan == id);
+
+                if (planDb == null) return NotFound();
+
+                // Actualizar datos del plan
+                planDb.Descripcion = model.Plan.Descripcion;
+                planDb.FechaAsignacion = model.Plan.FechaAsignacion;
+                planDb.IdUsuario = model.Plan.IdUsuario;
+
+                // Manejo de alimentos
+                var alimentosDb = planDb.Alimentos.ToList();
+
+                foreach (var alimentoVm in model.Alimentos)
                 {
-                    _context.Update(planesNutricionales);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlanesNutricionalesExists(planesNutricionales.IdPlan))
+                    if (alimentoVm.Id == 0)
                     {
-                        return NotFound();
+                        // Nuevo → se agrega
+                        alimentoVm.IdPlan = planDb.IdPlan;
+                        _context.AlimentosPlanNutricional.Add(alimentoVm);
                     }
                     else
                     {
-                        throw;
+                        // Ya existe → actualizar
+                        var alimentoDb = alimentosDb.FirstOrDefault(a => a.Id == alimentoVm.Id);
+                        if (alimentoDb != null)
+                        {
+                            alimentoDb.DiaSemana = alimentoVm.DiaSemana;
+                            alimentoDb.Comida = alimentoVm.Comida;
+                            alimentoDb.HoraEstimada = alimentoVm.HoraEstimada;
+                            alimentoDb.Alimento = alimentoVm.Alimento;
+                            alimentoDb.Porciones = alimentoVm.Porciones;
+                            alimentoDb.Comentarios = alimentoVm.Comentarios;
+                        }
                     }
                 }
+
+                // Eliminar los que ya no estén en el modelo
+                foreach (var alimentoDb in alimentosDb)
+                {
+                    if (!model.Alimentos.Any(a => a.Id == alimentoDb.Id))
+                    {
+                        _context.AlimentosPlanNutricional.Remove(alimentoDb);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", planesNutricionales.IdUsuario);
-            return View(planesNutricionales);
+
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", model.Plan.IdUsuario);
+            return View(model);
         }
+
+
+
+
 
         // GET: PlanesNutricionales/Delete/5
         public async Task<IActionResult> Delete(int? id)

@@ -5,13 +5,18 @@ namespace Tesina.Models
     public class Eventos
     {
         [Key]
-        [Required]
+        [Required(ErrorMessage = "El Id del evento es obligatorio.")]
         public int IdEvento { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "El nombre del evento es obligatorio.")]
+        [StringLength(100, ErrorMessage = "El nombre no puede exceder los 100 caracteres.")]
         public string Nombre { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "La descripción del evento es obligatoria.")]
+        [StringLength(500, ErrorMessage = "La descripción no puede exceder los 500 caracteres.")]
         public string Descripcion { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "La fecha del evento es obligatoria.")]
         [DataType(DataType.DateTime)]
         public DateTime FechaEvento { get; set; }
     }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class LesionesController : Controller
     {
@@ -22,7 +22,7 @@ namespace WebApplication1.Controllers
         // GET: Lesiones
         public async Task<IActionResult> Index()
         {
-            var gymDbContext = _context.Lesiones.Include(l => l.Usuario);
+            var gymDbContext = _context.Lesiones.Include(l => l.Usuario).OrderBy(a => a.FechaDiagnostico);
             return View(await gymDbContext.ToListAsync());
         }
 
