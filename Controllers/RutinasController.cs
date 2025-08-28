@@ -7,9 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tesina.Data;
 using Tesina.Models;
-using WebApplication1.Models;
+using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class RutinasController : Controller
     {
@@ -23,7 +23,75 @@ namespace WebApplication1.Controllers
         // GET: Rutinas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Rutinas.ToListAsync());
+            return View(await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync());
+        }
+  
+        // GET: mostrar la vista
+        public async Task<IActionResult> AsignarRutina(int IdUsuario)
+        {
+            var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
+
+            var model = new AsignarRutinaViewModel
+            {
+                IdUsuario = IdUsuario,
+                FechaAsignacion = DateTime.Now,
+                RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
+                {
+                    IdRutina = r.IdRutina,
+                    Nombre = r.Nombre,
+                    Descripcion = r.Descripcion
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        // POST: guardar la asignación
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GuardarAsignar(AsignarRutinaViewModel model)
+        {
+            if (!ModelState.IsValid || model.RutinaSeleccionada == 0)
+            {
+                ModelState.AddModelError("", "Debes seleccionar una rutina.");
+                // Recargar las rutinas en caso de error
+                var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
+                model.RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
+                {
+                    IdRutina = r.IdRutina,
+                    Nombre = r.Nombre,
+                    Descripcion = r.Descripcion
+                }).ToList();
+                return View("AsignarRutina", model);
+            }
+
+            // Buscar si ya existe asignación
+            var asignacionExistente = await _context.ClienteRutina
+                .FirstOrDefaultAsync(cr => cr.IdUsuario == model.IdUsuario);
+
+            if (asignacionExistente != null)
+            {
+                // Sobrescribir
+                asignacionExistente.IdRutina = model.RutinaSeleccionada;
+                asignacionExistente.FechaAsignacion = model.FechaAsignacion;
+                asignacionExistente.Observaciones = model.Observaciones;
+                _context.Update(asignacionExistente);
+            }
+            else
+            {
+                // Crear nueva
+                var nuevaAsignacion = new ClienteRutina
+                {
+                    IdUsuario = model.IdUsuario,
+                    IdRutina = model.RutinaSeleccionada,
+                    FechaAsignacion = model.FechaAsignacion,
+                    Observaciones = model.Observaciones
+                };
+                _context.Add(nuevaAsignacion);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Usuarios", new { id = model.IdUsuario });
         }
 
         // GET: Rutinas/Details/5
@@ -35,9 +103,9 @@ namespace WebApplication1.Controllers
             }
 
             var rutina = await _context.Rutinas
-    .Include(r => r.RutinaEjercicio)
-        .ThenInclude(re => re.Ejercicio)
-    .FirstOrDefaultAsync(m => m.IdRutina == id);
+                .Include(r => r.RutinaEjercicio)
+                .ThenInclude(re => re.Ejercicio)
+                .FirstOrDefaultAsync(m => m.IdRutina == id);
 
             if (rutina == null)
             {
@@ -48,7 +116,7 @@ namespace WebApplication1.Controllers
         }   
         public async Task<IActionResult> Create()
         {
-            var ejercicios = await _context.Ejercicios.ToListAsync();
+            var ejercicios = await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync();
             ViewBag.Ejercicios = new SelectList(ejercicios, "IdEjercicio", "Nombre");
 
             var viewModel = new RutinaCreateViewModel();
@@ -61,7 +129,7 @@ namespace WebApplication1.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var ejercicios = await _context.Ejercicios.ToListAsync();
+                var ejercicios = await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync();
                 ViewBag.Ejercicios = new SelectList(ejercicios, "IdEjercicio", "Nombre");
                 foreach (var modelState in ModelState)
                 {

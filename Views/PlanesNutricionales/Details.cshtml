@@ -1,36 +1,63 @@
-﻿@model Tesina.Models.PlanesNutricionales
+﻿@model Tesina.Models.PlanAlimenticioViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Plan Nutricional";
 }
 
-<h1>Details</h1>
+<h2 class="mb-4">Detalles del Plan Nutricional</h2>
 
-<div>
-    <h4>PlanesNutricionales</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Usuario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Usuario.Cedula)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaAsignacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaAsignacion)
-        </dd>
-    </dl>
+<div class="card mt-3">
+    <div class="card-body">
+        @if (Model.Plan != null)
+        {
+            <div class="mb-3">
+                <h6><strong>Descripción:</strong> @Model.Plan.Descripcion</h6>
+                <p><strong>Fecha de Asignación:</strong> @Model.Plan.FechaAsignacion.ToString("dd/MM/yyyy")</p>
+            </div>
+
+            @if (Model.Alimentos != null && Model.Alimentos.Any())
+            {
+                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+                var alimentosPorDia = Model.Alimentos
+                .GroupBy(a => a.DiaSemana)
+                .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
+
+                foreach (var dia in alimentosPorDia)
+                {
+                    <div class="mb-3">
+                        <h6 class="text-primary">@dia.Key</h6>
+
+                        @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
+                        {
+                            <div class="card mb-2 shadow-sm">
+                                <div class="card-body">
+                                    <p><strong>Comida:</strong> @comida.Comida</p>
+                                    <p><strong>Hora Estimada:</strong> @(comida.HoraEstimada.HasValue? comida.HoraEstimada.Value.ToString(@"hh\:mm") : "-")</p>
+                                    <p><strong>Alimento:</strong> @comida.Alimento</p>
+                                    <p><strong>Porciones:</strong> @comida.Porciones</p>
+                                    @if (!string.IsNullOrEmpty(comida.Comentarios))
+                                    {
+                                        <p><strong>Comentarios:</strong> @comida.Comentarios</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">Este plan aún no tiene alimentos registrados.</p>
+            }
+        }
+        else
+        {
+            <p class="text-muted">No hay planes nutricionales asignados para este cliente.</p>
+        }
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdPlan">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.Plan.IdPlan" class="btn btn-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
 </div>

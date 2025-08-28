@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tesina.Data;
 using Tesina.Models;
-using WebApplication1.Models;
 
 namespace Tesina.Controllers
 {
@@ -23,7 +22,7 @@ namespace Tesina.Controllers
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Usuarios.Where(a=> a.Rol == "Cliente").ToListAsync());
+            return View(await _context.Usuarios.Where(a=> a.Rol == "Cliente").OrderBy(a => a.NombreCompleto).ToListAsync());
         }
 
         // GET: Usuarios/Details/5
@@ -71,7 +70,7 @@ namespace Tesina.Controllers
             var planNutricional = await _context.PlanesNutricionales
     .Where(p => p.IdUsuario == id)
     .Include(p => p.Alimentos)
-    .OrderByDescending(p => p.FechaAsignacion) // Trae el más reciente primero
+    .OrderByDescending(p => p.FechaAsignacion)
     .FirstOrDefaultAsync();
 
             var viewModel = new ClienteDetalle

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class EntrenadoresController : Controller
     {
@@ -22,7 +22,7 @@ namespace WebApplication1.Controllers
         // GET: Entrenadores
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Usuarios.Where(a=> a.Rol=="Entrenador").ToListAsync());
+            return View(await _context.Usuarios.Where(a=> a.Rol=="Entrenador").OrderBy(a => a.NombreCompleto).ToListAsync());
         }
 
         // GET: Entrenadores/Details/5

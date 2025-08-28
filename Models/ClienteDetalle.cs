@@ -1,6 +1,6 @@
 ﻿using Tesina.Models;
 using System.Collections.Generic;
-using WebApplication1.Models;
+using Tesina.Models;
 
 namespace Tesina.Models
 {

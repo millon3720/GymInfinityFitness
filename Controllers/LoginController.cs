@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class LoginController : Controller
     {

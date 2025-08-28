@@ -3,23 +3,6 @@
 
 @{
     ViewData["Title"] = "Detalles del Cliente";
-    var fechas = Model.Expedientes.Select(e => e.FechaRegistro.ToString("dd-MM-yyyy")).ToList();
-    var pesos = Model.Expedientes.Select(e => e.PesoKg).ToList();
-    var imcs = Model.Expedientes.Select(e => e.IMC).ToList();
-    var Cintura = Model.Expedientes.Select(e => e.MedidaCintura).ToList();
-    var Pecho = Model.Expedientes.Select(e => e.MedidaPecho).ToList();
-    var grasa = Model.Expedientes.Select(e => e.PorcentajeGrasa).ToList();
-    var musculo = Model.Expedientes.Select(e => e.PorcentajeMuscular).ToList();
-    var espalda = Model.Expedientes.Select(e => e.MedidaEspalda).ToList();
-    var cadera = Model.Expedientes.Select(e => e.MedidaCadera).ToList();
-    var bicepD = Model.Expedientes.Select(e => e.BicepDerecho).ToList();
-    var bicepI = Model.Expedientes.Select(e => e.BicepIzquierdo).ToList();
-    var piernaD = Model.Expedientes.Select(e => e.PiernaDerecha).ToList();
-    var piernaI = Model.Expedientes.Select(e => e.PiernaIzquierda).ToList();
-    var pantorrillaD = Model.Expedientes.Select(e => e.PantorrillaDerecha).ToList();
-    var pantorrillaI = Model.Expedientes.Select(e => e.PantorrillaIzquierda).ToList();
-    var alturacm = Model.Expedientes.Select(e => e.AlturaCm).ToList();
-
 }
 <div class="container">
 
@@ -245,7 +228,8 @@
             <div id="collapseRutinas" class="accordion-collapse collapse " aria-labelledby="headingRutinas" data-bs-parent="#accordionRutinas">
                 <div class="accordion-body"> 
                     <div class="accordion-body text-end">
-                        <a asp-action="Create" asp-controller="Rutinas" class="btn btn-primary">
+                        <a asp-action="AsignarRutina" asp-route-IdUsuario="@Model.Cliente.IdUsuario"
+                           asp-controller="Rutinas" class="btn btn-primary">
                             Asignar Rutina
                         </a>                      
                     </div>
@@ -470,161 +454,7 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const labels = @Html.Raw(JsonSerializer.Serialize(fechas));
-
-        const pesoData = {
-            labels: labels,
-            datasets: [{
-                label: 'Peso (kg)',
-                data: @Html.Raw(JsonSerializer.Serialize(pesos)),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.3
-            }]
-        };
-
-        const imcData = {
-            labels: labels,
-            datasets: [{
-                label: 'IMC',
-                data: @Html.Raw(JsonSerializer.Serialize(imcs)),
-                borderColor: 'rgba(255, 99, 132, 1)',
-                tension: 0.3
-            }]
-        };
-           const CinturaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Cintura',
-                data: @Html.Raw(JsonSerializer.Serialize(Cintura)),
-                borderColor: 'rgba(255, 159, 64, 1)',
-                tension: 0.3
-            }]
-        };   const PechoData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pecho',
-                data: @Html.Raw(JsonSerializer.Serialize(Pecho)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-                const grasaData = {
-            labels: labels,
-            datasets: [{
-                label: '% Grasa',
-                data: @Html.Raw(JsonSerializer.Serialize(grasa)),
-                borderColor: 'rgba(255, 205, 86, 1)',
-                tension: 0.3
-            }]
-        };
-        const musculoData = {
-            labels: labels,
-            datasets: [{
-                label: '% Muscular',
-                data: @Html.Raw(JsonSerializer.Serialize(musculo)),
-                borderColor: 'rgba(54, 162, 235, 1)',
-                tension: 0.3
-            }]
-        };
-        const espaldaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Espalda',
-                data: @Html.Raw(JsonSerializer.Serialize(espalda)),
-                borderColor: 'rgba(255, 99, 132, 1)',
-                tension: 0.3
-            }]
-        };
-        const caderaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Cadera',
-                data: @Html.Raw(JsonSerializer.Serialize(cadera)),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.3
-            }]
-        };
-        const bicepDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Bicep Derecho',
-                data: @Html.Raw(JsonSerializer.Serialize(bicepD)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-        const bicepIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Bicep Izquierdo',
-                data: @Html.Raw(JsonSerializer.Serialize(bicepI)),
-                borderColor: 'rgba(255, 159, 64, 1)',
-                tension: 0.3
-            }]
-        };
-        const piernaDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pierna Derecha',
-                data: @Html.Raw(JsonSerializer.Serialize(piernaD)),
-                borderColor: 'rgba(201, 203, 207, 1)',
-                tension: 0.3
-            }]
-        };
-        const piernaIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pierna Izquierda',
-                data: @Html.Raw(JsonSerializer.Serialize(piernaI)),
-                borderColor: 'rgba(255, 206, 86, 1)',
-                tension: 0.3
-            }]
-        };
-        const pantorrillaDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pantorrilla Derecha',
-                data: @Html.Raw(JsonSerializer.Serialize(pantorrillaD)),
-                borderColor: 'rgba(54, 162, 235, 1)',
-                tension: 0.3
-            }]
-        };
-        const pantorrillaIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pantorrilla Izquierda',
-                data: @Html.Raw(JsonSerializer.Serialize(pantorrillaI)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-         const alturacmData = {
-            labels: labels,
-            datasets: [{
-                label: 'Altura Cm',
-                data: @Html.Raw(JsonSerializer.Serialize(alturacm)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-        new Chart(document.getElementById('GrasaChart'), { type: 'line', data: grasaData });
-        new Chart(document.getElementById('MusculoChart'), { type: 'line', data: musculoData });
-        new Chart(document.getElementById('EspaldaChart'), { type: 'line', data: espaldaData });
-        new Chart(document.getElementById('CaderaChart'), { type: 'line', data: caderaData });
-        new Chart(document.getElementById('BicepDChart'), { type: 'line', data: bicepDData });
-        new Chart(document.getElementById('BicepIChart'), { type: 'line', data: bicepIData });
-        new Chart(document.getElementById('PiernaDChart'), { type: 'line', data: piernaDData });
-        new Chart(document.getElementById('PiernaIChart'), { type: 'line', data: piernaIData });
-        new Chart(document.getElementById('PantorrillaDChart'), { type: 'line', data: pantorrillaDData });
-        new Chart(document.getElementById('PantorrillaIChart'), { type: 'line', data: pantorrillaIData });
-        new Chart(document.getElementById('pesoChart'), {type: 'line',data: pesoData});
-        new Chart(document.getElementById('imcChart'), {type: 'line',data: imcData});
-        new Chart(document.getElementById('CinturaChart'), {type: 'line',data: CinturaData});
-        new Chart(document.getElementById('PechoChart'), {type: 'line',data: PechoData});
-        new Chart(document.getElementById('alturaChart'), {type: 'line',data: alturacmData});
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
     @functions {
     string ConvertToEmbed(string url)
     {
