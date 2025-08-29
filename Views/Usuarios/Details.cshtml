@@ -2,647 +2,409 @@
 @using System.Text.Json
 
 @{
-    ViewData["Title"] = "Detalles del Cliente";
-    var fechas = Model.Expedientes.Select(e => e.FechaRegistro.ToString("dd-MM-yyyy")).ToList();
-    var pesos = Model.Expedientes.Select(e => e.PesoKg).ToList();
-    var imcs = Model.Expedientes.Select(e => e.IMC).ToList();
-    var Cintura = Model.Expedientes.Select(e => e.MedidaCintura).ToList();
-    var Pecho = Model.Expedientes.Select(e => e.MedidaPecho).ToList();
-    var grasa = Model.Expedientes.Select(e => e.PorcentajeGrasa).ToList();
-    var musculo = Model.Expedientes.Select(e => e.PorcentajeMuscular).ToList();
-    var espalda = Model.Expedientes.Select(e => e.MedidaEspalda).ToList();
-    var cadera = Model.Expedientes.Select(e => e.MedidaCadera).ToList();
-    var bicepD = Model.Expedientes.Select(e => e.BicepDerecho).ToList();
-    var bicepI = Model.Expedientes.Select(e => e.BicepIzquierdo).ToList();
-    var piernaD = Model.Expedientes.Select(e => e.PiernaDerecha).ToList();
-    var piernaI = Model.Expedientes.Select(e => e.PiernaIzquierda).ToList();
-    var pantorrillaD = Model.Expedientes.Select(e => e.PantorrillaDerecha).ToList();
-    var pantorrillaI = Model.Expedientes.Select(e => e.PantorrillaIzquierda).ToList();
-    var alturacm = Model.Expedientes.Select(e => e.AlturaCm).ToList();
+    ViewData["Title"] = "Detalles del Cliente";  
 
 }
-<div class="container">
+<div class="container-fluid mt-4">
+    <h2 class="text-center mb-4 text-primary">Detalles del Cliente</h2>
 
-    <div class="container">
-        <h2 class="text-center">Detalles del Cliente</h2>
-
+    <div class="card shadow rounded p-4 mb-4">
         <div class="row">
             <div class="col-md-3 mb-3">
                 <strong>Código de Usuario:</strong><br />
-                @Model.Cliente.IdUsuario
+                <span class="text-muted">@Model.Cliente.IdUsuario</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Cédula:</strong><br />
-                @Model.Cliente.Cedula
+                <span class="text-muted">@Model.Cliente.Cedula</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Nombre Completo:</strong><br />
-                @Model.Cliente.NombreCompleto
+                <span class="text-muted">@Model.Cliente.NombreCompleto</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Fecha Nacimiento:</strong><br />
-                @Model.Cliente.FechaNacimiento.ToString("dd-MM-yyyy")
+                <span class="text-muted">@Model.Cliente.FechaNacimiento.ToString("dd-MM-yyyy")</span>
             </div>
 
             <div class="col-md-3 mb-3">
                 <strong>Correo:</strong><br />
-                @Model.Cliente.Correo
+                <span class="text-muted">@Model.Cliente.Correo</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Teléfono:</strong><br />
-                @Model.Cliente.Telefono
+                <span class="text-muted">@Model.Cliente.Telefono</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Dirección:</strong><br />
-                @Model.Cliente.Direccion
+                <span class="text-muted">@Model.Cliente.Direccion</span>
             </div>
             <div class="col-md-3 mb-3">
                 <strong>Fecha de Registro:</strong><br />
-                @Model.Cliente.FechaRegistro.ToString()
+                <span class="text-muted">@Model.Cliente.FechaRegistro.ToString("dd-MM-yyyy HH:mm")</span>
             </div>
 
             <div class="col-md-3 mb-3">
                 <strong>Estado:</strong><br />
-                @(Model.Cliente.Estado ? "Activo" : "Inactivo")
+                <span class="badge @(Model.Cliente.Estado ? "bg-success" : "bg-danger")">
+                    @(Model.Cliente.Estado ? "Activo" : "Inactivo")
+                </span>
             </div>
         </div>
     </div>
-
-
-    <hr />
-    @* Graficos Medidas *@
-    <div class="accordion" id="accordionGraficos">
+    <!-- Graficos -->
+    <div class="accordion mb-4" id="accordionGraficos">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingGraficos">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseGraficos" aria-expanded="true" aria-controls="collapseGraficos">
-                    Graficas De Las Medidas Corporales
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseGraficos" aria-expanded="false" aria-controls="collapseGraficos">
+                    Gráficas de las Medidas Corporales
                 </button>
             </h2>
-            <div id="collapseGraficos" class="accordion-collapse collapse " aria-labelledby="headingGraficos" data-bs-parent="#accordionGraficos">
+            <div id="collapseGraficos" class="accordion-collapse collapse" aria-labelledby="headingGraficos" data-bs-parent="#accordionGraficos">
                 <div class="accordion-body">
-                    <div class="accordion-body text-end">
+                    <div class="text-end mb-3">
                         <a asp-action="Create" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Expedientes" class="btn btn-primary">
-                            Agregar Medida
+                            <i class="bi bi-plus-circle"></i> Agregar Medida
                         </a>
                     </div>
                     @await Html.PartialAsync("/Views/Expedientes/Graficas.cshtml", Model.Expedientes.ToList())
-
-
                 </div>
             </div>
         </div>
     </div>
-
-    @* Tabla Medidas *@
-    <div class="accordion" id="accordionTablaMedidas">
+    <!-- TablaMedidas -->
+    <div class="accordion mb-4" id="accordionTablaMedidas">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingTablaMedidas">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseTablaMedidas" aria-expanded="true" aria-controls="collapseTablaMedidas">
-                    Tabla De Las Medidas Corporales
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTablaMedidas" aria-expanded="false" aria-controls="collapseTablaMedidas">
+                    Tabla de las Medidas Corporales
                 </button>
-            </h2>         
-            <div id="collapseTablaMedidas" class="accordion-collapse collapse " aria-labelledby="headingTablaMedidas" data-bs-parent="#accordionTablaMedidas">
+            </h2>
+            <div id="collapseTablaMedidas" class="accordion-collapse collapse" aria-labelledby="headingTablaMedidas" data-bs-parent="#accordionTablaMedidas">
                 <div class="accordion-body">
-                    <div class="accordion-body text-end">
+                    <div class="text-end mb-3">
                         <a asp-action="Create" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Expedientes" class="btn btn-primary">
-                            Agregar Medida
+                            <i class="bi bi-plus-circle"></i> Agregar Medida
                         </a>
                     </div>
 
-                    <div class="row">
-                        <div class="card shadow p-4 mb-4">
+                    <div class="card shadow p-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Peso (Kg)</th>
+                                        <th>Altura (cm)</th>
+                                        <th>IMC</th>
+                                        <th>% Grasa</th>
+                                        <th>% Músculo</th>
+                                        <th>Pecho</th>
+                                        <th>Espalda</th>
+                                        <th>Cintura</th>
+                                        <th>Cadera</th>
+                                        <th>Bícep Der.</th>
+                                        <th>Bícep Izq.</th>
+                                        <th>Pierna Der.</th>
+                                        <th>Pierna Izq.</th>
+                                        <th>Pant. Der.</th>
+                                        <th>Pant. Izq.</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Expedientes)
+                                    {
+                                        <tr>
+                                            <td>@item.FechaRegistro.ToShortDateString()</td>
+                                            <td>@item.PesoKg</td>
+                                            <td>@item.AlturaCm</td>
+                                            <td>@item.IMC</td>
+                                            <td>@item.PorcentajeGrasa</td>
+                                            <td>@item.PorcentajeMuscular</td>
+                                            <td>@item.MedidaPecho</td>
+                                            <td>@item.MedidaEspalda</td>
+                                            <td>@item.MedidaCintura</td>
+                                            <td>@item.MedidaCadera</td>
+                                            <td>@item.BicepDerecho</td>
+                                            <td>@item.BicepIzquierdo</td>
+                                            <td>@item.PiernaDerecha</td>
+                                            <td>@item.PiernaIzquierda</td>
+                                            <td>@item.PantorrillaDerecha</td>
+                                            <td>@item.PantorrillaIzquierda</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">
+                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                </a>
+                                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Lesiones -->
+    <div class="accordion mb-4" id="accordionLesiones">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingLesiones">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseLesiones" aria-expanded="false" aria-controls="collapseLesiones">
+                    Lesiones
+                </button>
+            </h2>
+            <div id="collapseLesiones" class="accordion-collapse collapse" aria-labelledby="headingLesiones" data-bs-parent="#accordionLesiones">
+                <div class="accordion-body">
+                    <div class="text-end mb-3">
+                        <a asp-action="Create" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Lesiones" class="btn btn-primary shadow-sm">
+                            <i class="bi bi-plus-circle"></i> Agregar Lesión
+                        </a>
+                    </div>
+
+                    @if (Model.Lesion != null && Model.Lesion.Any())
+                    {
+                        <div class="card shadow rounded p-4">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover table-striped">
                                     <thead class="table-dark">
                                         <tr>
-                                            <th>Fecha</th>
-                                            <th>Peso (Kg)</th>
-                                            <th>Altura (cm)</th>
-                                            <th>IMC</th>
-                                            <th>% Grasa</th>
-                                            <th>% Músculo</th>
-                                            <th>Pecho</th>
-                                            <th>Espalda</th>
-                                            <th>Cintura</th>
-                                            <th>Cadera</th>
-                                            <th>Bícep Der.</th>
-                                            <th>Bícep Izq.</th>
-                                            <th>Pierna Der.</th>
-                                            <th>Pierna Izq.</th>
-                                            <th>Pant. Der.</th>
-                                            <th>Pant. Izq.</th>
-                                            <th></th>
+                                            <th>Descripción</th>
+                                            <th>Fecha de Diagnóstico</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var item in Model.Expedientes)
+                                        @foreach (var item in Model.Lesion)
                                         {
                                             <tr>
-                                                <td>@item.FechaRegistro.ToShortDateString()</td>
-                                                <td>@item.PesoKg</td>
-                                                <td>@item.AlturaCm</td>
-                                                <td>@item.IMC</td>
-                                                <td>@item.PorcentajeGrasa</td>
-                                                <td>@item.PorcentajeMuscular</td>
-                                                <td>@item.MedidaPecho</td>
-                                                <td>@item.MedidaEspalda</td>
-                                                <td>@item.MedidaCintura</td>
-                                                <td>@item.MedidaCadera</td>
-                                                <td>@item.BicepDerecho</td>
-                                                <td>@item.BicepIzquierdo</td>
-                                                <td>@item.PiernaDerecha</td>
-                                                <td>@item.PiernaIzquierda</td>
-                                                <td>@item.PantorrillaDerecha</td>
-                                                <td>@item.PantorrillaIzquierda</td>
+                                                <td>@item.Descripcion</td>
+                                                <td>@item.FechaDiagnostico.ToShortDateString()</td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">Editar<i class="bi bi-pencil-square"></i></a>
-                                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">Eliminar<i class="bi bi-trash"></i></a>
+                                                    <a class="btn btn-sm btn-info me-2 shadow-sm" asp-controller="Lesiones" asp-action="Edit" asp-route-id="@item.IdLesion">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger shadow-sm" asp-controller="Lesiones" asp-action="Delete" asp-route-id="@item.IdLesion">
+                                                        <i class="bi bi-trash"></i> Eliminar
+                                                    </a>
                                                 </td>
                                             </tr>
                                         }
-                                        
                                     </tbody>
                                 </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @* Lesiones *@
-    <div class="accordion" id="accordionLesiones">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingLesiones">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseLesiones" aria-expanded="true" aria-controls="collapseLesiones">
-                    Lesiones
-                </button>
-            </h2>
-            <div id="collapseLesiones" class="accordion-collapse collapse " aria-labelledby="headingLesiones" data-bs-parent="#accordionLesiones">
-                <div class="accordion-body">
-                    <div class="row">
-                        <!-- info aqui -->
-                        <div class="accordion-body text-end">
-                            <a asp-action="Create" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Lesiones" class="btn btn-primary">
-                                Agregar Lesion
-                            </a>
-                        </div>
-                        <div class="row">
-                            @if (Model.Lesion != null && Model.Lesion.Any())
-                            {
-                                <div class="card shadow p-4 mb-4">
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-hover table-striped">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th>Descripcion</th>
-                                                    <th>Fecha de Diagnostico</th>
-                                                    <th></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var item in Model.Lesion)
-                                                {
-                                                    <tr>
-                                                        <td>@item.Descripcion</td>
-                                                        <td>@item.FechaDiagnostico.ToShortDateString()</td>
-                                                        <td>
-                                                            <a class="btn btn-sm btn-info me-1" asp-controller="Lesiones" asp-action="Edit" asp-route-id="@item.IdLesion">Editar<i class="bi bi-pencil-square"></i></a> 
-                                                            <a class="btn btn-sm btn-danger" asp-controller="Lesiones" asp-action="Delete" asp-route-id="@item.IdLesion">Eliminar<i class="bi bi-trash"></i></a>
-                                                        </td>
-                                                    </tr>
-                                                }
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <p class="text-muted">No hay Lesiones Registradas.</p>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @* Rutinas *@
-    <div class="accordion" id="accordionRutinas">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingRutinas">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseRutinas" aria-expanded="true" aria-controls="collapseRutinas">
-                    Rutinas Asignadas
-                </button>
-            </h2>
-            <div id="collapseRutinas" class="accordion-collapse collapse " aria-labelledby="headingRutinas" data-bs-parent="#accordionRutinas">
-                <div class="accordion-body"> 
-                    <div class="accordion-body text-end">
-                        <a asp-action="Create" asp-controller="Rutinas" class="btn btn-primary">
-                            Asignar Rutina
-                        </a>                      
-                    </div>
-                    <div class="row">
-                        @if (Model.Rutina!=null)
-                        {
-                            
-                        
-                        <!-- info aqui -->
-                        <div class="card-body">   
-                            
-                            @{
-                                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
-                                var ejerciciosPorDia = Model.RutinaEjercicios
-                                .GroupBy(e => e.DiaSemana)
-                                .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
-                            }
-                            @if (Model.RutinaEjercicios != null && Model.RutinaEjercicios.Any())
-                            {
-                                @foreach (var dia in ejerciciosPorDia)
-                                {
-                                    <h5 class="mt-3">@dia.Key</h5>
-                                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                        @foreach (var ejercicio in dia)
-                                        {
-                                            <div class="col">
-                                                <div class="card h-100 shadow-sm">
-                                                    <div class="card-body">
-                                                        <h6 class="card-title">@ejercicio.Ejercicio.Nombre</h6>
-                                                        <p class="card-text">
-                                                            <strong>Series:</strong> @ejercicio.Series <br />
-                                                            <strong>Repeticiones:</strong> @ejercicio.Repeticiones <br />
-                                                            <strong>Descanso:</strong> @ejercicio.DescansoSegundos seg
-                                                        </p>
-                                                        @if (!string.IsNullOrEmpty(ejercicio.Ejercicio.VideoURL))
-                                                        {
-                                                            <div class="ratio ratio-16x9">
-                                                                <iframe src="@ConvertToEmbed(ejercicio.Ejercicio.VideoURL)"
-                                                                        title="@ejercicio.Ejercicio.Nombre"
-                                                                        allowfullscreen></iframe>
-                                                            </div>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="text-muted">Sin video</span>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <p class="text-muted">No hay ejercicios asignados a esta rutina.</p>
-                            }
-                            </div>
-                        }
-                        else
-                        {
-                            <p class="text-muted">No hay rutinas asignadas.</p>
-                        }
-                    </div>
-               </div>
-            </div>
-        </div>
-    </div>
-
-    @* Planes Nutricionales *@
-    <div class="accordion" id="accordionPlanesNutricionales">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingPlanes">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapsePlanes" aria-expanded="true" aria-controls="collapsePlanes">
-                    Planes Nutricionales
-                </button>
-            </h2>
-            <div id="collapsePlanes" class="accordion-collapse collapse " aria-labelledby="headingPlanes" data-bs-parent="#accordionPlanesNutricionales">
-                <div class="accordion-body">
-
-                    <div class="accordion-body">
-                        <div class="row">
-                            <div class="card mt-3">
-
-                                <div class="card-body">
-                                    @if (Model.PlanesNutricionales.Any())
-                                    {
-                                        var plan = Model.PlanesNutricionales.First();
-                                        <div class="mb-3">
-                                            <h6><strong>Descripción:</strong> @plan.Descripcion</h6>
-                                            <p><strong>Fecha de Asignación:</strong> @plan.FechaAsignacion.ToString("dd/MM/yyyy")</p>
-                                        </div>
-
-                                        @if (plan.Alimentos != null && plan.Alimentos.Any())
-                                        {
-                                            var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
-                                            var alimentosPorDia = plan.Alimentos
-                                            .GroupBy(a => a.DiaSemana)
-                                            .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
-
-                                            foreach (var dia in alimentosPorDia)
-                                            {
-                                                <div class="mb-3">
-                                                    <h6 class="text-primary">@dia.Key</h6>
-
-                                                    @* Ordenar por hora dentro de cada día *@
-                                                    @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
-                                                    {
-                                                        <div class="card mb-2 shadow-sm">
-                                                            <div class="card-body">
-                                                                <p><strong>Comida:</strong> @comida.Comida</p>
-                                                                <p><strong>Hora Estimada:</strong> @(comida.HoraEstimada.HasValue? comida.HoraEstimada.Value.ToString(@"hh\:mm") : "-")</p>
-                                                                <p><strong>Alimento:</strong> @comida.Alimento</p>
-                                                                <p><strong>Porciones:</strong> @comida.Porciones</p>
-                                                                @if (!string.IsNullOrEmpty(comida.Comentarios))
-                                                                {
-                                                                    <p><strong>Comentarios:</strong> @comida.Comentarios</p>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </div>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <p class="text-muted">Este plan aún no tiene alimentos registrados.</p>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <p class="text-muted">No hay planes nutricionales asignados para este cliente.</p>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-
-                        @* <h1>---------------------------------</h1>
-                        <div>
-                            <h3>Plan Nutricional</h3>
-                            ViewBag.Plan = planNutricional;
-                            ViewBag.Alimentos = planNutricional?.Alimentos.ToList();
-                            @await Html.PartialAsync("~/Views/Shared/Partials/_AlimentosPlanNutricional.cshtml")
-                        </div> *@
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    @* Asistencia *@
-    <div class="accordion" id="accordionAsistencia">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="headingAsistencia">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseAsistencia" aria-expanded="true" aria-controls="collapseAsistencia">
-                    Registro de Asistencia
-                </button>
-            </h2>
-            <div id="collapseAsistencia" class="accordion-collapse collapse " aria-labelledby="headingAsistencia" data-bs-parent="#accordionAsistencia">
-                <div class="accordion-body">
-                    @if (Model.Asistencias != null && Model.Asistencias.Any())
-                    {
-                        <div class="row">
-                            <div class="card shadow p-4 mb-4">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Fecha de Ingreso</th>
-                                                <th>Fecha de Salida</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var item in Model.Asistencias)
-                                            {
-                                                <tr>
-                                                    <td>@item.IdAsistencia</td>
-                                                    <td>@item.FechaIngreso</td>
-                                                    <td>@item.FechaSalida</td>
-                                                </tr>
-                                            }
-
-                                        </tbody>
-                                    </table>
-                                </div>
                             </div>
                         </div>
                     }
                     else
                     {
-                        <p class="text-muted">No hay Registrados de Asistencia.</p>
+                        <p class="text-muted">No hay lesiones registradas.</p>
                     }
                 </div>
             </div>
         </div>
     </div>
+    <!-- Rutinas -->
+    <div class="accordion mb-4" id="accordionRutinas">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingRutinas">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseRutinas" aria-expanded="false" aria-controls="collapseRutinas">
+                    Rutinas Asignadas
+                </button>
+            </h2>
+            <div id="collapseRutinas" class="accordion-collapse collapse" aria-labelledby="headingRutinas" data-bs-parent="#accordionRutinas">
+                <div class="accordion-body">
+                    <div class="text-end mb-3">                      
+                        <a asp-action="AsignarRutina" asp-route-IdUsuario="@Model.Cliente.IdUsuario"
+                           asp-controller="Rutinas" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i>Asignar Rutina
+                        </a>
+                    </div>
+                    <h2>@Model.Rutina.Nombre</h2>
+                    @if (Model.Rutina != null && Model.RutinaEjercicios != null && Model.RutinaEjercicios.Any())
+                    {
 
-    @* Facturas *@
-    <div class="accordion" id="accordionFacturas">
+                        var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+                        var ejerciciosPorDia = Model.RutinaEjercicios
+                        .GroupBy(e => e.DiaSemana)
+                        .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
+
+
+                        @foreach (var dia in ejerciciosPorDia)
+                        {
+                            <h5 class="mt-3 text-primary">@dia.Key</h5>
+                            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                                @foreach (var ejercicio in dia)
+                                {
+                                    <div class="col">
+                                        <div class="card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <h6 class="card-title">@ejercicio.Ejercicio.Nombre</h6>
+                                                <p class="card-text">
+                                                    <strong>Series:</strong> @ejercicio.Series <br />
+                                                    <strong>Repeticiones:</strong> @ejercicio.Repeticiones <br />
+                                                    <strong>Descanso:</strong> @ejercicio.DescansoSegundos seg
+                                                </p>
+                                                @if (!string.IsNullOrEmpty(ejercicio.Ejercicio.VideoURL))
+                                                {
+                                                    var videoId = System.Text.RegularExpressions.Regex.Match(
+                                                    ejercicio.Ejercicio.VideoURL ?? "",
+                                                    @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                                                    ).Groups[1].Value;
+
+                                                    if (!string.IsNullOrEmpty(videoId))
+                                                    {
+                                                        <div class="mt-2">
+                                                            <div class="ratio ratio-16x9">
+                                                                <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay rutinas asignadas.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PlanesNutricionales -->
+    <div class="accordion mb-4" id="accordionPlanesNutricionales">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingPlanes">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapsePlanes" aria-expanded="false" aria-controls="collapsePlanes">
+                    Planes Nutricionales
+                </button>
+            </h2>
+            <div id="collapsePlanes" class="accordion-collapse collapse" aria-labelledby="headingPlanes" data-bs-parent="#accordionPlanesNutricionales">
+                <div class="accordion-body">
+                    @if (Model.PlanesNutricionales.Any())
+                    {
+                        var plan = Model.PlanesNutricionales.First();
+                        <div class="card shadow rounded p-4 mb-3">
+                            <h6><strong>Descripción:</strong> @plan.Descripcion</h6>
+                            <p><strong>Fecha de Asignación:</strong> @plan.FechaAsignacion.ToString("dd/MM/yyyy")</p>
+
+                            @if (plan.Alimentos != null && plan.Alimentos.Any())
+                            {
+                                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+                                var alimentosPorDia = plan.Alimentos
+                                .GroupBy(a => a.DiaSemana)
+                                .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
+
+                                foreach (var dia in alimentosPorDia)
+                                {
+                                    <h6 class="text-primary mt-3">@dia.Key</h6>
+                                    @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
+                                    {
+                                        <div class="card mb-2 shadow-sm">
+                                            <div class="card-body">
+                                                <p><strong>Comida:</strong> @comida.Comida</p>
+                                                <p><strong>Hora Estimada:</strong> @(comida.HoraEstimada?.ToString(@"hh\:mm") ?? "-")</p>
+                                                <p><strong>Alimento:</strong> @comida.Alimento</p>
+                                                <p><strong>Porciones:</strong> @comida.Porciones</p>
+                                                @if (!string.IsNullOrEmpty(comida.Comentarios))
+                                                {
+                                                    <p><strong>Comentarios:</strong> @comida.Comentarios</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">Este plan aún no tiene alimentos registrados.</p>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay planes nutricionales asignados para este cliente.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Asistencia -->
+    <div class="accordion mb-4" id="accordionAsistencia">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingAsistencia">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseAsistencia" aria-expanded="false" aria-controls="collapseAsistencia">
+                    Registro de Asistencia
+                </button>
+            </h2>
+            <div id="collapseAsistencia" class="accordion-collapse collapse" aria-labelledby="headingAsistencia" data-bs-parent="#accordionAsistencia">
+                <div class="accordion-body">
+                    @if (Model.Asistencias != null && Model.Asistencias.Any())
+                    {
+                        <div class="card shadow rounded p-4">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Fecha de Ingreso</th>
+                                            <th>Fecha de Salida</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Asistencias)
+                                        {
+                                            <tr>
+                                                <td>@item.IdAsistencia</td>
+                                                <td>@item.FechaIngreso</td>
+                                                <td>@item.FechaSalida</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No hay registros de asistencia.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Facturas -->
+    <div class="accordion mb-4" id="accordionFacturas">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingFacturas">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseFacturas" aria-expanded="true" aria-controls="collapseFacturas">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFacturas" aria-expanded="false" aria-controls="collapseFacturas">
                     Facturas Asociadas
                 </button>
             </h2>
-            <div id="collapseFacturas" class="accordion-collapse collapse " aria-labelledby="headingFacturas" data-bs-parent="#accordionFacturas">
+            <div id="collapseFacturas" class="accordion-collapse collapse" aria-labelledby="headingFacturas" data-bs-parent="#accordionFacturas">
                 <div class="accordion-body">
-                    <div class="row">
-                        <!-- info aqui -->
-                    </div>
+                    <p class="text-muted">Contenido pendiente de integración.</p>
                 </div>
             </div>
         </div>
     </div>
 
+
+
+
 </div>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const labels = @Html.Raw(JsonSerializer.Serialize(fechas));
-
-        const pesoData = {
-            labels: labels,
-            datasets: [{
-                label: 'Peso (kg)',
-                data: @Html.Raw(JsonSerializer.Serialize(pesos)),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.3
-            }]
-        };
-
-        const imcData = {
-            labels: labels,
-            datasets: [{
-                label: 'IMC',
-                data: @Html.Raw(JsonSerializer.Serialize(imcs)),
-                borderColor: 'rgba(255, 99, 132, 1)',
-                tension: 0.3
-            }]
-        };
-           const CinturaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Cintura',
-                data: @Html.Raw(JsonSerializer.Serialize(Cintura)),
-                borderColor: 'rgba(255, 159, 64, 1)',
-                tension: 0.3
-            }]
-        };   const PechoData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pecho',
-                data: @Html.Raw(JsonSerializer.Serialize(Pecho)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-                const grasaData = {
-            labels: labels,
-            datasets: [{
-                label: '% Grasa',
-                data: @Html.Raw(JsonSerializer.Serialize(grasa)),
-                borderColor: 'rgba(255, 205, 86, 1)',
-                tension: 0.3
-            }]
-        };
-        const musculoData = {
-            labels: labels,
-            datasets: [{
-                label: '% Muscular',
-                data: @Html.Raw(JsonSerializer.Serialize(musculo)),
-                borderColor: 'rgba(54, 162, 235, 1)',
-                tension: 0.3
-            }]
-        };
-        const espaldaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Espalda',
-                data: @Html.Raw(JsonSerializer.Serialize(espalda)),
-                borderColor: 'rgba(255, 99, 132, 1)',
-                tension: 0.3
-            }]
-        };
-        const caderaData = {
-            labels: labels,
-            datasets: [{
-                label: 'Cadera',
-                data: @Html.Raw(JsonSerializer.Serialize(cadera)),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                tension: 0.3
-            }]
-        };
-        const bicepDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Bicep Derecho',
-                data: @Html.Raw(JsonSerializer.Serialize(bicepD)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-        const bicepIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Bicep Izquierdo',
-                data: @Html.Raw(JsonSerializer.Serialize(bicepI)),
-                borderColor: 'rgba(255, 159, 64, 1)',
-                tension: 0.3
-            }]
-        };
-        const piernaDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pierna Derecha',
-                data: @Html.Raw(JsonSerializer.Serialize(piernaD)),
-                borderColor: 'rgba(201, 203, 207, 1)',
-                tension: 0.3
-            }]
-        };
-        const piernaIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pierna Izquierda',
-                data: @Html.Raw(JsonSerializer.Serialize(piernaI)),
-                borderColor: 'rgba(255, 206, 86, 1)',
-                tension: 0.3
-            }]
-        };
-        const pantorrillaDData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pantorrilla Derecha',
-                data: @Html.Raw(JsonSerializer.Serialize(pantorrillaD)),
-                borderColor: 'rgba(54, 162, 235, 1)',
-                tension: 0.3
-            }]
-        };
-        const pantorrillaIData = {
-            labels: labels,
-            datasets: [{
-                label: 'Pantorrilla Izquierda',
-                data: @Html.Raw(JsonSerializer.Serialize(pantorrillaI)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-         const alturacmData = {
-            labels: labels,
-            datasets: [{
-                label: 'Altura Cm',
-                data: @Html.Raw(JsonSerializer.Serialize(alturacm)),
-                borderColor: 'rgba(153, 102, 255, 1)',
-                tension: 0.3
-            }]
-        };
-        new Chart(document.getElementById('GrasaChart'), { type: 'line', data: grasaData });
-        new Chart(document.getElementById('MusculoChart'), { type: 'line', data: musculoData });
-        new Chart(document.getElementById('EspaldaChart'), { type: 'line', data: espaldaData });
-        new Chart(document.getElementById('CaderaChart'), { type: 'line', data: caderaData });
-        new Chart(document.getElementById('BicepDChart'), { type: 'line', data: bicepDData });
-        new Chart(document.getElementById('BicepIChart'), { type: 'line', data: bicepIData });
-        new Chart(document.getElementById('PiernaDChart'), { type: 'line', data: piernaDData });
-        new Chart(document.getElementById('PiernaIChart'), { type: 'line', data: piernaIData });
-        new Chart(document.getElementById('PantorrillaDChart'), { type: 'line', data: pantorrillaDData });
-        new Chart(document.getElementById('PantorrillaIChart'), { type: 'line', data: pantorrillaIData });
-        new Chart(document.getElementById('pesoChart'), {type: 'line',data: pesoData});
-        new Chart(document.getElementById('imcChart'), {type: 'line',data: imcData});
-        new Chart(document.getElementById('CinturaChart'), {type: 'line',data: CinturaData});
-        new Chart(document.getElementById('PechoChart'), {type: 'line',data: PechoData});
-        new Chart(document.getElementById('alturaChart'), {type: 'line',data: alturacmData});
-    </script>
-    @functions {
-    string ConvertToEmbed(string url)
-    {
-        if (string.IsNullOrEmpty(url)) return "";
-
-        if (url.Contains("youtube.com/watch?v="))
-        {
-            var videoId = url.Split("watch?v=")[1];
-            return $"https://www.youtube.com/embed/{videoId}";
-        }
-        else if (url.Contains("youtube.com/shorts/"))
-        {
-            var videoId = url.Split("shorts/")[1].Split("?")[0];
-            return $"https://www.youtube.com/embed/{videoId}";
-        }
-
-        return url;
-    }
-}
-
-}

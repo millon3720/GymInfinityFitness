@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Tesina.Models;
 
-namespace WebApplication1.Models
+namespace Tesina.Models
 {
     public class AlimentosPlanNutricional
     {

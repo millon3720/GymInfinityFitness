@@ -3,82 +3,87 @@
 @{
     ViewData["Title"] = "Delete";
 }
-
 <div class="container mt-4">
-    <h2 class="text-danger">Eliminar Expediente</h2>
-    <hr />
-    <h5 class="text-warning">¿Está seguro de que desea eliminar este expediente?</h5>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
 
-    <div class="card border-danger shadow-sm mt-4">
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Cédula Cliente</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Usuario.Cedula)</dd>
+            <h2 class="text-center text-danger mb-4">
+                ¿Estás seguro de que deseas eliminar este Expediente?
+            </h2>
 
-                <dt class="col-sm-3">Fecha Registro</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaRegistro)</dd>
+            <div class="card shadow rounded p-4 border-danger">
+                <div class="card-body">
+                    <h4 class="mb-4 text-center text-primary">Detalles del Expediente</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">Cédula Cliente:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Usuario.Cedula)</dd>
 
-                <dt class="col-sm-3">Peso (Kg)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PesoKg)</dd>
+                        <dt class="col-sm-4 fw-bold">Fecha Registro:</dt>
+                        <dd class="col-sm-8 text-muted">@Convert.ToDateTime(Model.FechaRegistro).ToString("dd-MM-yyyy")</dd>
 
-                <dt class="col-sm-3">Altura (cm)</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.AlturaCm)</dd>
+                        <dt class="col-sm-4 fw-bold">Peso (Kg):</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PesoKg)</dd>
 
-                <dt class="col-sm-3">IMC</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.IMC)</dd>
+                        <dt class="col-sm-4 fw-bold">Altura (cm):</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.AlturaCm)</dd>
 
-                <dt class="col-sm-3">Porcentaje de Grasa</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PorcentajeGrasa)</dd>
+                        <dt class="col-sm-4 fw-bold">IMC:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.IMC)</dd>
 
-                <dt class="col-sm-3">Porcentaje Muscular</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PorcentajeMuscular)</dd>
+                        <dt class="col-sm-4 fw-bold">Porcentaje de Grasa:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PorcentajeGrasa)</dd>
 
-                <dt class="col-sm-3">Medida Pecho</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.MedidaPecho)</dd>
+                        <dt class="col-sm-4 fw-bold">Porcentaje Muscular:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PorcentajeMuscular)</dd>
 
-                <dt class="col-sm-3">Medida Espalda</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.MedidaEspalda)</dd>
+                        <dt class="col-sm-4 fw-bold">Medida Pecho:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.MedidaPecho)</dd>
 
-                <dt class="col-sm-3">Medida Cintura</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.MedidaCintura)</dd>
+                        <dt class="col-sm-4 fw-bold">Medida Espalda:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.MedidaEspalda)</dd>
 
-                <dt class="col-sm-3">Medida Cadera</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.MedidaCadera)</dd>
+                        <dt class="col-sm-4 fw-bold">Medida Cintura:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.MedidaCintura)</dd>
 
-                <dt class="col-sm-3">Bíceps Derecho</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.BicepDerecho)</dd>
+                        <dt class="col-sm-4 fw-bold">Medida Cadera:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.MedidaCadera)</dd>
 
-                <dt class="col-sm-3">Bíceps Izquierdo</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.BicepIzquierdo)</dd>
+                        <dt class="col-sm-4 fw-bold">Bíceps Derecho:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.BicepDerecho)</dd>
 
-                <dt class="col-sm-3">Pierna Derecha</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PiernaDerecha)</dd>
+                        <dt class="col-sm-4 fw-bold">Bíceps Izquierdo:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.BicepIzquierdo)</dd>
 
-                <dt class="col-sm-3">Pierna Izquierda</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PiernaIzquierda)</dd>
+                        <dt class="col-sm-4 fw-bold">Pierna Derecha:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PiernaDerecha)</dd>
 
-                <dt class="col-sm-3">Pantorrilla Derecha</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PantorrillaDerecha)</dd>
+                        <dt class="col-sm-4 fw-bold">Pierna Izquierda:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PiernaIzquierda)</dd>
 
-                <dt class="col-sm-3">Pantorrilla Izquierda</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.PantorrillaIzquierda)</dd>
+                        <dt class="col-sm-4 fw-bold">Pantorrilla Derecha:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PantorrillaDerecha)</dd>
 
-                <dt class="col-sm-3">Observaciones</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Observaciones)</dd>
-            </dl>
+                        <dt class="col-sm-4 fw-bold">Pantorrilla Izquierda:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.PantorrillaIzquierda)</dd>
+
+                        <dt class="col-sm-4 fw-bold">Observaciones:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Observaciones)</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" class="mt-4 text-center">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdExpediente" />
+                <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar este Expediente?')">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <a asp-action="Index" asp-controller="Usuarios" class="btn btn-secondary btn-lg shadow-sm">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </form>
+
         </div>
     </div>
-
-    <form asp-action="Delete" method="post" class="mt-3">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="IdExpediente" />
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-danger">
-                <i class="bi bi-trash"></i> Eliminar
-            </button>
-            <a asp-action="Index" class="btn btn-secondary">
-                <i class="bi bi-arrow-left-circle"></i> Cancelar
-            </a>
-        </div>
-    </form>
 </div>

@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Models
+﻿namespace Tesina.Models
 {
     public class RutinaEjercicioInput
     {

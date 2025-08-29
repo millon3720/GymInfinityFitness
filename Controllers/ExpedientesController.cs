@@ -99,7 +99,8 @@ namespace WebApplication1.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", expediente.IdUsuario);
+
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Nombre", expediente.IdUsuario);
             return View(expediente);
         }
 

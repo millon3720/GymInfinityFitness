@@ -70,12 +70,13 @@
                             }
 
                             <td class="text-center">
-                                <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-route-id="@item.IdUsuario" title="Editar">
-                                    Editar<i class="bi bi-pencil-square"></i>
-                                </a>
                                 <a class="btn btn-sm btn-primary me-1" asp-action="Details" asp-route-id="@item.IdUsuario" title="Detalles">
-                                    Detalles<i class="bi bi-info-circle"></i>
+                                    Ver<i class="bi bi-info-circle"></i>
+                                </a> 
+                                <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-route-id="@item.IdUsuario" title="Editar">
+                                    Modificar<i class="bi bi-pencil-square"></i>
                                 </a>
+                               
                                 <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario">
                                     Eliminar<i class="bi bi-trash"></i>
                                 </a>

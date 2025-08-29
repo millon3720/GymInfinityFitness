@@ -46,7 +46,7 @@ namespace WebApplication1.Controllers
         // GET: Ejercicios/Create
         public IActionResult Create()
         {
-            return View();
+            return View(new Ejercicio());
         }
 
         // POST: Ejercicios/Create

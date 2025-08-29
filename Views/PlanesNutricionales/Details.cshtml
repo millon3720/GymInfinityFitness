@@ -1,36 +1,93 @@
-﻿@model Tesina.Models.PlanesNutricionales
+﻿@model Tesina.Models.PlanAlimenticioViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Plan Nutricional";
 }
+<h2 class="text-center mb-4">Detalles del Plan Nutricional</h2>
 
-<h1>Details</h1>
+<div class="card shadow rounded p-4">
+    @if (Model.Plan != null)
+    {
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <strong>Código de Plan:</strong><br />
+                <span class="text-muted">@Model.Plan.IdPlan</span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <strong>Descripción:</strong><br />
+                <span class="text-muted">@Model.Plan.Descripcion</span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <strong>Fecha de Asignación:</strong><br />
+                <span class="text-muted">@Model.Plan.FechaAsignacion.ToString("dd-MM-yyyy")</span>
+            </div>
+        </div>
 
-<div>
-    <h4>PlanesNutricionales</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Usuario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Usuario.Cedula)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaAsignacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaAsignacion)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdPlan">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <hr />
+        <h5 class="text-primary mb-3">Alimentos Asignados</h5>
+
+        @if (Model.Alimentos != null && Model.Alimentos.Any())
+        {
+            var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+            var alimentosPorDia = Model.Alimentos
+                .GroupBy(a => a.DiaSemana)
+                .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
+               
+               
+            foreach (var dia in alimentosPorDia)
+            {
+                <div class="border rounded p-3 mb-3">
+                    <h6 class="text-primary">@dia.Key</h6>
+
+                    @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
+                    {
+                        <div class="card mb-2 shadow-sm border-0">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Comida:</strong><br />
+                                        <span class="text-muted">@comida.Comida</span>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Hora Estimada:</strong><br />
+                                        <span class="text-muted">
+                                            @(comida.HoraEstimada.HasValue ? comida.HoraEstimada.Value.ToString(@"hh\:mm") : "-")
+                                        </span>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <strong>Porciones:</strong><br />
+                                        <span class="text-muted">@comida.Porciones</span>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <strong>Alimento:</strong><br />
+                                        <span class="text-muted">@comida.Alimento</span>
+                                    </div>
+                                    <div class="col-md-6 mb-2">
+                                        <strong>Comentarios:</strong><br />
+                                        <span class="text-muted">@comida.Comentarios</span>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Este plan aún no tiene alimentos registrados.</p>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No hay planes nutricionales asignados para este cliente.</p>
+    }
+
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Plan.IdPlan" class="btn btn-sm btn-info">
+            <i class="bi bi-pencil-square"></i> Editar
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+    </div>
 </div>

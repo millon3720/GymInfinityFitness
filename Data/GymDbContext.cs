@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Tesina.Models;
-using WebApplication1.Models;
 namespace Tesina.Data
 {
     public class GymDbContext : DbContext
