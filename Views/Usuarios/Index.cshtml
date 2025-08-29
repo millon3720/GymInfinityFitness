@@ -4,49 +4,33 @@
     ViewData["Title"] = "Index";
 }
 
-
 <div class="container mt-5">
     <h2 class="text-center text-primary mb-4">
         <i class="bi bi-people-fill"></i> Lista de Clientes
     </h2>
 
     <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-success" asp-action="Create">
+        <a class="btn btn-success shadow-sm" asp-action="Create">
             <i class="bi bi-plus-circle"></i> Crear Nuevo Cliente
         </a>
     </div>
 
     @if (Model.Any())
     {
-        <div class="table-responsive">
+        <!-- Vista en escritorio -->
+        <div class="table-responsive d-none d-md-block">
             <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                <thead class="table-dark">
+                <thead class="table-dark text-center">
                     <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Cedula)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.NombreCompleto)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FechaNacimiento)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Correo)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Telefono)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Direccion)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FechaRegistro)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Estado)
-                        </th>
-                        <th></th>
+                        <th>@Html.DisplayNameFor(model => model.Cedula)</th>
+                        <th>@Html.DisplayNameFor(model => model.NombreCompleto)</th>
+                        <th>@Html.DisplayNameFor(model => model.FechaNacimiento)</th>
+                        <th>@Html.DisplayNameFor(model => model.Correo)</th>
+                        <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+                        <th>@Html.DisplayNameFor(model => model.Direccion)</th>
+                        <th>@Html.DisplayNameFor(model => model.FechaRegistro)</th>
+                        <th>@Html.DisplayNameFor(model => model.Estado)</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,30 +44,50 @@
                             <td>@item.Telefono</td>
                             <td>@item.Direccion</td>
                             <td>@item.FechaRegistro.ToShortDateString()</td>
-                            @if (@item.Estado)
-                            {
-                                <td>Activo</td>
-                            }
-                            else
-                            {
-                                <td>Inactivo</td>
-                            }
+                            <td>
+                                <span class="fw-bold @(item.Estado ? "text-success" : "text-danger")">
+                                    @(item.Estado ? "Activo" : "Inactivo")
+                                </span>
+                            </td>
 
                             <td class="text-center">
-                                <a class="btn btn-sm btn-primary me-1" asp-action="Details" asp-route-id="@item.IdUsuario" title="Detalles">
-                                    Ver<i class="bi bi-info-circle"></i>
-                                </a>  <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-route-id="@item.IdUsuario" title="Editar">
-                                    Modificar<i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario">
-                                    Eliminar<i class="bi bi-trash"></i>
-                                </a>
+                                <div class="btn-group">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdUsuario"><i class="bi bi-info-circle">Ver</i></a>
+                                    <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdUsuario"><i class="bi bi-pencil-square"></i>Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario"><i class="bi bi-trash"></i>Eliminar</a>
+                                </div>
+
                             </td>
                         </tr>
-
                     }
                 </tbody>
             </table>
+        </div>
+
+        <!-- Vista en móvil -->
+        <div class="d-block d-md-none">
+            @foreach (var item in Model)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@item.NombreCompleto</h5>
+                        <p class="mb-1"><strong>Cédula:</strong> @item.Cedula</p>
+                        <p class="mb-1"><strong>Fecha Nacimiento:</strong> @item.FechaNacimiento.ToShortDateString()</p>
+                        <p class="mb-1"><strong>Correo:</strong> @item.Correo</p>
+                        <p class="mb-1"><strong>Teléfono:</strong> @item.Telefono</p>
+                        <p class="mb-1"><strong>Dirección:</strong> @item.Direccion</p>
+                        <p class="mb-1"><strong>Registro:</strong> @item.FechaRegistro.ToShortDateString()</p>
+<p class="mb-3 fw-bold @(item.Estado ? "text-success" : "text-danger")">
+    <strong>Estado:</strong> @(item.Estado ? "Activo" : "Inactivo")
+</p>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdUsuario"><i class="bi bi-info-circle"></i>Ver</a>
+                            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdUsuario"><i class="bi bi-pencil-square"></i>Modificar</a>
+                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario"><i class="bi bi-trash"></i>Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     }
     else

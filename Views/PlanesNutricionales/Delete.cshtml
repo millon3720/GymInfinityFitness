@@ -4,34 +4,45 @@
     ViewData["Title"] = "Eliminar Plan Nutricional";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="text-center text-danger mb-4">¿Estás seguro de que deseas eliminar este plan nutricional?</h2>
 
-            <div class="card shadow-sm rounded-3">
+            <h2 class="text-center text-danger mb-4">
+                ¿Estás seguro de que deseas eliminar este Plan Nutricional?
+            </h2>
+
+            <div class="card shadow rounded p-4">
                 <div class="card-body">
-                    <h4 class="mb-3 text-center">Plan Nutricional</h4>
+                    <h4 class="mb-4 text-center text-primary">Detalles del Plan</h4>
                     <dl class="row">
-                        <dt class="col-sm-4">Usuario</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Usuario.Cedula)</dd>
+                        <dt class="col-sm-4 fw-bold">Cliente:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Usuario.NombreCompleto)</dd>
 
-                        <dt class="col-sm-4">Descripción</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
+                        <dt class="col-sm-4 fw-bold">Descripción:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Descripcion)</dd>
 
-                        <dt class="col-sm-4">Fecha de Asignación</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.FechaAsignacion)</dd>                        
+                        <dt class="col-sm-4 fw-bold">Fecha de Asignación:</dt>
+                        <dd class="col-sm-8 text-muted">
+                            @Convert.ToDateTime(Model.FechaAsignacion).ToString("dd-MM-yyyy")
+                        </dd>
+
                     </dl>
                 </div>
             </div>
 
             <form asp-action="Delete" class="mt-4 text-center">
                 <input type="hidden" asp-for="IdPlan" />
-                <button type="submit" class="btn btn-danger me-2" onclick="return confirm('¿Estás seguro de que deseas eliminar este plan nutricional?')" title="Eliminar">
-                    Eliminar
+                <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar este Plan Nutricional?')">
+                    <i class="bi bi-trash"></i> Eliminar
                 </button>
-                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
             </form>
+
+
         </div>
     </div>
 </div>

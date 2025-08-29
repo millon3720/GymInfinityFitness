@@ -3,46 +3,63 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
-                <input type="hidden" asp-for="IdEjercicio" />
+<div class="container-fluid mt-4">
+    <h4>Editar Ejercicio</h4>
+    <hr />
+    <div class="card shadow rounded p-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="IdEjercicio" />
 
-                <div class="form-group mb-3">
-                    <h4 class="mb-4">Editar Ejercicio</h4>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Nombre" class="form-label"></label>
-                    <input asp-for="Nombre" class="form-control form-control-lg" placeholder="Nombre del Ejercicio" />
-                    <span asp-validation-for="Nombre" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Descripcion" class="form-label"></label>
-                    <input asp-for="Descripcion" class="form-control form-control-lg" placeholder="Descripción" />
-                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="VideoURL" class="form-label"></label>
-                    <input asp-for="VideoURL" class="form-control form-control-lg" placeholder="URL del Video" />
-                    <span asp-validation-for="VideoURL" class="text-danger"></span>
-                </div>
-
-                <div class="d-grid gap-2 mb-4">
-                    <input type="submit" value="Guardar Cambios" class="btn btn-primary btn-lg" />
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+            <div class="mb-3">
+                <label asp-for="Nombre" class="form-label"></label>
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre del Ejercicio" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label"></label>
+                <input asp-for="Descripcion" class="form-control" placeholder="Descripción" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="VideoURL" class="form-label"></label>
+                <input asp-for="VideoURL" class="form-control" placeholder="URL del Video" />
+                <span asp-validation-for="VideoURL" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.VideoURL) && Model.VideoURL.Contains("youtube.com"))
+            {
+                var videoId = System.Text.RegularExpressions.Regex.Match(
+                Model.VideoURL ?? "",
+                @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                ).Groups[1].Value;
+                if (!string.IsNullOrEmpty(videoId))
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Vista previa del video:</label>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Guardar Cambios
+                </button>
+
+            </div>
+        </form>
     </div>
 </div>
+
+
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

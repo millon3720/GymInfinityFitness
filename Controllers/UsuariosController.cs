@@ -101,13 +101,13 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
+        public async Task<IActionResult> Create([Bind("Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Edit", new { id = usuarios.IdUsuario });
             }
             return View(usuarios);
         }
@@ -115,17 +115,65 @@ namespace Tesina.Controllers
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
+            if (id == null || _context.Usuarios == null)
                 return NotFound();
-            }
 
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
-            {
+            var cliente = await _context.Usuarios.FindAsync(id);
+            if (cliente == null)
                 return NotFound();
+
+            var expedientes = await _context.Expedientes
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaRegistro)
+                .ToListAsync();
+
+            var clienteRutina = await _context.ClienteRutina
+                .Include(cr => cr.Rutina)
+                .ThenInclude(r => r.RutinaEjercicio)
+                .ThenInclude(re => re.Ejercicio)
+                .FirstOrDefaultAsync(cr => cr.IdUsuario == id);
+            if (clienteRutina != null && clienteRutina.Rutina?.RutinaEjercicio != null)
+            {
+                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+
+                clienteRutina.Rutina.RutinaEjercicio = clienteRutina.Rutina.RutinaEjercicio
+                    .OrderBy(re => Array.IndexOf(diasSemanaOrdenados, re.DiaSemana))
+                    .ToList();
             }
-            return View(usuarios);
+            var lesiones = await _context.Lesiones
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaDiagnostico)
+                .ToListAsync();
+
+            var facturas = await _context.Lesiones
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaDiagnostico)
+                .ToListAsync();
+
+            var asistencia = await _context.Asistencias
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaIngreso)
+                .ToListAsync();
+            var planNutricional = await _context.PlanesNutricionales
+    .Where(p => p.IdUsuario == id)
+    .Include(p => p.Alimentos)
+    .OrderByDescending(p => p.FechaAsignacion) // Trae el más reciente primero
+    .FirstOrDefaultAsync();
+
+            var viewModel = new ClienteDetalle
+            {
+                Cliente = cliente,
+                Expedientes = expedientes,
+                ClienteRutina = clienteRutina,
+                Rutina = clienteRutina?.Rutina,
+                RutinaEjercicios = clienteRutina?.Rutina?.RutinaEjercicio?.ToList() ?? new List<RutinaEjercicio>(),
+                Lesion = lesiones,
+                Asistencias = asistencia,
+                PlanesNutricionales = planNutricional != null ? new List<PlanesNutricionales> { planNutricional } : new List<PlanesNutricionales>(),
+                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>()
+            };
+
+            return View(viewModel);
         }
 
         // POST: Usuarios/Edit/5

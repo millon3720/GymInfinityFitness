@@ -4,141 +4,142 @@
     ViewData["Title"] = "Editar Plan Nutricional";
 }
 
-<h2>Editar Plan Nutricional</h2>
+<h4>Editar Plan Nutricional</h4>
 <hr />
+<div class="card shadow rounded p-4">
+    <form asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="Plan.IdPlan" />
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Plan.IdPlan" />
+        <div class="mb-3">
+            <label asp-for="Plan.IdUsuario" class="form-label"></label>
+            <select asp-for="Plan.IdUsuario" class="form-control" asp-items="ViewBag.IdUsuario"></select>
+            <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
+        </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Plan.IdUsuario" class="form-label"></label>
-                <select asp-for="Plan.IdUsuario" class="form-control" asp-items="ViewBag.IdUsuario"></select>
-                <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
-            </div>
+        <div class="mb-3">
+            <label asp-for="Plan.Descripcion" class="form-label"></label>
+            <input asp-for="Plan.Descripcion" class="form-control" placeholder="Descripción del Plan" />
+            <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
+        </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Plan.Descripcion" class="form-label"></label>
-                <input asp-for="Plan.Descripcion" class="form-control" />
-                <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
-            </div>
+        <div class="mb-3">
+            <label asp-for="Plan.FechaAsignacion" class="form-label"></label>
+            <input asp-for="Plan.FechaAsignacion" class="form-control" type="date" />
+            <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
+        </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Plan.FechaAsignacion" class="form-label"></label>
-                <input asp-for="Plan.FechaAsignacion" type="date" class="form-control" />
-                <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
-            </div>
-
-            <hr />
-            <h4>Alimentos del Plan</h4>
-            <div id="alimentosContainer">
-                @for (int i = 0; i < Model.Alimentos.Count; i++)
-                {
-                    <div class="border p-3 mb-3">
-                        <div class="row">
-                            <input type="hidden" name="Alimentos[@i].Id" value="@Model.Alimentos[i].Id" />
-                            <div class="col-md-2">
-                                <label>Día</label>
-                                <select name="Alimentos[@i].DiaSemana" class="form-select">
-                                    <option value="Lunes" selected="@(Model.Alimentos[i].DiaSemana == "Lunes")">Lunes</option>
-                                    <option value="Martes" selected="@(Model.Alimentos[i].DiaSemana == "Martes")">Martes</option>
-                                    <option value="Miércoles" selected="@(Model.Alimentos[i].DiaSemana == "Miércoles")">Miércoles</option>
-                                    <option value="Jueves" selected="@(Model.Alimentos[i].DiaSemana == "Jueves")">Jueves</option>
-                                    <option value="Viernes" selected="@(Model.Alimentos[i].DiaSemana == "Viernes")">Viernes</option>
-                                    <option value="Sábado" selected="@(Model.Alimentos[i].DiaSemana == "Sábado")">Sábado</option>
-                                    <option value="Domingo" selected="@(Model.Alimentos[i].DiaSemana == "Domingo")">Domingo</option>
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label>Comida</label>
-                                <input type="text" name="Alimentos[@i].Comida" value="@Model.Alimentos[i].Comida" class="form-control" />
-                            </div>
-                            <div class="col-md-2">
-                                <label>Hora Estimada</label>
-                                <input type="time" name="Alimentos[@i].HoraEstimada" value="@(Model.Alimentos[i].HoraEstimada?.ToString(@"hh\:mm"))" class="form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label>Alimento</label>
-                                <input type="text" name="Alimentos[@i].Alimento" value="@Model.Alimentos[i].Alimento" class="form-control" />
-                            </div>
-                            <div class="col-md-2">
-                                <label>Porciones</label>
-                                <input type="text" name="Alimentos[@i].Porciones" value="@Model.Alimentos[i].Porciones" class="form-control" />
-                            </div>
-                            <div class="col-md-3">
-                                <label>Comentarios</label>
-                                <input type="text" name="Alimentos[@i].Comentarios" value="@Model.Alimentos[i].Comentarios" class="form-control" />
-                            </div>
-                            <div class="col-md-1 text-end">
-                                <label>&nbsp;</label>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.border').remove()">Eliminar</button>
-                            </div>
+        <hr />
+        <h5 class="mb-3">Alimentos Asignados</h5>
+        <div id="alimentosContainer">
+            @for (int i = 0; i < Model.Alimentos.Count; i++)
+            {
+                <div class="border rounded p-3 mb-3 alimento-item">
+                    <input type="hidden" name="Alimentos[@i].Id" value="@Model.Alimentos[i].Id" />
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label class="form-label">Día</label>
+                            <select name="Alimentos[@i].DiaSemana" class="form-select">
+                                @foreach (var dia in new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" })
+                                {
+                                    <option value="@dia" selected="@(Model.Alimentos[i].DiaSemana == dia)">@dia</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Comida</label>
+                            <input type="text" name="Alimentos[@i].Comida" value="@Model.Alimentos[i].Comida" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Hora Estimada</label>
+                            <input type="time" name="Alimentos[@i].HoraEstimada" value="@(Model.Alimentos[i].HoraEstimada?.ToString(@"hh\:mm"))" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Alimento</label>
+                            <input type="text" name="Alimentos[@i].Alimento" value="@Model.Alimentos[i].Alimento" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Porciones</label>
+                            <input type="text" name="Alimentos[@i].Porciones" value="@Model.Alimentos[i].Porciones" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Comentarios</label>
+                            <input type="text" name="Alimentos[@i].Comentarios" value="@Model.Alimentos[i].Comentarios" class="form-control" />
+                        </div>
+                        <div class="col-12 text-end">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.border').remove()">Eliminar</button>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
+        </div>
 
-            <button type="button" class="btn btn-secondary mb-3" onclick="agregarAlimento()">Agregar Alimento</button>
-            <hr />
+        <button type="button" class="btn btn-success mb-3" onclick="agregarAlimento()">Agregar Alimento</button>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
-
-        </form>
-    </div>
+        </div>
+    </form>
 </div>
 
 @section Scripts {
     <script>
         let index = @Model.Alimentos.Count;
+
         function agregarAlimento() {
             const container = document.getElementById("alimentosContainer");
-            const div = document.createElement("div");
-            div.classList.add("border", "p-3", "mb-3");
 
-            div.innerHTML = `
-                <div class="row">
-                    <div class="col-md-2">
-                        <label>Día</label>
-                        <select name="Alimentos[${index}].DiaSemana" class="form-select">
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                            <option value="Domingo">Domingo</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label>Comida</label>
-                        <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
-                    </div>
-                    <div class="col-md-2">
-                        <label>Hora Estimada</label>
-                        <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label>Alimento</label>
-                        <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
-                    </div>
-                    <div class="col-md-2">
-                        <label>Porciones</label>
-                        <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label>Comentarios</label>
-                        <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
-                    </div>
-                    <div class="col-md-1 text-end">
-                        <label>&nbsp;</label>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.border').remove()">Eliminar</button>
-                    </div>
+                    const div = document.createElement("div");
+        div.classList.add("border", "rounded", "p-3", "mb-3", "alimento-item");
+
+        div.innerHTML = `
+            <div class="row g-3 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label">Día</label>
+                    <select name="Alimentos[${index}].DiaSemana" class="form-select">
+                        <option value="Lunes">Lunes</option>
+                        <option value="Martes">Martes</option>
+                        <option value="Miércoles">Miércoles</option>
+                        <option value="Jueves">Jueves</option>
+                        <option value="Viernes">Viernes</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
+                    </select>
                 </div>
-            `;
-            container.appendChild(div);
-            index++;
+                <div class="col-md-2">
+                    <label class="form-label">Comida</label>
+                    <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Hora Estimada</label>
+                    <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Alimento</label>
+                    <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Porciones</label>
+                    <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Comentarios</label>
+                    <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
+                </div>
+                <div class="col-12 text-end">
+                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.alimento-item').remove()">Eliminar</button>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(div);
+        index++;
+
         }
     </script>
+
+
+
 }

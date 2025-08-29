@@ -4,77 +4,72 @@
     ViewData["Title"] = "Edit";
 }
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <form asp-action="Edit">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
-                <input type="hidden" asp-for="IdUsuario" />
+<h4>Editar Entrenador</h4>
+<hr />
+<div class="card shadow rounded p-4">
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <input type="hidden" asp-for="IdUsuario" />
 
-                <div class="form-group mb-3">
-                    <h4 class="mb-4">Editar Cliente</h4>
-                </div>
+        <div class="mb-3">
+            <label asp-for="Cedula" class="form-label"></label>
+            <input asp-for="Cedula" class="form-control" placeholder="Cédula" />
+            <span asp-validation-for="Cedula" class="text-danger"></span>
+        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Cedula" class="form-label"></label>
-                    <input asp-for="Cedula" class="form-control form-control-lg" placeholder="Cédula" />
-                    <span asp-validation-for="Cedula" class="text-danger"></span>
-                </div>
+        <div class="mb-3">
+            <label asp-for="NombreCompleto" class="form-label"></label>
+            <input asp-for="NombreCompleto" class="form-control" placeholder="Nombre Completo" />
+            <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+        </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="NombreCompleto" class="form-label"></label>
-                    <input asp-for="NombreCompleto" class="form-control form-control-lg" placeholder="Nombre Completo" />
-                    <span asp-validation-for="NombreCompleto" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="FechaNacimiento" class="form-label"></label>
-                    <input asp-for="FechaNacimiento" class="form-control form-control-lg" type="date" />
-                    <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Correo" class="form-label"></label>
-                    <input asp-for="Correo" class="form-control form-control-lg" placeholder="Correo Electrónico" />
-                    <span asp-validation-for="Correo" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Telefono" class="form-label"></label>
-                    <input asp-for="Telefono" class="form-control form-control-lg" placeholder="Número de Teléfono" />
-                    <span asp-validation-for="Telefono" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="Direccion" class="form-label"></label>
-                    <input asp-for="Direccion" class="form-control form-control-lg" placeholder="Dirección" />
-                    <span asp-validation-for="Direccion" class="text-danger"></span>
-                </div>
-
-                <div class="form-group mb-3">
-                    <label asp-for="FechaRegistro" class="form-label"></label>
-                    <input asp-for="FechaRegistro" class="form-control form-control-lg" type="datetime-local" />
-                    <span asp-validation-for="FechaRegistro" class="text-danger"></span>
-                </div>
-                <input type="hidden" asp-for="Rol" value="Entrenador" />
-                <div class="form-group form-check mb-4">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="Estado" />
-                        @Html.DisplayNameFor(model => model.Estado)
-                    </label>
-                </div>
-
-                <div class="d-grid gap-2 mb-4">
-                    <input type="submit" value="Guardar Cambios" class="btn btn-primary btn-lg" />
-                </div>
-            </form>
-
-            <div class="text-center mt-3">
-                <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaNacimiento" class="form-label"></label>
+                <input asp-for="FechaNacimiento" class="form-control" type="date" />
+                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaRegistro" class="form-label"></label>
+                <input asp-for="FechaRegistro" class="form-control" type="datetime-local" />
+                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
             </div>
         </div>
-    </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Correo" class="form-label"></label>
+                <input asp-for="Correo" class="form-control" placeholder="Correo Electrónico" />
+                <span asp-validation-for="Correo" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="Telefono" class="form-label"></label>
+                <input asp-for="Telefono" class="form-control" placeholder="Número de Teléfono" />
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Direccion" class="form-label"></label>
+            <input asp-for="Direccion" class="form-control" placeholder="Dirección" />
+            <span asp-validation-for="Direccion" class="text-danger"></span>
+        </div>
+
+        <input type="hidden" asp-for="Rol" value="Entrenador" />
+
+        <div class="form-check mb-3">
+            <input class="form-check-input" asp-for="Estado" />
+            <label class="form-check-label" asp-for="Estado"></label>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+        </div>
+    </form>
 </div>
+
 
 @section Scripts {
     @{

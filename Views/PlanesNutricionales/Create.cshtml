@@ -3,91 +3,98 @@
 @{
     ViewData["Title"] = "Crear Plan Nutricional";
 }
+<h2 class="text-center mb-4">Crear Plan Nutricional</h2>
 
-<h2>Crear Plan Nutricional</h2>
-<hr />
+<div class="card shadow rounded p-4">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Plan.IdUsuario" class="form-label"></label>
-                <select asp-for="Plan.IdUsuario" class="form-control" asp-items="ViewBag.IdUsuario"></select>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
+                <select asp-for="Plan.IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Plan.Descripcion" class="form-label"></label>
+            <div class="col-md-4 mb-3">
+                <label asp-for="Plan.Descripcion" class="form-label">Descripción</label>
                 <input asp-for="Plan.Descripcion" class="form-control" />
                 <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
             </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Plan.FechaAsignacion" class="form-label"></label>
+            <div class="col-md-4 mb-3">
+                <label asp-for="Plan.FechaAsignacion" class="form-label">Fecha de Asignación</label>
                 <input asp-for="Plan.FechaAsignacion" type="date" class="form-control" />
                 <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
             </div>
+        </div>
 
-            <hr />
-            <h4>Alimentos del Plan</h4>
-            <div id="alimentosContainer">
-                <!-- Aquí se agregan dinámicamente los alimentos -->
-            </div>
+        <hr />
+        <h5 class="text-primary mb-3">Alimentos del Plan</h5>
+        <div id="alimentosContainer">
+            <!-- Alimentos dinámicos se agregan aquí -->
+        </div>
 
-            <button type="button" class="btn btn-secondary mb-3" onclick="agregarAlimento()">Agregar Alimento</button>
-            <hr />
-            <button type="submit" class="btn btn-primary">Guardar Plan</button>
-            <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+        <button type="button" class="btn btn-sm btn-success mb-3" onclick="agregarAlimento()">
+            <i class="bi bi-plus-circle"></i> Agregar Alimento
+        </button>
 
-        </form>
-    </div>
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar Plan
+            </button>
+        </div>
+    </form>
 </div>
+
 @section Scripts {
     <script>
         let index = 0;
         function agregarAlimento() {
             const container = document.getElementById("alimentosContainer");
             const div = document.createElement("div");
-            div.classList.add("border", "p-3", "mb-3");
+            div.classList.add("card", "shadow-sm", "border-0", "mb-3");
 
             div.innerHTML = `
-                <div class="row">
-                    <div class="col-md-2">
-                        <label>Día</label>
-                        <select name="Alimentos[${index}].DiaSemana" class="form-select">
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                            <option value="Domingo">Domingo</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label>Comida</label>
-                        <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
-                    </div>
-                    <div class="col-md-2">
-                        <label>Hora Estimada</label>
-                        <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
-                    </div>
-                    <div class="col-md-3">
-                        <label>Alimento</label>
-                        <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
-                    </div>
-                    <div class="col-md-2">
-                        <label>Porciones</label>
-                        <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
-                    </div>
-                     <div class="col-md-3">
-                    <label>Comentarios</label>
-                    <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
-                </div>
-                    <div class="col-md-1">
-                        <label>&nbsp;</label>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('div.row').remove()">Eliminar</button>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Día</label>
+                            <select name="Alimentos[${index}].DiaSemana" class="form-select">
+                                <option value="Lunes">Lunes</option>
+                                <option value="Martes">Martes</option>
+                                <option value="Miércoles">Miércoles</option>
+                                <option value="Jueves">Jueves</option>
+                                <option value="Viernes">Viernes</option>
+                                <option value="Sábado">Sábado</option>
+                                <option value="Domingo">Domingo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Comida</label>
+                            <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Hora Estimada</label>
+                            <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Alimento</label>
+                            <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
+                        </div>
+                        <div class="col-md-2 mb-2">
+                            <label class="form-label">Porciones</label>
+                            <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Comentarios</label>
+                            <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.card').remove()">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;

@@ -99,6 +99,7 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
+
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", expediente.IdUsuario);
             return View(expediente);
         }

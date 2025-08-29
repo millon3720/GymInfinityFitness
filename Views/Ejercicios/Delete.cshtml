@@ -3,36 +3,55 @@
 @{
     ViewData["Title"] = "Delete";
 }
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <h2 class="text-center text-danger mb-4">¿Estás seguro de que deseas eliminar este ejercicio?</h2>
+<div class="container-fluid mt-4">
+    <h2 class="text-center text-danger mb-4">
+        ¿Estás seguro de que deseas eliminar este ejercicio?
+    </h2>
 
-            <div class="card shadow-sm rounded-3">
-                <div class="card-body">
-                    <h4 class="mb-3 text-center">Ejercicio</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4">Nombre</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+    <div class="card shadow rounded p-4">
+        <h4 class="mb-4 text-center text-primary">Detalles del Ejercicio</h4>
 
-                        <dt class="col-sm-4">Descripción</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
-
-                        <dt class="col-sm-4">Video URL</dt>
-                        <dd class="col-sm-8">
-                            <a href="@Model.VideoURL" target="_blank">@Model.VideoURL</a>
-                        </dd>
-                    </dl>
-                </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <strong>Nombre:</strong><br />
+                <span class="text-muted">@Html.DisplayFor(model => model.Nombre)</span>
             </div>
 
-            <form asp-action="Delete" class="mt-4 text-center">
-                <input type="hidden" asp-for="IdEjercicio" />
-                <button type="submit" class="btn btn-danger me-2" onclick="return confirm('¿Estás seguro de que deseas eliminar este ejercicio?')" title="Eliminar">
-                    Eliminar
-                </button>
-                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-            </form>
+            <div class="col-md-8 mb-3">
+                <strong>Descripción:</strong><br />
+                <span class="text-muted">@Html.DisplayFor(model => model.Descripcion)</span>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <strong>Video:</strong><br />
+                @if (!string.IsNullOrEmpty(Model.VideoURL))
+                {
+                    var videoId = System.Text.RegularExpressions.Regex.Match(
+                    Model.VideoURL ?? "",
+                    @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                    ).Groups[1].Value;
+
+                    if (!string.IsNullOrEmpty(videoId))
+                    {
+                        <div class="mt-2">
+                            <div class="ratio ratio-16x9">
+                                <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         </div>
+
+        <form asp-action="Delete" class="mt-4 text-center">
+            <input type="hidden" asp-for="IdEjercicio" />
+            <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
+                    onclick="return confirm('¿Estás seguro de que deseas eliminar este ejercicio?')">
+                <i class="bi bi-trash"></i> Eliminar
+            </button>
+            <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                <i class="bi bi-x-circle"></i> Cancelar
+            </a>
+        </form>
     </div>
 </div>
