@@ -11,12 +11,12 @@
 using System;
 using System.Reflection;
 
-[assembly: System.Reflection.AssemblyCompanyAttribute("WebApplication1")]
+[assembly: System.Reflection.AssemblyCompanyAttribute("Tesina")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fb60b1fb8e568562e8c25f352727b8933285e596")]
-[assembly: System.Reflection.AssemblyProductAttribute("WebApplication1")]
-[assembly: System.Reflection.AssemblyTitleAttribute("WebApplication1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c74936b7f3845b2a2e2388b5aa4eb9ee84edc50")]
+[assembly: System.Reflection.AssemblyProductAttribute("Tesina")]
+[assembly: System.Reflection.AssemblyTitleAttribute("Tesina")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 
 // Generado por la clase WriteCodeFragment de MSBuild.
