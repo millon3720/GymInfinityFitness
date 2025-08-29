@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
-namespace WebApplication1.Controllers
+namespace Tesina.Controllers
 {
     public class ExpedientesController : Controller
     {
@@ -100,7 +100,7 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Nombre", expediente.IdUsuario);
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", expediente.IdUsuario);
             return View(expediente);
         }
 

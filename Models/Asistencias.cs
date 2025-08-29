@@ -7,13 +7,20 @@ namespace Tesina.Models
     {
         [Key]
         public int IdAsistencia { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Se debe especificar el usuario.")]
         public int IdUsuario { get; set; }
+
         [ForeignKey("IdUsuario")]
+        [Required(ErrorMessage = "Se debe proporcionar la información del usuario.")]
         public Usuarios Usuario { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "La fecha de ingreso es obligatoria.")]
+        [DataType(DataType.DateTime)]
         public DateTime FechaIngreso { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "La fecha de salida es obligatoria.")]
+        [DataType(DataType.DateTime)]
         public DateTime? FechaSalida { get; set; }
     }
 }

@@ -4,6 +4,7 @@
 @{
     ViewData["Title"] = "Detalles del Cliente";  
 
+
 }
 <div class="container-fluid mt-4">
     <h2 class="text-center mb-4 text-primary">Detalles del Cliente</h2>
@@ -226,6 +227,7 @@
                            asp-controller="Rutinas" class="btn btn-primary">
                             <i class="bi bi-plus-circle"></i>Asignar Rutina
                         </a>
+
                     </div>
                     <h2>@Model.Rutina.Nombre</h2>
                     @if (Model.Rutina != null && Model.RutinaEjercicios != null && Model.RutinaEjercicios.Any())

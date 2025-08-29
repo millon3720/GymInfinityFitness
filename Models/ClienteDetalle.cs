@@ -1,6 +1,7 @@
 ﻿using Tesina.Models;
 using System.Collections.Generic;
 
+
 namespace Tesina.Models
 {
     public class ClienteDetalle
