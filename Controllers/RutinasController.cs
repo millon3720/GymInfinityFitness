@@ -93,73 +93,7 @@ namespace Tesina.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "Usuarios", new { id = model.IdUsuario });
         }
-        // GET: mostrar la vista
-        public async Task<IActionResult> AsignarRutina(int IdUsuario)
-        {
-            var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
-
-            var model = new AsignarRutinaViewModel
-            {
-                IdUsuario = IdUsuario,
-                FechaAsignacion = DateTime.Now,
-                RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
-                {
-                    IdRutina = r.IdRutina,
-                    Nombre = r.Nombre,
-                    Descripcion = r.Descripcion
-                }).ToList()
-            };
-
-            return View(model);
-        }
-
-        // POST: guardar la asignación
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GuardarAsignar(AsignarRutinaViewModel model)
-        {
-            if (!ModelState.IsValid || model.RutinaSeleccionada == 0)
-            {
-                ModelState.AddModelError("", "Debes seleccionar una rutina.");
-                // Recargar las rutinas en caso de error
-                var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
-                model.RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
-                {
-                    IdRutina = r.IdRutina,
-                    Nombre = r.Nombre,
-                    Descripcion = r.Descripcion
-                }).ToList();
-                return View("AsignarRutina", model);
-            }
-
-            // Buscar si ya existe asignación
-            var asignacionExistente = await _context.ClienteRutina
-                .FirstOrDefaultAsync(cr => cr.IdUsuario == model.IdUsuario);
-
-            if (asignacionExistente != null)
-            {
-                // Sobrescribir
-                asignacionExistente.IdRutina = model.RutinaSeleccionada;
-                asignacionExistente.FechaAsignacion = model.FechaAsignacion;
-                asignacionExistente.Observaciones = model.Observaciones;
-                _context.Update(asignacionExistente);
-            }
-            else
-            {
-                // Crear nueva
-                var nuevaAsignacion = new ClienteRutina
-                {
-                    IdUsuario = model.IdUsuario,
-                    IdRutina = model.RutinaSeleccionada,
-                    FechaAsignacion = model.FechaAsignacion,
-                    Observaciones = model.Observaciones
-                };
-                _context.Add(nuevaAsignacion);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "Usuarios", new { id = model.IdUsuario });
-        }
+        
         // GET: Rutinas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
