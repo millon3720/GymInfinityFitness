@@ -1,0 +1,9 @@
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.csproj.AssemblyReference.cache
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.AssemblyInfoInputs.cache
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.AssemblyInfo.cs
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.csproj.CoreCompileInputs.cache
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.RazorAssemblyInfo.cache
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.RazorAssemblyInfo.cs
+C:\Users\josed\Desktop\TesisCorrecto\obj\Debug\net8.0\Tesina.sourcelink.json
