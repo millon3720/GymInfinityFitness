@@ -79,7 +79,7 @@ namespace Tesina.Controllers
                 Cliente = cliente,
                 Expedientes = expedientes,
                 ClienteRutina = clienteRutina,
-                Rutina = clienteRutina?.Rutina,
+                Rutina = clienteRutina?.Rutina ?? new Rutina(),
                 RutinaEjercicios = clienteRutina?.Rutina?.RutinaEjercicio?.ToList() ?? new List<RutinaEjercicio>(),
                 Lesion = lesiones,
                 Asistencias = asistencia,
