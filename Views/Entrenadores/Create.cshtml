@@ -62,10 +62,33 @@
         <input type="hidden" asp-for="Rol" value="Entrenador" />
 
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
-            <button type="submit" class="btn btn-primary">Crear Entrenador</button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Volver a la lista</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Crear Entrenador</button>
         </div>
     </form>
+    @if (ViewBag.Alerta != null)
+    {
+        <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+            <div id="liveToast" class="toast bg-danger text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Alerta
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.addEventListener('load', function () {
+                var toastEl = document.getElementById('liveToast');
+                if (toastEl) {
+                    var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                    toast.show();
+                }
+            });
+        </script>
+    }
 
 </div>
 

@@ -4,8 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
-	  <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,37 +16,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
-  </ItemGroup>
-	
-	
-	<ItemGroup>
-    <Compile Update="Controllers\EjerciciosController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\EntrenadoresController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\ExpedientesController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\HomeController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\LesionesController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\LoginController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\PlanesNutricionalesController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\RutinasController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-    <Compile Update="Controllers\UsuariosController.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -187,6 +154,8 @@
     <Content Update="Views\_ViewStart.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
+  </ItemGroup>	
+
+  
 
 </Project>

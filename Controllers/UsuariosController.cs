@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,10 +106,30 @@ namespace Tesina.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool cedulaExiste = await _context.Usuarios
+                    .AnyAsync(u => u.Cedula == usuarios.Cedula);
+
+                if (cedulaExiste)
+                {
+                    ViewBag.Alerta = "Ya existe un usuario con esta cédula.";
+                    return View(usuarios);
+                }
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
+
+                var login = new UsuarioLogin
+                {
+                    IdUsuario = usuarios.IdUsuario,
+                    Usuario = usuarios.Correo,
+                    Contrasena = usuarios.Cedula
+                };
+
+                _context.UsuariosLogin.Add(login);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction("Edit", new { id = usuarios.IdUsuario });
             }
+
             return View(usuarios);
         }
 
@@ -181,25 +202,33 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
+        public async Task<IActionResult> Edit(int id, [Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] ClienteDetalle usuarios)
         {
-            if (id != usuarios.IdUsuario)
+            if (id != usuarios.Cliente.IdUsuario)
             {
-                return NotFound();
+                return View();
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    bool cedulaExiste = await _context.Usuarios
+                        .AnyAsync(u => u.Cedula == usuarios.Cliente.Cedula);
+
+                    if (cedulaExiste)
+                    {
+                        ViewBag.Alerta = "Ya existe un usuario con esta cedula.";
+                        return View(usuarios);
+                    }
                     _context.Update(usuarios);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuariosExists(usuarios.IdUsuario))
+                    if (!UsuariosExists(usuarios.Cliente.IdUsuario))
                     {
-                        return NotFound();
+                        return View();
                     }
                     else
                     {

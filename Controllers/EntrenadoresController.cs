@@ -56,12 +56,33 @@ namespace Tesina.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
         {
+
             if (ModelState.IsValid)
             {
+                bool cedulaExiste = await _context.Usuarios
+                    .AnyAsync(u => u.Cedula == usuarios.Cedula);
+
+                if (cedulaExiste)
+                {
+                    ViewBag.Alerta = "Ya existe un usuario con esta cédula.";
+                    return View(usuarios); 
+                }
+
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
+
+                var login = new UsuarioLogin
+                {
+                    IdUsuario = usuarios.IdUsuario,
+                    Usuario = usuarios.Correo,
+                    Contrasena = usuarios.Cedula
+                };
+
+                _context.UsuariosLogin.Add(login);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
-            }
+            }            
             return View(usuarios);
         }
 
@@ -95,8 +116,15 @@ namespace Tesina.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
+                try { 
+                    bool cedulaExiste = await _context.Usuarios
+                        .AnyAsync(u => u.Cedula == usuarios.Cedula);
+
+                    if (cedulaExiste)
+                    {
+                        ViewBag.Alerta = "Ya existe un usuario con esta cedula.";
+                        return View(usuarios);
+                    }
                     _context.Update(usuarios);
                     await _context.SaveChangesAsync();
                 }
