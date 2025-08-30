@@ -1,10 +1,10 @@
-# Imagen base oficial de ASP.NET Core
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+# Imagen base oficial de ASP.NET Core 8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-# Imagen para compilar el proyecto
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+# Imagen para compilar el proyecto con SDK 8.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["Tesina.csproj", "./"]
 RUN dotnet restore "Tesina.csproj"
