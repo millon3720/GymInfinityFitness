@@ -1,24 +1,24 @@
 ﻿@model Tesina.Models.RutinaCreateViewModel
 @{
     ViewData["Title"] = "Editar Rutina";
-    var ejerciciosList = ViewBag.Ejercicios as SelectList;
+    var ejerciciosList = ViewBag.ejerciciosList as SelectList;
 }
 <h4 class="mb-3">Editar Rutina</h4>
 <hr />
 <div class="card shadow rounded p-4">
     <form asp-action="Edit" method="post">
-        <input type="hidden" asp-for="Rutina.IdRutina" />
+        <input type="hidden" name="Rutina.IdRutina" value="@Model.Rutina.IdRutina" />
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="mb-3">
-            <label asp-for="Rutina.Nombre" class="form-label"></label>
-            <input asp-for="Rutina.Nombre" class="form-control" placeholder="Nombre de la Rutina" />
+            <label class="form-label">Nombre</label>
+            <input name="Rutina.Nombre" class="form-control" value="@Model.Rutina.Nombre" placeholder="Nombre de la Rutina" />
             <span asp-validation-for="Rutina.Nombre" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Rutina.Descripcion" class="form-label"></label>
-            <textarea asp-for="Rutina.Descripcion" class="form-control" rows="3" placeholder="Descripción detallada"></textarea>
+            <label class="form-label">Descripción</label>
+            <textarea name="Rutina.Descripcion" class="form-control" rows="3" placeholder="Descripción detallada">@Model.Rutina.Descripcion</textarea>
             <span asp-validation-for="Rutina.Descripcion" class="text-danger"></span>
         </div>
 
@@ -31,24 +31,54 @@
                     <div class="row g-3 align-items-end">
                         <div class="col-md-4">
                             <label class="form-label">Ejercicio</label>
-                            <select asp-for="Ejercicios[i].IdEjercicio" asp-items="ViewBag.Ejercicios" class="form-select"></select>
+                            <select name="Ejercicios[@i].IdEjercicio" class="form-select">
+                                @foreach (var ejercicio in ViewBag.ejerciciosList as SelectList)
+                                {
+                                    @if (ejercicio.Value == Model.Ejercicios[i].IdEjercicio.ToString())
+                                    {
+                                        <option value="@ejercicio.Value" selected>@ejercicio.Text</option>
+
+                                    }
+                                    else
+                                    {
+                                        <option value="@ejercicio.Value">@ejercicio.Text</option>
+                                    }
+                                }
+                            </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Series</label>
                             <input type="number" name="Ejercicios[@i].Series" class="form-control" value="@Model.Ejercicios[i].Series" />
+                            <span asp-validation-for="Ejercicios[@i].Series" class="text-danger"></span>
+
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Repeticiones</label>
                             <input type="number" name="Ejercicios[@i].Repeticiones" class="form-control" value="@Model.Ejercicios[i].Repeticiones" />
+                            <span asp-validation-for="Ejercicios[@i].Repeticiones" class="text-danger"></span>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Descanso (seg)</label>
                             <input type="number" name="Ejercicios[@i].DescansoSegundos" class="form-control" value="@Model.Ejercicios[i].DescansoSegundos" />
+                            <span asp-validation-for="Ejercicios[@i].DescansoSegundos" class="text-danger"></span>
+
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Día</label>
-                            <select asp-for="Ejercicios[@i].DiaSemana" asp-items="ViewBag.DiasSemana" class="form-select">
-                                <option value="">Seleccione un día</option>
+
+                            <select name="Ejercicios[@i].DiaSemana" class="form-select">
+                                @foreach (var dia in ViewBag.DiasSemana as SelectList)
+                                {                                    
+                                    @if (dia.Text == Model.Ejercicios[i].DiaSemana.ToString())
+                                    {
+                                        <option value="@dia.Text" selected>@dia.Text</option>
+
+                                    }
+                                    else
+                                    {
+                                        <option value="@dia.Text">@dia.Text</option>
+                                    }
+                                }
                             </select>
                         </div>
                         <div class="col-12 text-end">
@@ -58,16 +88,13 @@
                 </div>
             }
         </div>
-
-        <button type="button" class="btn btn-success mt-2" onclick="agregarEjercicio()">Agregar Ejercicio</button>
-
+        <button type="button" class="btn btn-success mt-2" onclick="agregarEjercicio()"><i class="bi bi-plus-circle"></i> Agregar Ejercicio</button>
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Guardar Cambios</button>
         </div>
     </form>
 </div>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -81,6 +108,10 @@
             ejercicios.forEach(e => {
                 opciones += `<option value="${e.id}">${e.nombre}</option>`;
             });
+
+            const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+            let diasOptions = '<option value="">Seleccione un día</option>';
+            dias.forEach(d => diasOptions += `<option value="${d}">${d}</option>`);
 
             const div = document.createElement("div");
             div.classList.add("border", "rounded", "p-3", "mb-3", "ejercicio-item", "bg-light");
@@ -108,14 +139,7 @@
                     <div class="col-md-2">
                         <label class="form-label">Día</label>
                         <select name="Ejercicios[${index}].DiaSemana" class="form-select">
-                            <option value="">Seleccione un día</option>
-                            <option value="Lunes">Lunes</option>
-                            <option value="Martes">Martes</option>
-                            <option value="Miércoles">Miércoles</option>
-                            <option value="Jueves">Jueves</option>
-                            <option value="Viernes">Viernes</option>
-                            <option value="Sábado">Sábado</option>
-                            <option value="Domingo">Domingo</option>
+                            ${diasOptions}
                         </select>
                     </div>
                     <div class="col-12 text-end">
@@ -126,6 +150,22 @@
             container.appendChild(div);
             index++;
         }
+
+        // Reindexar antes de enviar
+                       document.querySelector("form").addEventListener("submit", function () {
+            const items = document.querySelectorAll(".ejercicio-item");
+            items.forEach((item, i) => {
+                item.querySelectorAll("select, input").forEach(input => {
+                    const name = input.getAttribute("name");
+                    if (name) {
+                        const newName = name.replace(/\[\d+\]/, `[${i}]`);
+                        input.setAttribute("name", newName);
+                    }
+                });
+            });
+        });
+
+
     </script>
 }
 

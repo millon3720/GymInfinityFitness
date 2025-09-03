@@ -12,7 +12,7 @@
         <input type="hidden" asp-for="Plan.IdPlan" />
 
         <div class="mb-3">
-            <label asp-for="Plan.IdUsuario" class="form-label"></label>
+            <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
             <select asp-for="Plan.IdUsuario" class="form-control" asp-items="ViewBag.IdUsuario"></select>
             <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
         </div>
@@ -40,9 +40,17 @@
                         <div class="col-md-2">
                             <label class="form-label">Día</label>
                             <select name="Alimentos[@i].DiaSemana" class="form-select">
-                                @foreach (var dia in new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" })
+                                @foreach (var dia in ViewBag.DiasSemana as SelectList)
                                 {
-                                    <option value="@dia" selected="@(Model.Alimentos[i].DiaSemana == dia)">@dia</option>
+                                    @if (dia.Text == Model.Alimentos[i].DiaSemana.ToString())
+                                    {
+                                        <option value="@dia.Text" selected>@dia.Text</option>
+
+                                    }
+                                    else
+                                    {
+                                        <option value="@dia.Text">@dia.Text</option>
+                                    }
                                 }
                             </select>
                         </div>
@@ -68,18 +76,18 @@
                         </div>
                         <div class="col-12 text-end">
                             <label class="form-label">&nbsp;</label>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.border').remove()">Eliminar</button>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.alimento-item').remove()">Eliminar</button>
                         </div>
                     </div>
                 </div>
             }
         </div>
 
-        <button type="button" class="btn btn-success mb-3" onclick="agregarAlimento()">Agregar Alimento</button>
+        <button type="button" class="btn btn-success mb-3" onclick="agregarAlimento()"><i class="bi bi-plus-circle"></i> Agregar Alimento</button>
 
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Guardar Cambios</button>
         </div>
     </form>
 </div>
@@ -128,6 +136,9 @@
                     <label class="form-label">Comentarios</label>
                     <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
                 </div>
+                        <input type="hidden" name="Alimentos[${index}].Id" value="0" />
+        <input type="hidden" name="Alimentos[${index}].IdPlan" value="@Model.Plan.IdPlan" />
+
                 <div class="col-12 text-end">
                     <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.alimento-item').remove()">Eliminar</button>
                 </div>
@@ -138,6 +149,20 @@
         index++;
 
         }
+                 document.querySelector("form").addEventListener("submit", function () {
+            const items = document.querySelectorAll(".alimento-item");
+            items.forEach((item, i) => {
+                item.querySelectorAll("input, select, textarea").forEach(input => {
+                    const name = input.getAttribute("name");
+                    if (name) {
+                        const newName = name.replace(/\[\d+\]/, `[${i}]`);
+                        input.setAttribute("name", newName);
+                    }
+                });
+            });
+        });
+
+
     </script>
 
 

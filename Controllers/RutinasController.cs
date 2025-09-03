@@ -191,17 +191,12 @@ namespace Tesina.Controllers
                 }).ToList()
             };
 
-            ViewBag.Ejercicios = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
-            ViewBag.DiasSemana = new SelectList(
-    new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" }
-);
+            ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
+            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
+
             return View(viewModel);
         }
-
-
         // POST: Rutinas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, RutinaCreateViewModel model)
@@ -209,9 +204,11 @@ namespace Tesina.Controllers
             if (id != model.Rutina.IdRutina)
                 return NotFound();
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || model.Ejercicios == null || !model.Ejercicios.Any())
             {
-                ViewBag.Ejercicios = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
+                ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
+                ViewBag.DiasSemana = new SelectList(new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
+
                 return View(model);
             }
 

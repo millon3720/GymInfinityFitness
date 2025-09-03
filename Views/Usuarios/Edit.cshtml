@@ -13,8 +13,10 @@
                 <input type="hidden" asp-for="@Model.Cliente.IdUsuario" />
 
                 <div class="mb-3">
-                    <label asp-for="@Model.Cliente.Cedula" class="form-label"></label>
-                    <input asp-for="@Model.Cliente.Cedula" class="form-control" placeholder="Cédula" />
+                    <label asp-for="@Model.Cliente.Cedula" class="form-label"></label> 
+                    <input asp-for="@Model.Cliente.Cedula" class="form-control" disabled placeholder="Cédula" />
+                    <input asp-for="@Model.Cliente.Cedula" class="form-control" hidden placeholder="Cédula" />
+                    
                     <span asp-validation-for="@Model.Cliente.Cedula" class="text-danger"></span>
                 </div>
 

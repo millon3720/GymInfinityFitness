@@ -14,6 +14,10 @@
                 <span class="text-muted">@Model.Plan.IdPlan</span>
             </div>
             <div class="col-md-4 mb-3">
+                <strong>Cliente:</strong><br />
+                <span class="text-muted">@Model.Plan.Usuario.NombreCompleto</span>
+            </div>
+            <div class="col-md-4 mb-3">
                 <strong>Descripción:</strong><br />
                 <span class="text-muted">@Model.Plan.Descripcion</span>
             </div>
@@ -41,7 +45,7 @@
 
                     @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
                     {
-                        <div class="card mb-2 shadow-sm border-0">
+                        <div class="card mb-2 shadow-sm border-2">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-4 mb-2">
@@ -89,7 +93,7 @@
         <a asp-action="Edit" asp-route-id="@Model.Plan.IdPlan" class="btn btn-sm btn-info">
             <i class="bi bi-pencil-square"></i> Editar
         </a>
-        <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
     </div>
 
 </div>

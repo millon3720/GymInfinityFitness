@@ -69,10 +69,10 @@ namespace Tesina.Controllers
                 .OrderBy(e => e.FechaIngreso)
                 .ToListAsync();
             var planNutricional = await _context.PlanesNutricionales
-    .Where(p => p.IdUsuario == id)
-    .Include(p => p.Alimentos)
-    .OrderByDescending(p => p.FechaAsignacion)
-    .FirstOrDefaultAsync();
+                .Where(p => p.IdUsuario == id)
+                .Include(p => p.Alimentos)
+                .OrderByDescending(p => p.FechaAsignacion)
+                .FirstOrDefaultAsync();
 
             var viewModel = new ClienteDetalle
             {
@@ -176,10 +176,10 @@ namespace Tesina.Controllers
                 .OrderBy(e => e.FechaIngreso)
                 .ToListAsync();
             var planNutricional = await _context.PlanesNutricionales
-    .Where(p => p.IdUsuario == id)
-    .Include(p => p.Alimentos)
-    .OrderByDescending(p => p.FechaAsignacion) // Trae el más reciente primero
-    .FirstOrDefaultAsync();
+                .Where(p => p.IdUsuario == id)
+                .Include(p => p.Alimentos)
+                .OrderByDescending(p => p.FechaAsignacion)
+                .FirstOrDefaultAsync();
 
             var viewModel = new ClienteDetalle
             {
@@ -202,26 +202,19 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] ClienteDetalle usuarios)
+        public async Task<IActionResult> Edit(int id, ClienteDetalle usuarios)
         {
             if (id != usuarios.Cliente.IdUsuario)
             {
                 return View();
             }
 
-            if (ModelState.IsValid)
+            if (usuarios.Cliente!=null)
             {
                 try
                 {
-                    bool cedulaExiste = await _context.Usuarios
-                        .AnyAsync(u => u.Cedula == usuarios.Cliente.Cedula);
-
-                    if (cedulaExiste)
-                    {
-                        ViewBag.Alerta = "Ya existe un usuario con esta cedula.";
-                        return View(usuarios);
-                    }
-                    _context.Update(usuarios);
+                    
+                    _context.Update(usuarios.Cliente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -237,7 +230,69 @@ namespace Tesina.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(usuarios);
+            
+            return View(CargarEdit(id));
+        }
+        private async Task<ClienteDetalle> CargarEdit(int? id)
+        {
+            if (id == null || _context.Usuarios == null)
+                return null;
+
+            var cliente = await _context.Usuarios.FindAsync(id);
+            if (cliente == null)
+                return null;
+
+            var expedientes = await _context.Expedientes
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaRegistro)
+                .ToListAsync();
+
+            var clienteRutina = await _context.ClienteRutina
+                .Include(cr => cr.Rutina)
+                .ThenInclude(r => r.RutinaEjercicio)
+                .ThenInclude(re => re.Ejercicio)
+                .FirstOrDefaultAsync(cr => cr.IdUsuario == id);
+            if (clienteRutina != null && clienteRutina.Rutina?.RutinaEjercicio != null)
+            {
+                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+
+                clienteRutina.Rutina.RutinaEjercicio = clienteRutina.Rutina.RutinaEjercicio
+                    .OrderBy(re => Array.IndexOf(diasSemanaOrdenados, re.DiaSemana))
+                    .ToList();
+            }
+            var lesiones = await _context.Lesiones
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaDiagnostico)
+                .ToListAsync();
+
+            var facturas = await _context.Lesiones
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaDiagnostico)
+                .ToListAsync();
+
+            var asistencia = await _context.Asistencias
+                .Where(e => e.IdUsuario == id)
+                .OrderBy(e => e.FechaIngreso)
+                .ToListAsync();
+            var planNutricional = await _context.PlanesNutricionales
+                .Where(p => p.IdUsuario == id)
+                .Include(p => p.Alimentos)
+                .OrderByDescending(p => p.FechaAsignacion)
+                .FirstOrDefaultAsync();
+
+            var viewModel = new ClienteDetalle
+            {
+                Cliente = cliente,
+                Expedientes = expedientes,
+                ClienteRutina = clienteRutina,
+                Rutina = clienteRutina?.Rutina,
+                RutinaEjercicios = clienteRutina?.Rutina?.RutinaEjercicio?.ToList() ?? new List<RutinaEjercicio>(),
+                Lesion = lesiones,
+                Asistencias = asistencia,
+                PlanesNutricionales = planNutricional != null ? new List<PlanesNutricionales> { planNutricional } : new List<PlanesNutricionales>(),
+                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>()
+            };
+            return viewModel;
         }
 
         // GET: Usuarios/Delete/5

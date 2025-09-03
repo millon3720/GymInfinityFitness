@@ -37,12 +37,23 @@
         <button type="button" class="btn btn-sm btn-success mb-3" onclick="agregarAlimento()">
             <i class="bi bi-plus-circle"></i> Agregar Alimento
         </button>
+        @if (ViewBag.ExistePlan == true)
+        {
+            <div class="alert alert-warning">
+                Ya existe un plan nutricional para este cliente.
+                <button type="submit" name="Sobreescribir" value="true" class="btn btn-danger btn-sm ms-2">
+                    Sobreescribir plan existente
+                </button>
+            </div>
+        }
 
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
-            <button type="submit" class="btn btn-primary">
-                <i class="bi bi-save"></i> Guardar Plan
-            </button>
+            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+            @if (ViewBag.ExistePlan != true)
+            {
+                <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Guardar Plan</button>
+            }
+
         </div>
     </form>
 </div>

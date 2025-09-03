@@ -12,7 +12,7 @@
         <input type="hidden" asp-for="IdExpediente" />
 
         <div class="mb-3">
-            <label asp-for="IdUsuario" class="form-label"></label>
+            <label asp-for="IdUsuario" class="form-label">Cliente</label>
             <select asp-for="IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
             <span asp-validation-for="IdUsuario" class="text-danger"></span>
         </div>
@@ -124,7 +124,7 @@
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Edit" asp-controller="Usuarios" asp-route-id="IdUsuario" class="btn btn-secondary">Volver a la lista</a>
+            <a asp-action="Edit" asp-controller="Usuarios" asp-route-id="IdUsuario" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>

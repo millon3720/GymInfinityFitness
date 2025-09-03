@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
 
@@ -34,7 +35,7 @@ namespace Tesina.Controllers
                 return NotFound();
             }
 
-            var plan = await _context.PlanesNutricionales
+            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
                 .FirstOrDefaultAsync(p => p.IdPlan == id);
 
             if (plan == null)
@@ -70,21 +71,56 @@ namespace Tesina.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PlanAlimenticioViewModel model)
         {
+            var existePlan = await _context.PlanesNutricionales
+                .AnyAsync(p => p.IdUsuario == model.Plan.IdUsuario);
+
+            if (existePlan && !Request.Form.ContainsKey("Sobreescribir"))
+            {
+                TempData["Alimentos"] = JsonConvert.SerializeObject(model.Alimentos);
+                ViewBag.ExistePlan = true;
+                ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", model.Plan.IdUsuario);
+                return View(model);
+            }
+
             if (ModelState.IsValid)
             {
-                // Crear el plan y asignar los alimentos
                 var plan = model.Plan;
-                plan.Alimentos = model.Alimentos; // Asignamos los alimentos
+                plan.Alimentos = model.Alimentos;
+                
+                // Si ya existe y se desea sobreescribir, eliminamos el anterior
+                if (existePlan)
+                {
+                    var anterior = await _context.PlanesNutricionales
+                        .Include(p => p.Alimentos)
+                        .FirstOrDefaultAsync(p => p.IdUsuario == model.Plan.IdUsuario);
 
+                    _context.AlimentosPlanNutricional.RemoveRange(anterior.Alimentos);
+                    _context.PlanesNutricionales.Remove(anterior);
+                }
                 _context.Add(plan);
+                await _context.SaveChangesAsync();
+                if (TempData["Alimentos"] != null)
+                {
+                    model.Alimentos = JsonConvert.DeserializeObject<List<AlimentosPlanNutricional>>(
+                        TempData["Alimentos"].ToString()
+                    );
+                }
+                // Asignar el IdPlan generado a cada alimento
+                foreach (var alimento in model.Alimentos)
+                {
+                    alimento.IdPlan = plan.IdPlan;
+                }
+
+                // Guardar los alimentos
+                _context.AlimentosPlanNutricional.AddRange(model.Alimentos);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            // Reconstruir SelectList en caso de error
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", model.Plan.IdUsuario);
             return View(model);
         }
+
 
 
         // GET: PlanesNutricionales/Edit/5
@@ -93,7 +129,7 @@ namespace Tesina.Controllers
             if (id == null) return NotFound();
 
             var plan = await _context.PlanesNutricionales
-                .Include(p => p.Alimentos)
+                .Include(p => p.Alimentos).Include(p => p.Usuario)
                 .FirstOrDefaultAsync(p => p.IdPlan == id);
 
             if (plan == null) return NotFound();
@@ -103,7 +139,7 @@ namespace Tesina.Controllers
                 Plan = plan,
                 Alimentos = plan.Alimentos.ToList()
             };
-
+            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", plan.IdUsuario);
             return View(viewModel);
         }
@@ -114,11 +150,11 @@ namespace Tesina.Controllers
         public async Task<IActionResult> Edit(int id, PlanAlimenticioViewModel model)
         {
             if (id != model.Plan.IdPlan) return NotFound();
-
+            
             if (ModelState.IsValid)
             {
                 var planDb = await _context.PlanesNutricionales
-                    .Include(p => p.Alimentos)
+                    .Include(p => p.Alimentos).Include(p => p.Usuario)
                     .FirstOrDefaultAsync(p => p.IdPlan == id);
 
                 if (planDb == null) return NotFound();
@@ -167,7 +203,7 @@ namespace Tesina.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", model.Plan.IdUsuario);
             return View(model);
         }

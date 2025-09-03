@@ -35,17 +35,20 @@
                             <td>@item.Descripcion</td>
                             <td>@item.FechaCreacion.ToShortDateString()</td>
                             <td class="text-center">
-                                <a class="btn btn-sm btn-primary me-1" asp-action="Details" asp-route-id="@item.IdRutina" title="Detalles">
-                                    Ver <i class="bi bi-info-circle"></i>
-                                </a>
-                                <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-route-id="@item.IdRutina" title="Editar">
+                                <div class="btn-group">
 
-                                    Modificar <i class="bi bi-pencil-square"></i>
+                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdRutina" title="Detalles">
+                                    <i class="bi bi-info-circle"></i> Ver
+                                </a>
+                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdRutina" title="Editar">
+
+                                    <i class="bi bi-pencil-square"></i> Modificar
                                 </a>
                                 
                                 <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdRutina" title="Eliminar">
-                                    Eliminar <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash"></i> Eliminar
                                 </a>
+                                </div>
                             </td>
                         </tr>
                     }

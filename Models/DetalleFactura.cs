@@ -24,9 +24,8 @@ namespace Tesina.Models
         [Required(ErrorMessage = "Debe indicar la cantidad.")]
         [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor que 0.")]
         public int Cantidad { get; set; }
-
-        [Required(ErrorMessage = "Debe indicar el precio unitario.")]
+        
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0.")]
-        public decimal PrecioUnitario { get; set; }
+        public decimal Subtotal { get; set; }
     }
 }
