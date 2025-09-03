@@ -4,89 +4,98 @@
     ViewData["Title"] = "Detalles de Rutina";
 }
 
-    <h2 class="text-center mb-4">Detalles de la Rutina</h2>
+<h2 class="text-center mb-4">Detalles de la Rutina</h2>
 
-    <div class="card shadow rounded p-4 mb-4">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <strong>Código de Rutina:</strong><br />
-                <span class="text-muted">@Model.IdRutina</span>
-            </div>
-            <div class="col-md-4 mb-3">
-                <strong>Nombre:</strong><br />
-                <span class="text-muted">@Model.Nombre</span>
-            </div>
-            <div class="col-md-4 mb-3">
-                <strong>Fecha de Creación:</strong><br />
-                <span class="text-muted">@Model.FechaCreacion.ToString("dd-MM-yyyy")</span>
-            </div>
-            <div class="col-md-12 mb-3">
-                <strong>Descripción:</strong><br />
-                <span class="text-muted">@Model.Descripcion</span>
-            </div>
+<div class="card shadow rounded p-4 mb-4">
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <strong>Código de Rutina:</strong><br />
+            <span class="text-muted">@Model.IdRutina</span>
         </div>
-
-        <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Edit" asp-route-id="@Model.IdRutina" class="btn btn-sm btn-info">
-                <i class="bi bi-pencil-square"></i> Editar
-            </a>
-            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+        <div class="col-md-4 mb-3">
+            <strong>Nombre:</strong><br />
+            <span class="text-muted">@Model.Nombre</span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <strong>Fecha de Creación:</strong><br />
+            <span class="text-muted">@Model.FechaCreacion.ToString("dd-MM-yyyy")</span>
+        </div>
+        <div class="col-md-12 mb-3">
+            <strong>Descripción:</strong><br />
+            <span class="text-muted">@Model.Descripcion</span>
         </div>
     </div>
 
-    <div class="card shadow rounded">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Ejercicios Asignados</h5>
-        </div>
-        <div class="card-body">
-            @if (Model.RutinaEjercicio != null && Model.RutinaEjercicio.Any())
-            {
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover align-middle">
-                        <thead class="table-dark text-center">
-                            <tr>
-                                <th>Ejercicio</th>
-                                <th>Series</th>
-                                <th>Repeticiones</th>
-                                <th>Descanso (seg)</th>
-                                <th>Día</th>
-                                <th>Explicación</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.RutinaEjercicio)
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.IdRutina" class="btn btn-sm btn-info">
+            <i class="bi bi-pencil-square"></i> Editar
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="card shadow rounded">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Ejercicios Asignados</h5>
+    </div>
+    <div class="card-body">
+        @if (Model.RutinaEjercicio != null && Model.RutinaEjercicio.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th>Ejercicio</th>
+                            <th>Series</th>
+                            <th>Repeticiones</th>
+                            <th>Descanso (seg)</th>
+                            <th>Día</th>
+                            <th>Explicación</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RutinaEjercicio)
+                        {
+                            var videoId = string.Empty;
+                            if (!string.IsNullOrEmpty(item.Ejercicio?.VideoURL) && item.Ejercicio.VideoURL.Contains("youtube.com"))
                             {
-                                <tr>
-                                    <td>@item.Ejercicio?.Nombre</td>
-                                    <td class="text-center">@item.Series</td>
-                                    <td class="text-center">@item.Repeticiones</td>
-                                    <td class="text-center">@item.DescansoSegundos</td>
-                                    <td class="text-center">@item.DiaSemana</td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(item.Ejercicio?.VideoURL))
-                                        {
-                                            var videoId = System.Text.RegularExpressions.Regex.Match(
-                                            item.Ejercicio?.VideoURL ?? "",
-                                            @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
-                                            ).Groups[1].Value;
-
-                                            if (!string.IsNullOrEmpty(videoId))
-                                            {
-                                                <div class="ratio ratio-16x9">
-                                                    <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
-                                                </div>
-                                            }
-                                        }
-                                    </td>
-                                </tr>
+                                videoId = System.Text.RegularExpressions.Regex.Match(
+                                item.Ejercicio.VideoURL,
+                                @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                                ).Groups[1].Value;
                             }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <p class="text-muted">No hay ejercicios asignados a esta rutina.</p>
-            }
-        </div>
+
+                            <tr>
+                                <td>@item.Ejercicio?.Nombre</td>
+                                <td class="text-center">@item.Series</td>
+                                <td class="text-center">@item.Repeticiones</td>
+                                <td class="text-center">@item.DescansoSegundos</td>
+                                <td class="text-center">@item.DiaSemana</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(videoId))
+                                    {
+                                        <div class="mt-2">
+                                            <div class="ratio ratio-16x9">
+                                                <iframe src="@($"https://www.youtube.com/embed/{videoId}")" frameborder="0" allowfullscreen></iframe>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin video disponible</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No hay ejercicios asignados a esta rutina.</p>
+        }
     </div>
+</div>

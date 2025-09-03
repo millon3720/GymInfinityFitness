@@ -19,5 +19,8 @@ namespace Tesina.Models
         [Required(ErrorMessage = "La fecha del evento es obligatoria.")]
         [DataType(DataType.DateTime)]
         public DateTime FechaEvento { get; set; }
+
+        [Display(Name = "Imagen del evento")]
+        public byte[]? Imagen { get; set; }
     }
 }

@@ -22,5 +22,7 @@ namespace Tesina.Models
         [Required(ErrorMessage = "El precio es obligatorio.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor a cero.")]
         public decimal Precio { get; set; }
+        public ICollection<DetalleFactura>? DetallesFactura { get; set; }
+        public Inventario? Inventario { get; set; }
     }
 }
