@@ -1,0 +1,58 @@
+﻿@model Tesina.Models.Usuarios
+
+@{
+    ViewData["Title"] = "Details";
+}
+    <h2 class="text-center mb-4">Detalles del Entrenador</h2>
+
+    <div class="card shadow rounded p-4">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <strong>Código de Usuario:</strong><br />
+                <span class="text-muted">@Model.IdUsuario</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Cédula:</strong><br />
+                <span class="text-muted">@Model.Cedula</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Nombre Completo:</strong><br />
+                <span class="text-muted">@Model.NombreCompleto</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Fecha Nacimiento:</strong><br />
+                <span class="text-muted">@Model.FechaNacimiento.ToString("dd-MM-yyyy")</span>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <strong>Correo:</strong><br />
+                <span class="text-muted">@Model.Correo</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Teléfono:</strong><br />
+                <span class="text-muted">@Model.Telefono</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Dirección:</strong><br />
+                <span class="text-muted">@Model.Direccion</span>
+            </div>
+            <div class="col-md-3 mb-3">
+                <strong>Fecha de Registro:</strong><br />
+                <span class="text-muted">@Model.FechaRegistro.ToString("dd-MM-yyyy HH:mm")</span>
+            </div>
+
+            <div class="col-md-3 mb-3">
+                <strong>Estado:</strong><br />
+                <span class="badge @(Model.Estado ? "bg-success" : "bg-danger")">
+                    @(Model.Estado ? "Activo" : "Inactivo")
+                </span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@Model.IdUsuario">
+                <i class="bi bi-pencil-square"></i> Editar
+            </a>
+        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+        </div>
+    </div>
