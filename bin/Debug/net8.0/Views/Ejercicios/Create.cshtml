@@ -1,0 +1,62 @@
+﻿@model Tesina.Models.Ejercicio
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="container-fluid mt-4">
+    <h4>Nuevo Ejercicio</h4>
+    <hr />
+    <div class="card shadow rounded p-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Nombre" class="form-label"></label>
+                <input asp-for="Nombre" class="form-control" placeholder="Nombre del Ejercicio" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="form-label"></label>
+                <input asp-for="Descripcion" class="form-control" placeholder="Descripción" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="VideoURL" class="form-label"></label>
+                <input asp-for="VideoURL" class="form-control" placeholder="URL del Video" />
+                <span asp-validation-for="VideoURL" class="text-danger"></span>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.VideoURL) && Model.VideoURL.Contains("youtube.com"))
+            {
+                var videoId = System.Text.RegularExpressions.Regex.Match(
+                Model.VideoURL ?? "",
+                @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                ).Groups[1].Value;
+                if (!string.IsNullOrEmpty(videoId))
+                {
+                    <div class="mb-3">
+                        <label class="form-label">Vista previa del video:</label>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                }
+            }
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Crear Ejercicio
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,47 +1,81 @@
-﻿@model IEnumerable<Tesina.Models.Inventario>
+﻿@model IEnumerable<Tesina.Models.ProductoInventarioViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Inventario de Productos y Servicios";
 }
 
-<h1>Index</h1>
+<div class="container-fluid mt-4">
+    <h4 class="text-primary text-center mb-4">Inventario de Productos y Servicios</h4>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductoServicio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CantidadDisponible)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PuntoDeReorden)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductoServicio.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CantidadDisponible)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PuntoDeReorden)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdInventario">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdInventario">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdInventario">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow rounded p-4 mb-4">
+        <div class="d-flex justify-content-end mb-3">
+            <a asp-action="Create" class="btn btn-success shadow-sm">
+                <i class="bi bi-plus-circle"></i> Registrar nuevo
+            </a>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover shadow-sm rounded">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Precio</th>
+                            <th>Cantidad Disponible</th>
+                            <th>Punto de Reorden</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var requiereReorden = item.Inventario.CantidadDisponible <= item.Inventario.PuntoDeReorden;
+                            <tr class="text-center">
+                                <td>@item.Producto.Nombre</td>
+                                <td>@item.Producto.Tipo</td>
+                                <td>@item.Producto.Precio.ToString("C")</td>
+                                <td>@item.Inventario.CantidadDisponible</td>
+                                <td>@item.Inventario.PuntoDeReorden</td>
+                                <td>
+                                    @if (requiereReorden&& item.Producto.Tipo.ToLower()!="servicio")
+                                    {
+                                        <span class="badge bg-danger">Reabastecer</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Stock OK</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Producto.IdProductoServicio" title="Detalles">
+                                            <i class="bi bi-info-circle"></i> Ver
+                                        </a>
+                                        <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Producto.IdProductoServicio" title="Editar">
+
+                                            <i class="bi bi-pencil-square"></i> Modificar
+                                        </a>
+
+                                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Producto.IdProductoServicio">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center mt-5">
+                <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
+            </div>
+        }
+    </div>
+</div>

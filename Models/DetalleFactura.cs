@@ -13,13 +13,13 @@ namespace Tesina.Models
         public int IdFactura { get; set; }
 
         [ForeignKey("IdFactura")]
-        public Facturas Factura { get; set; }
+        public Facturas? Factura { get; set; }
 
         [Required(ErrorMessage = "Debe especificar el producto o servicio.")]
         public int IdProductoServicio { get; set; }
 
         [ForeignKey("IdProductoServicio")]
-        public ProductosServicios ProductoServicio { get; set; }
+        public ProductosServicios? ProductoServicio { get; set; }
 
         [Required(ErrorMessage = "Debe indicar la cantidad.")]
         [Range(1, int.MaxValue, ErrorMessage = "La cantidad debe ser mayor que 0.")]

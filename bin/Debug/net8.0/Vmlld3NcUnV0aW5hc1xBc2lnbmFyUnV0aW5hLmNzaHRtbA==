@@ -1,0 +1,42 @@
+﻿@model AsignarRutinaViewModel
+
+<h2>Asignar Rutina al Cliente</h2>
+
+<form asp-action="GuardarAsignar" method="post">
+    <input type="hidden" asp-for="IdUsuario" />
+
+    <div class="mb-3">
+        <label>Fecha de Asignación</label>
+        <input asp-for="FechaAsignacion" class="form-control" type="date" />
+    </div>
+
+    <div class="mb-3">
+        <label>Observaciones</label>
+        <textarea asp-for="Observaciones" class="form-control"></textarea>
+    </div>
+
+    <h4>Seleccione una Rutina</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Seleccionar</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.RutinasDisponibles.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <input type="radio" asp-for="RutinaSeleccionada" value="@Model.RutinasDisponibles[i].IdRutina" />
+                    </td>
+                    <td>@Model.RutinasDisponibles[i].Nombre</td>
+                    <td>@Model.RutinasDisponibles[i].Descripcion</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Guardar Asignación</button>
+</form>

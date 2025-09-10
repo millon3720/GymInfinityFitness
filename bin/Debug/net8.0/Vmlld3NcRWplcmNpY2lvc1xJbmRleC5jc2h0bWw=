@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Tesina.Models.Ejercicio>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center text-primary mb-4">
+        <i class="bi bi-people-fill"></i> Lista de Ejercicios
+    </h2>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a class="btn btn-success" asp-action="Create">
+            <i class="bi bi-plus-circle"></i> Crear Nuevo Ejercicio
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Nombre)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Descripcion)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.VideoURL)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nombre)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Descripcion)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.VideoURL)
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdEjercicio" title="Detalles">
+                                    <i class="bi bi-info-circle"></i> Ver
+                                </a>
+                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdEjercicio" title="Editar">
+
+                                    <i class="bi bi-pencil-square"></i> Modificar
+                                </a>
+                                
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdEjercicio">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-5">
+            <i class="bi bi-exclamation-circle"></i> No hay ejercicios registrados.
+        </div>
+    }
+</div>

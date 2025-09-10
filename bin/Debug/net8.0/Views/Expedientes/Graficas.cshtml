@@ -1,0 +1,254 @@
+﻿@model List< Tesina.Models.Expediente>
+
+@using System.Text.Json
+@{
+    var fechas = Model.Select(e => e.FechaRegistro.ToString("dd-MM-yyyy")).ToList();
+    var pesos = Model.Select(e => e.PesoKg).ToList();
+    var imcs = Model.Select(e => e.IMC).ToList();
+    var Cintura = Model.Select(e => e.MedidaCintura).ToList();
+    var Pecho = Model.Select(e => e.MedidaPecho).ToList();
+    var grasa = Model.Select(e => e.PorcentajeGrasa).ToList();
+    var musculo = Model.Select(e => e.PorcentajeMuscular).ToList();
+    var espalda = Model.Select(e => e.MedidaEspalda).ToList();
+    var cadera = Model.Select(e => e.MedidaCadera).ToList();
+    var bicepD = Model.Select(e => e.BicepDerecho).ToList();
+    var bicepI = Model.Select(e => e.BicepIzquierdo).ToList();
+    var piernaD = Model.Select(e => e.PiernaDerecha).ToList();
+    var piernaI = Model.Select(e => e.PiernaIzquierda).ToList();
+    var pantorrillaD = Model.Select(e => e.PantorrillaDerecha).ToList();
+    var pantorrillaI = Model.Select(e => e.PantorrillaIzquierda).ToList();
+    var alturacm = Model.Select(e => e.AlturaCm).ToList();
+
+}
+<div class="row">
+    <!-- Fila 1 -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <h4>% Grasa</h4>
+            <canvas id="GrasaChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>% Muscular</h4>
+            <canvas id="MusculoChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>IMC</h4>
+            <canvas id="imcChart" width="100%" height="100"></canvas>
+        </div>
+    </div>
+    <!-- Fila 2 -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <h4>Altura cm</h4>
+            <canvas id="alturaChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Peso</h4>
+            <canvas id="pesoChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Pecho</h4>
+            <canvas id="PechoChart" width="100%" height="100"></canvas>
+        </div>
+    </div>
+    <!-- Fila 3 -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <h4>Cintura</h4>
+            <canvas id="CinturaChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Espalda</h4>
+            <canvas id="EspaldaChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Cadera</h4>
+            <canvas id="CaderaChart" width="100%" height="100"></canvas>
+        </div>
+    </div>
+    <!-- Fila 4 -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <h4>Bicep Derecho</h4>
+            <canvas id="BicepDChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Bicep Izquierdo</h4>
+            <canvas id="BicepIChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Pantorrilla Derecha</h4>
+            <canvas id="PantorrillaDChart" width="100%" height="100"></canvas>
+        </div>
+    </div>
+    <!-- Fila 5 -->
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <h4>Pantorrilla Izquierda</h4>
+            <canvas id="PantorrillaIChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Pierna Derecha</h4>
+            <canvas id="PiernaDChart" width="100%" height="100"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h4>Pierna Izquierda</h4>
+            <canvas id="PiernaIChart" width="100%" height="100"></canvas>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = @Html.Raw(JsonSerializer.Serialize(fechas));
+
+    const pesoData = {
+        labels: labels,
+        datasets: [{
+            label: 'Peso (kg)',
+            data: @Html.Raw(JsonSerializer.Serialize(pesos)),
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.3
+        }]
+    };
+
+    const imcData = {
+        labels: labels,
+        datasets: [{
+            label: 'IMC',
+            data: @Html.Raw(JsonSerializer.Serialize(imcs)),
+            borderColor: 'rgba(255, 99, 132, 1)',
+            tension: 0.3
+        }]
+    };
+       const CinturaData = {
+        labels: labels,
+        datasets: [{
+            label: 'Cintura',
+            data: @Html.Raw(JsonSerializer.Serialize(Cintura)),
+            borderColor: 'rgba(255, 159, 64, 1)',
+            tension: 0.3
+        }]
+    };   const PechoData = {
+        labels: labels,
+        datasets: [{
+            label: 'Pecho',
+            data: @Html.Raw(JsonSerializer.Serialize(Pecho)),
+            borderColor: 'rgba(153, 102, 255, 1)',
+            tension: 0.3
+        }]
+    };
+            const grasaData = {
+        labels: labels,
+        datasets: [{
+            label: '% Grasa',
+            data: @Html.Raw(JsonSerializer.Serialize(grasa)),
+            borderColor: 'rgba(255, 205, 86, 1)',
+            tension: 0.3
+        }]
+    };
+    const musculoData = {
+        labels: labels,
+        datasets: [{
+            label: '% Muscular',
+            data: @Html.Raw(JsonSerializer.Serialize(musculo)),
+            borderColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.3
+        }]
+    };
+    const espaldaData = {
+        labels: labels,
+        datasets: [{
+            label: 'Espalda',
+            data: @Html.Raw(JsonSerializer.Serialize(espalda)),
+            borderColor: 'rgba(255, 99, 132, 1)',
+            tension: 0.3
+        }]
+    };
+    const caderaData = {
+        labels: labels,
+        datasets: [{
+            label: 'Cadera',
+            data: @Html.Raw(JsonSerializer.Serialize(cadera)),
+            borderColor: 'rgba(75, 192, 192, 1)',
+            tension: 0.3
+        }]
+    };
+    const bicepDData = {
+        labels: labels,
+        datasets: [{
+            label: 'Bicep Derecho',
+            data: @Html.Raw(JsonSerializer.Serialize(bicepD)),
+            borderColor: 'rgba(153, 102, 255, 1)',
+            tension: 0.3
+        }]
+    };
+    const bicepIData = {
+        labels: labels,
+        datasets: [{
+            label: 'Bicep Izquierdo',
+            data: @Html.Raw(JsonSerializer.Serialize(bicepI)),
+            borderColor: 'rgba(255, 159, 64, 1)',
+            tension: 0.3
+        }]
+    };
+    const piernaDData = {
+        labels: labels,
+        datasets: [{
+            label: 'Pierna Derecha',
+            data: @Html.Raw(JsonSerializer.Serialize(piernaD)),
+            borderColor: 'rgba(201, 203, 207, 1)',
+            tension: 0.3
+        }]
+    };
+    const piernaIData = {
+        labels: labels,
+        datasets: [{
+            label: 'Pierna Izquierda',
+            data: @Html.Raw(JsonSerializer.Serialize(piernaI)),
+            borderColor: 'rgba(255, 206, 86, 1)',
+            tension: 0.3
+        }]
+    };
+    const pantorrillaDData = {
+        labels: labels,
+        datasets: [{
+            label: 'Pantorrilla Derecha',
+            data: @Html.Raw(JsonSerializer.Serialize(pantorrillaD)),
+            borderColor: 'rgba(54, 162, 235, 1)',
+            tension: 0.3
+        }]
+    };
+    const pantorrillaIData = {
+        labels: labels,
+        datasets: [{
+            label: 'Pantorrilla Izquierda',
+            data: @Html.Raw(JsonSerializer.Serialize(pantorrillaI)),
+            borderColor: 'rgba(153, 102, 255, 1)',
+            tension: 0.3
+        }]
+    };
+     const alturacmData = {
+        labels: labels,
+        datasets: [{
+            label: 'Altura Cm',
+            data: @Html.Raw(JsonSerializer.Serialize(alturacm)),
+            borderColor: 'rgba(153, 102, 255, 1)',
+            tension: 0.3
+        }]
+    };
+    new Chart(document.getElementById('GrasaChart'), { type: 'line', data: grasaData });
+    new Chart(document.getElementById('MusculoChart'), { type: 'line', data: musculoData });
+    new Chart(document.getElementById('EspaldaChart'), { type: 'line', data: espaldaData });
+    new Chart(document.getElementById('CaderaChart'), { type: 'line', data: caderaData });
+    new Chart(document.getElementById('BicepDChart'), { type: 'line', data: bicepDData });
+    new Chart(document.getElementById('BicepIChart'), { type: 'line', data: bicepIData });
+    new Chart(document.getElementById('PiernaDChart'), { type: 'line', data: piernaDData });
+    new Chart(document.getElementById('PiernaIChart'), { type: 'line', data: piernaIData });
+    new Chart(document.getElementById('PantorrillaDChart'), { type: 'line', data: pantorrillaDData });
+    new Chart(document.getElementById('PantorrillaIChart'), { type: 'line', data: pantorrillaIData });
+    new Chart(document.getElementById('pesoChart'), {type: 'line',data: pesoData});
+    new Chart(document.getElementById('imcChart'), {type: 'line',data: imcData});
+    new Chart(document.getElementById('CinturaChart'), {type: 'line',data: CinturaData});
+    new Chart(document.getElementById('PechoChart'), {type: 'line',data: PechoData});
+    new Chart(document.getElementById('alturaChart'), {type: 'line',data: alturacmData});
+</script>

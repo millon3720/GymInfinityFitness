@@ -1,0 +1,138 @@
+﻿@model IEnumerable<Tesina.Models.Expediente>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaRegistro)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PesoKg)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AlturaCm)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IMC)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PorcentajeGrasa)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PorcentajeMuscular)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedidaPecho)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedidaEspalda)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedidaCintura)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedidaCadera)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BicepDerecho)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BicepIzquierdo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PiernaDerecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PiernaIzquierda)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PantorrillaDerecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PantorrillaIzquierda)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Observaciones)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.Cedula)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaRegistro)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PesoKg)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AlturaCm)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IMC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PorcentajeGrasa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PorcentajeMuscular)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedidaPecho)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedidaEspalda)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedidaCintura)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedidaCadera)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BicepDerecho)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BicepIzquierdo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PiernaDerecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PiernaIzquierda)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PantorrillaDerecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PantorrillaIzquierda)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Observaciones)
+            </td>
+            <td>
+                    <a asp-action="Details" asp-route-id="@item.IdExpediente">Ver</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdExpediente">Modificar</a>
+
+                <a asp-action="Delete" asp-route-id="@item.IdExpediente">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
