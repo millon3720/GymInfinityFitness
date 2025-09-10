@@ -22,34 +22,51 @@ namespace Tesina.Controllers
         // GET: Inventarios
         public async Task<IActionResult> Index()
         {
-            var gymDbContext = _context.Inventario.Include(i => i.ProductoServicio);
-            return View(await gymDbContext.ToListAsync());
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            var viewModel = productos
+                .Where(p => p.Inventario != null)
+                .Select(p => new ProductoInventarioViewModel
+                {
+                    Producto = p,
+                    Inventario = p.Inventario
+                }).ToList();
+
+            return View(viewModel);
         }
 
+
         // GET: Inventarios/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
 
-            var inventario = await _context.Inventario
-                .Include(i => i.ProductoServicio)
-                .FirstOrDefaultAsync(m => m.IdInventario == id);
-            if (inventario == null)
-            {
+            if (producto == null || producto.Inventario == null)
                 return NotFound();
-            }
 
-            return View(inventario);
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+
+            return View(viewModel);
         }
 
         // GET: Inventarios/Create
         public IActionResult Create()
         {
-            ViewData["IdProductoServicio"] = new SelectList(_context.ProductosServicios, "IdProductoServicio", "Descripcion");
-            return View();
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = new ProductosServicios(),
+                Inventario = new Inventario()
+            };
+
+            return View(viewModel);
         }
 
         // POST: Inventarios/Create
@@ -57,33 +74,41 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdInventario,IdProductoServicio,CantidadDisponible,PuntoDeReorden")] Inventario inventario)
+        public async Task<IActionResult> Create(ProductoInventarioViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(inventario);
+                _context.ProductosServicios.Add(model.Producto);
                 await _context.SaveChangesAsync();
+
+                model.Inventario.IdProductoServicio = model.Producto.IdProductoServicio;
+                _context.Inventario.Add(model.Inventario);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdProductoServicio"] = new SelectList(_context.ProductosServicios, "IdProductoServicio", "Descripcion", inventario.IdProductoServicio);
-            return View(inventario);
+
+            return View(model);
         }
 
-        // GET: Inventarios/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var inventario = await _context.Inventario.FindAsync(id);
-            if (inventario == null)
-            {
+        // GET: Inventarios/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
+
+            if (producto == null || producto.Inventario == null)
                 return NotFound();
-            }
-            ViewData["IdProductoServicio"] = new SelectList(_context.ProductosServicios, "IdProductoServicio", "Descripcion", inventario.IdProductoServicio);
-            return View(inventario);
+
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+
+            return View(viewModel);
         }
 
         // POST: Inventarios/Edit/5
@@ -91,54 +116,38 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdInventario,IdProductoServicio,CantidadDisponible,PuntoDeReorden")] Inventario inventario)
+        public async Task<IActionResult> Edit(ProductoInventarioViewModel model)
         {
-            if (id != inventario.IdInventario)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(inventario);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InventarioExists(inventario.IdInventario))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(model.Producto);
+                model.Inventario.IdProductoServicio = model.Producto.IdProductoServicio;
+                _context.Update(model.Inventario);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdProductoServicio"] = new SelectList(_context.ProductosServicios, "IdProductoServicio", "Descripcion", inventario.IdProductoServicio);
-            return View(inventario);
+
+            return View(model);
         }
 
         // GET: Inventarios/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
 
-            var inventario = await _context.Inventario
-                .Include(i => i.ProductoServicio)
-                .FirstOrDefaultAsync(m => m.IdInventario == id);
-            if (inventario == null)
-            {
+            if (producto == null || producto.Inventario == null)
                 return NotFound();
-            }
 
-            return View(inventario);
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+
+            return View(viewModel);
         }
 
         // POST: Inventarios/Delete/5
@@ -146,13 +155,19 @@ namespace Tesina.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var inventario = await _context.Inventario.FindAsync(id);
-            if (inventario != null)
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
+
+            if (producto != null)
             {
-                _context.Inventario.Remove(inventario);
+                if (producto.Inventario != null)
+                    _context.Inventario.Remove(producto.Inventario);
+
+                _context.ProductosServicios.Remove(producto);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

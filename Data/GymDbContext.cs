@@ -19,14 +19,13 @@ namespace Tesina.Data
         public DbSet<ClienteRutina> ClienteRutina { get; set; }
         public DbSet<PlanesNutricionales> PlanesNutricionales { get; set; }
         public DbSet<AlimentosPlanNutricional> AlimentosPlanNutricional { get; set; }
-        public DbSet<Notificaciones> Notificaciones { get; set; }
         public DbSet<ProductosServicios> ProductosServicios { get; set; }
         public DbSet<Inventario> Inventario { get; set; }
         public DbSet<Facturas> Facturas { get; set; }
-        public DbSet<DetalleFactura> DetalleFacturas { get; set; }
-        public DbSet<Pagos> Pagos { get; set; }
+        public DbSet<DetalleFactura> DetalleFactura { get; set; }
         public DbSet<Eventos> Eventos { get; set; }
         public DbSet<ClienteEvento> ClienteEventos { get; set; }
+        public DbSet<Mensualidades> Mensualidades { get; set; }
 
     }
 

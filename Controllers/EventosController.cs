@@ -19,139 +19,136 @@ namespace Tesina.Controllers
             _context = context;
         }
 
-        // GET: Eventos
+        // INDEX
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Eventos.ToListAsync());
-        }
-
-        // GET: Eventos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var eventos = await _context.Eventos
-                .FirstOrDefaultAsync(m => m.IdEvento == id);
-            if (eventos == null)
-            {
-                return NotFound();
-            }
-
+            var eventos = await _context.Eventos.OrderBy(e => e.FechaEvento).ToListAsync();
             return View(eventos);
         }
 
-        // GET: Eventos/Create
+        // CREATE (GET)
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Eventos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdEvento,Nombre,Descripcion,FechaEvento,Imagen")] Eventos eventos)
+        public async Task<IActionResult> Create(Eventos evento, IFormFile imagenArchivo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(eventos);
+                if (imagenArchivo != null && imagenArchivo.Length > 0)
+                {
+                    using var ms = new MemoryStream();
+                    await imagenArchivo.CopyToAsync(ms);
+                    evento.Imagen = ms.ToArray();
+                }
+
+                _context.Eventos.Add(evento);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(eventos);
+
+            return View(evento);
         }
 
-        // GET: Eventos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // DETAILS
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
-            {
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento == null)
                 return NotFound();
-            }
 
-            var eventos = await _context.Eventos.FindAsync(id);
-            if (eventos == null)
-            {
-                return NotFound();
-            }
-            return View(eventos);
+            return View(evento);
         }
 
-        // POST: Eventos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // EDIT (GET)
+        public async Task<IActionResult> Edit(int id)
+        {
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento == null)
+                return NotFound();
+
+            return View(evento);
+        }
+
+        // EDIT (POST)
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdEvento,Nombre,Descripcion,FechaEvento,Imagen")] Eventos eventos)
+        [ValidateAntiForgeryToken]    
+        public async Task<IActionResult> Edit(int id, Eventos evento, IFormFile imagenArchivo)
         {
-            if (id != eventos.IdEvento)
-            {
+            if (id != evento.IdEvento)
                 return NotFound();
+
+            var eventoExistente = await _context.Eventos.FindAsync(id);
+            if (eventoExistente == null)
+                return NotFound();
+
+            // Actualizar campos básicos
+            eventoExistente.Nombre = evento.Nombre;
+            eventoExistente.Descripcion = evento.Descripcion;
+            eventoExistente.FechaEvento = evento.FechaEvento;
+
+            // Solo actualizar imagen si se sube una nueva
+            if (imagenArchivo != null && imagenArchivo.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await imagenArchivo.CopyToAsync(ms);
+                eventoExistente.Imagen = ms.ToArray();
+            }
+            ModelState.Clear();
+            // Validar el objeto final que se va a guardar
+            if (!TryValidateModel(eventoExistente))
+            {
+                return View(eventoExistente); // Devolvés el objeto completo, con imagen
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(eventos);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EventosExists(eventos.IdEvento))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(eventos);
+            _context.Update(eventoExistente);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Eventos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+
+
+        // DELETE (GET)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
-            {
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento == null)
                 return NotFound();
-            }
 
-            var eventos = await _context.Eventos
-                .FirstOrDefaultAsync(m => m.IdEvento == id);
-            if (eventos == null)
-            {
-                return NotFound();
-            }
-
-            return View(eventos);
+            return View(evento);
         }
 
-        // POST: Eventos/Delete/5
+        // DELETE (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var eventos = await _context.Eventos.FindAsync(id);
-            if (eventos != null)
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento != null)
             {
-                _context.Eventos.Remove(eventos);
+                _context.Eventos.Remove(evento);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EventosExists(int id)
+        // IMAGEN (GET)
+        public async Task<IActionResult> VerImagen(int id)
         {
-            return _context.Eventos.Any(e => e.IdEvento == id);
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento?.Imagen != null)
+            {
+                return File(evento.Imagen, "image/jpeg");
+            }
+
+            return NotFound();
         }
     }
+
 }

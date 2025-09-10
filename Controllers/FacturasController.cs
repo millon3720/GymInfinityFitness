@@ -30,97 +30,314 @@ namespace Tesina.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var facturas = await _context.Facturas
+            var factura = await _context.Facturas
                 .Include(f => f.Usuario)
-                .FirstOrDefaultAsync(m => m.IdFactura == id);
-            if (facturas == null)
-            {
-                return NotFound();
-            }
+                .Include(f => f.DetallesFactura)
+                    .ThenInclude(d => d.ProductoServicio)
+                .FirstOrDefaultAsync(f => f.IdFactura == id);
 
-            return View(facturas);
+            if (factura == null)
+                return NotFound();
+
+            return View(factura);
         }
 
+
         // GET: Facturas/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula");
-            return View();
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            var viewModel = new FacturaViewModel
+            {
+                Factura = new Facturas { Fecha = DateTime.Now },
+                Detalles = new List<DetalleFactura> { new DetalleFactura() },
+                UsuariosDisponibles = await _context.Usuarios
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.IdUsuario.ToString(),
+                        Text = u.NombreCompleto.ToString()
+                    }).ToListAsync(),
+                ProductosDisponibles = productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.IdProductoServicio.ToString(),
+                        Text = p.Nombre
+                    }).ToList()
+            };
+
+            ViewBag.ProductosExtendidos = productos.Select(p => new
+            {
+                id = p.IdProductoServicio,
+                nombre = p.Nombre,
+                precio = p.Precio,
+                tipo = p.Tipo,
+                stock = p.Inventario?.CantidadDisponible ?? 0
+            }).ToList();
+
+            return View(viewModel);
         }
 
         // POST: Facturas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdFactura,IdUsuario,Fecha,Total")] Facturas facturas)
+        public async Task<IActionResult> Create(FacturaViewModel model)
         {
-            if (ModelState.IsValid)
+            // Validación básica
+            if (!ModelState.IsValid || model.Detalles == null || !model.Detalles.Any())
             {
-                _context.Add(facturas);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await RecargarListas(model);
+                ModelState.AddModelError("", "Debe agregar al menos un producto o servicio.");
+                return View(model);
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", facturas.IdUsuario);
-            return View(facturas);
+
+            // Validación de duplicados
+            var idsDuplicados = model.Detalles
+                .GroupBy(d => d.IdProductoServicio)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (idsDuplicados.Any())
+            {
+                await RecargarListas(model);
+                ModelState.AddModelError("", "Hay productos o servicios duplicados en la factura.");
+                return View(model);
+            }
+
+            // Validación de stock y cálculo de subtotales
+            foreach (var detalle in model.Detalles)
+            {
+                var producto = await _context.ProductosServicios
+                    .Include(p => p.Inventario)
+                    .FirstOrDefaultAsync(p => p.IdProductoServicio == detalle.IdProductoServicio);
+
+                if (producto == null)
+                {
+                    ModelState.AddModelError("", $"Producto o servicio con ID {detalle.IdProductoServicio} no existe.");
+                    continue;
+                }
+
+                if (producto.Tipo.ToLower() == "producto" &&
+                    producto.Inventario != null &&
+                    detalle.Cantidad > producto.Inventario.CantidadDisponible)
+                {
+                    await RecargarListas(model);
+                    ModelState.AddModelError("", $"La cantidad de '{producto.Nombre}' supera el stock disponible ({producto.Inventario.CantidadDisponible}).");
+                    return View(model);
+                }
+
+                detalle.Subtotal = producto.Precio * detalle.Cantidad;
+            }
+
+            // Calcular total
+            model.Factura.Total = model.Detalles.Sum(d => d.Subtotal);
+
+            // Guardar factura
+            _context.Facturas.Add(model.Factura);
+            await _context.SaveChangesAsync();
+
+            // Guardar detalles y actualizar inventario
+            foreach (var detalle in model.Detalles)
+            {
+                detalle.IdFactura = model.Factura.IdFactura;
+                _context.DetalleFactura.Add(detalle);
+
+                var producto = await _context.ProductosServicios
+                    .Include(p => p.Inventario)
+                    .FirstOrDefaultAsync(p => p.IdProductoServicio == detalle.IdProductoServicio);
+
+                if (producto != null && producto.Tipo.ToLower() == "producto" && producto.Inventario != null)
+                {
+                    producto.Inventario.CantidadDisponible -= detalle.Cantidad;
+
+                    if (producto.Inventario.CantidadDisponible < 0)
+                        producto.Inventario.CantidadDisponible = 0;
+
+                    _context.Inventario.Update(producto.Inventario);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+        private async Task RecargarListas(FacturaViewModel model)
+        {
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            model.UsuariosDisponibles = await _context.Usuarios
+                .Select(u => new SelectListItem
+                {
+                    Value = u.IdUsuario.ToString(),
+                    Text = u.NombreCompleto.ToString()
+                }).ToListAsync();
+
+            model.ProductosDisponibles = productos
+                .Select(p => new SelectListItem
+                {
+                    Value = p.IdProductoServicio.ToString(),
+                    Text = p.Nombre
+                }).ToList();
+
+            ViewBag.ProductosExtendidos = productos.Select(p => new
+            {
+                id = p.IdProductoServicio,
+                nombre = p.Nombre,
+                precio = p.Precio,
+                tipo = p.Tipo,
+                stock = p.Inventario?.CantidadDisponible ?? 0
+            }).ToList();
+        }
+
 
         // GET: Facturas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var factura = await _context.Facturas
+                .Include(f => f.Usuario)
+                .Include(f => f.DetallesFactura)
+                .ThenInclude(d => d.ProductoServicio)
+                .ThenInclude(p => p.Inventario)
+                .FirstOrDefaultAsync(f => f.IdFactura == id);
 
-            var facturas = await _context.Facturas.FindAsync(id);
-            if (facturas == null)
-            {
+            if (factura == null)
                 return NotFound();
-            }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", facturas.IdUsuario);
-            return View(facturas);
+
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            var viewModel = new FacturaViewModel
+            {
+                Factura = factura,
+                Detalles = factura.DetallesFactura.ToList(),
+                UsuariosDisponibles = await _context.Usuarios
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.IdUsuario.ToString(),
+                        Text = u.NombreCompleto
+                    }).ToListAsync(),
+                ProductosDisponibles = productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.IdProductoServicio.ToString(),
+                        Text = p.Nombre
+                    }).ToList()
+            };
+
+            ViewBag.ProductosExtendidos = productos.Select(p => new
+            {
+                id = p.IdProductoServicio,
+                nombre = p.Nombre,
+                precio = p.Precio,
+                tipo = p.Tipo,
+                stock = p.Inventario?.CantidadDisponible ?? 0
+            }).ToList();
+
+            return View(viewModel);
         }
+
 
         // POST: Facturas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdFactura,IdUsuario,Fecha,Total")] Facturas facturas)
+        public async Task<IActionResult> Edit(FacturaViewModel model)
         {
-            if (id != facturas.IdFactura)
+            if (!ModelState.IsValid || model.Detalles == null || !model.Detalles.Any())
             {
-                return NotFound();
+                await RecargarListas(model);
+                ModelState.AddModelError("", "Debe agregar al menos un producto o servicio.");
+                return View(model);
             }
 
-            if (ModelState.IsValid)
+            var idsDuplicados = model.Detalles
+                .GroupBy(d => d.IdProductoServicio)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (idsDuplicados.Any())
             {
-                try
-                {
-                    _context.Update(facturas);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FacturasExists(facturas.IdFactura))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                await RecargarListas(model);
+                ModelState.AddModelError("", "Hay productos o servicios duplicados en la factura.");
+                return View(model);
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", facturas.IdUsuario);
-            return View(facturas);
+
+            foreach (var detalle in model.Detalles)
+            {
+                var producto = await _context.ProductosServicios
+                    .Include(p => p.Inventario)
+                    .FirstOrDefaultAsync(p => p.IdProductoServicio == detalle.IdProductoServicio);
+
+                if (producto == null)
+                {
+                    ModelState.AddModelError("", $"Producto o servicio con ID {detalle.IdProductoServicio} no existe.");
+                    continue;
+                }
+
+                if (producto.Tipo.ToLower() == "producto" &&
+                    producto.Inventario != null &&
+                    detalle.Cantidad > producto.Inventario.CantidadDisponible)
+                {
+                    await RecargarListas(model);
+                    ModelState.AddModelError("", $"La cantidad de '{producto.Nombre}' supera el stock disponible ({producto.Inventario.CantidadDisponible}).");
+                    return View(model);
+                }
+
+                detalle.Subtotal = producto.Precio * detalle.Cantidad;
+            }
+
+            model.Factura.Total = model.Detalles.Sum(d => d.Subtotal);
+
+            var facturaExistente = await _context.Facturas
+                .Include(f => f.DetallesFactura)
+                .FirstOrDefaultAsync(f => f.IdFactura == model.Factura.IdFactura);
+
+            if (facturaExistente == null)
+                return NotFound();
+
+            // Actualizar datos básicos
+            facturaExistente.IdUsuario = model.Factura.IdUsuario;
+            facturaExistente.Fecha = model.Factura.Fecha;
+            facturaExistente.Total = model.Factura.Total;
+
+            // Eliminar detalles anteriores
+            _context.DetalleFactura.RemoveRange(facturaExistente.DetallesFactura);
+
+            // Agregar nuevos detalles y actualizar inventario
+            foreach (var detalle in model.Detalles)
+            {
+                detalle.IdFactura = facturaExistente.IdFactura;
+                _context.DetalleFactura.Add(detalle);
+
+                var producto = await _context.ProductosServicios
+                    .Include(p => p.Inventario)
+                    .FirstOrDefaultAsync(p => p.IdProductoServicio == detalle.IdProductoServicio);
+
+                if (producto != null && producto.Tipo.ToLower() == "producto" && producto.Inventario != null)
+                {
+                    producto.Inventario.CantidadDisponible -= detalle.Cantidad;
+                    if (producto.Inventario.CantidadDisponible < 0)
+                        producto.Inventario.CantidadDisponible = 0;
+
+                    _context.Inventario.Update(producto.Inventario);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Facturas/Delete/5
         public async Task<IActionResult> Delete(int? id)

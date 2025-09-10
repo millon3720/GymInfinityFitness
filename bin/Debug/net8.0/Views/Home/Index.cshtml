@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link rel="stylesheet" href="~/css/Menu1.css" />
+<header>
+    <img src="~/img/Logo.jpg" alt="Logo Gym" class="logo" />
+
+    <div class="sliders-container">
+        <div class="slider" id="slider1">
+            <img src="https://static.vecteezy.com/system/resources/previews/026/781/389/large_2x/gym-interior-background-of-dumbbells-on-rack-in-fitness-and-workout-room-photo.jpg" alt="Anuncio 1" class="active" />
+            <img src="https://th.bing.com/th/id/OIP.mlC3Eevlb-HAx80_oqbWdgHaEK?rs=1&pid=ImgDetMain" alt="Anuncio 2" />
+            <img src="https://th.bing.com/th/id/OIP.SgerZ1ZYjr_k77iB7v7-dwHaE8?rs=1&pid=ImgDetMain" alt="Anuncio 3" />
+        </div>
+
+        <div class="slider" id="slider2">
+            <img src="https://scontent.fsjo8-1.fna.fbcdn.net/v/t39.30808-6/482242097_658859873311882_5966609343908511340_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_ohc=89zoaGjsfDEQ7kNvwHF_wG0&_nc_oc=AdmRrN9n_KQ2-1L__531rRDs7aVdVtPTw1kyWRWMwjoKb6EvYOCjSE5wODdoxSZfSj8JY3OAOIG-A4T2VHunbYZu&_nc_zt=23&_nc_ht=scontent.fsjo8-1.fna&_nc_gid=obTWos_2yXQCVQNqkb6sQw&oh=00_AfKhhP5Sy0_I9lEeGWvXH9Paa_01oWxTeaJrpvKuHDd6Pw&oe=6843E3D2" alt="Anuncio 1" class="active" />
+            <img src="https://scontent.fsjo8-1.fna.fbcdn.net/v/t39.30808-6/482247995_658859553311914_8679845848516611066_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_ohc=uCEHdQ6crOYQ7kNvwFlEI7G&_nc_oc=AdlhFctSXy2-5xhEPILumJj4orN3Q-QVmtulW4WX55dzzzcYDfUxbESsWuWnuzR_30sz_n2uLOj6P--dwhdgUcyD&_nc_zt=23&_nc_ht=scontent.fsjo8-1.fna&_nc_gid=obTWos_2yXQCVQNqkb6sQw&oh=00_AfIOXV2Fc2gNkn5Uy_5NdZQ2hrlkUEP5veISoWVnPvn3sw&oe=6843D4D6" alt="Anuncio 2" />
+            <img src="https://scontent.fsjo8-1.fna.fbcdn.net/v/t39.30808-6/482222877_658854469979089_7074172689658418352_n.jpg?stp=dst-jpg_p526x296_tt6&_nc_cat=100&ccb=1-7&_nc_sid=833d8c&_nc_ohc=fJ4iRk361-kQ7kNvwHIbs4J&_nc_oc=AdmMn2tAkQzDQlZLLE5u4FjIH5ohi47XTXPjJJ2AK5xxU_TiCT1x0iq4fJBJWoZMDLUP6DIWCxGcA1HsjSLZ61z0&_nc_zt=23&_nc_ht=scontent.fsjo8-1.fna&_nc_gid=obTWos_2yXQCVQNqkb6sQw&oh=00_AfITTBxPdeLqvTFLzcY-VX5MjuwzEnF-GaCbOWwyuA1DaA&oe=6843E435" alt="Anuncio 3" />
+        </div>
+    </div>
+</header>
+
+
+<script>
+        function setupSlider(sliderId, intervalTime) {
+        const slider = document.getElementById(sliderId);
+        const slides = slider.querySelectorAll('img');
+        let currentIndex = 0;
+
+        function showNextSlide() {
+            slides[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex].classList.add('active');
+        }
+
+        setInterval(showNextSlide, intervalTime);
+    }
+
+    setupSlider('slider1', 2000); // cambia cada 2 segundos
+    setupSlider('slider2', 3500); // cambia cada 3.5 segundos
+</script>

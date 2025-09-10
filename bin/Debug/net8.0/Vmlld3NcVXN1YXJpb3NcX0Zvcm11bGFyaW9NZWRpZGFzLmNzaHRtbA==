@@ -1,0 +1,136 @@
+﻿@model Tesina.Models.Expediente
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h4>Agregar Nueva Medida</h4>
+<hr />
+<div class="card shadow rounded p-4">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="IdUsuario" class="form-label"></label>
+            <select asp-for="IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
+            <span asp-validation-for="IdUsuario" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FechaRegistro" class="form-label"></label>
+                <input asp-for="FechaRegistro" class="form-control" />
+                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="PesoKg" class="form-label"></label>
+                <input asp-for="PesoKg" class="form-control" />
+                <span asp-validation-for="PesoKg" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="AlturaCm" class="form-label"></label>
+                <input asp-for="AlturaCm" class="form-control" />
+                <span asp-validation-for="AlturaCm" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="IMC" class="form-label"></label>
+                <input asp-for="IMC" class="form-control" />
+                <span asp-validation-for="IMC" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="PorcentajeGrasa" class="form-label"></label>
+                <input asp-for="PorcentajeGrasa" class="form-control" />
+                <span asp-validation-for="PorcentajeGrasa" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="PorcentajeMuscular" class="form-label"></label>
+                <input asp-for="PorcentajeMuscular" class="form-control" />
+                <span asp-validation-for="PorcentajeMuscular" class="text-danger"></span>
+            </div>
+        </div>
+
+        <h5 class="mt-4">Medidas Corporales</h5>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="MedidaPecho" class="form-label"></label>
+                <input asp-for="MedidaPecho" class="form-control" />
+                <span asp-validation-for="MedidaPecho" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="MedidaEspalda" class="form-label"></label>
+                <input asp-for="MedidaEspalda" class="form-control" />
+                <span asp-validation-for="MedidaEspalda" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="MedidaCintura" class="form-label"></label>
+                <input asp-for="MedidaCintura" class="form-control" />
+                <span asp-validation-for="MedidaCintura" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="MedidaCadera" class="form-label"></label>
+                <input asp-for="MedidaCadera" class="form-control" />
+                <span asp-validation-for="MedidaCadera" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="BicepDerecho" class="form-label"></label>
+                <input asp-for="BicepDerecho" class="form-control" />
+                <span asp-validation-for="BicepDerecho" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="BicepIzquierdo" class="form-label"></label>
+                <input asp-for="BicepIzquierdo" class="form-control" />
+                <span asp-validation-for="BicepIzquierdo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="PiernaDerecha" class="form-label"></label>
+                <input asp-for="PiernaDerecha" class="form-control" />
+                <span asp-validation-for="PiernaDerecha" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="PiernaIzquierda" class="form-label"></label>
+                <input asp-for="PiernaIzquierda" class="form-control" />
+                <span asp-validation-for="PiernaIzquierda" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="PantorrillaDerecha" class="form-label"></label>
+                <input asp-for="PantorrillaDerecha" class="form-control" />
+                <span asp-validation-for="PantorrillaDerecha" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PantorrillaIzquierda" class="form-label"></label>
+            <input asp-for="PantorrillaIzquierda" class="form-control" />
+            <span asp-validation-for="PantorrillaIzquierda" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Observaciones" class="form-label"></label>
+            <input asp-for="Observaciones" class="form-control" />
+            <span asp-validation-for="Observaciones" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Volver a la lista</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

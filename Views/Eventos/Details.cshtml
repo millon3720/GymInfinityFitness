@@ -1,42 +1,42 @@
-﻿@model Tesina.Models.Eventos
+﻿@model Eventos
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalle del Evento";
 }
 
-<h1>Details</h1>
+<div class="container-fluid mt-4">
+    <h4 class="text-primary text-center mb-4">Detalle del Evento</h4>
+    <div class="card shadow rounded p-4 mb-4">
+        <dl class="row">
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Model.Nombre</dd>
 
-<div>
-    <h4>Eventos</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaEvento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaEvento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Imagen)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Imagen)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdEvento">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+            <dt class="col-sm-3">Descripción</dt>
+            <dd class="col-sm-9">@Model.Descripcion</dd>
+
+            <dt class="col-sm-3">Fecha</dt>
+            <dd class="col-sm-9">@Model.FechaEvento.ToString("dd/MM/yyyy HH:mm")</dd>
+
+            <dt class="col-sm-3">Imagen</dt>
+            <dd class="col-sm-9">
+                @if (Model.Imagen != null)
+                {
+                    <img src="@Url.Action("VerImagen", "Eventos", new { id = Model.IdEvento })" class="img-fluid rounded shadow-sm" />
+                }
+                else
+                {
+                    <span class="text-muted">Sin imagen</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="d-flex justify-content-end mt-4">
+            <a asp-action="Edit" asp-route-id="@Model.IdEvento" class="btn btn-info me-2 shadow-sm">
+                <i class="bi bi-pencil-square"></i> Modificar
+            </a>
+            <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+            </a>
+        </div>
+    </div>
 </div>

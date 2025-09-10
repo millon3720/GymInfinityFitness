@@ -12,7 +12,7 @@ namespace Tesina.Models
         public int IdProductoServicio { get; set; }
 
         [ForeignKey("IdProductoServicio")]
-        public ProductosServicios ProductoServicio { get; set; }
+        public ProductosServicios? ProductoServicio { get; set; }
 
         [Required(ErrorMessage = "La cantidad disponible es obligatoria.")]
         [Range(0, int.MaxValue, ErrorMessage = "La cantidad disponible debe ser un número positivo.")]

@@ -1,0 +1,59 @@
+﻿@model Tesina.Models.ClienteDetalle
+<h4>Crear Lesiones</h4>
+<hr />
+<div class="card shadow rounded p-4">
+    <form asp-action="CrearLesiones" method="post">
+        <div id="lesionesContainer">
+            <!-- Se añadirán dinámicamente los formularios de lesiones -->
+        </div>
+        <button type="button" class="btn btn-success" onclick="agregarLesion()">
+            <i class="bi bi-plus-circle"></i> Agregar Lesión
+        </button>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <a asp-action="Details" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Usuarios" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar Todas las Lesiones
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        let index = 0;
+
+        function agregarLesion() {
+            const container = document.getElementById("lesionesContainer");
+
+            const div = document.createElement("div");
+            div.classList.add("border", "rounded", "p-3", "mb-3", "lesion-item", "bg-light");
+
+            div.innerHTML = `
+                <div class="row">
+                    <input type="hidden" name="Lesion[${index}].IdUsuario" value="@Model.Cliente.IdUsuario" />
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Descripción</label>
+                        <input type="text" name="Lesion[${index}].Descripcion" class="form-control" placeholder="Descripción de la lesión" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Fecha Diagnóstico</label>
+                        <input type="date" name="Lesion[${index}].FechaDiagnostico" class="form-control" />
+                    </div>
+
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.lesion-item').remove()">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(div);
+            index++;
+        }
+    </script>
+}
+

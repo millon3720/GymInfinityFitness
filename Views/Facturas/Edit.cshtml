@@ -1,44 +1,167 @@
-﻿@model Tesina.Models.Facturas
+﻿@model FacturaViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Factura";
 }
 
-<h1>Edit</h1>
+<div class="container-fluid mt-4">
+    <h4 class="text-warning text-center mb-4">Editar Factura</h4>
+    <div class="card shadow rounded p-4 mb-4">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Factura.IdFactura" />
 
-<h4>Facturas</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IdFactura" />
-            <div class="form-group">
-                <label asp-for="IdUsuario" class="control-label"></label>
-                <select asp-for="IdUsuario" class="form-control" asp-items="ViewBag.IdUsuario"></select>
-                <span asp-validation-for="IdUsuario" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <h5 class="text-secondary mb-3">Información de la Factura</h5>
+
+            <div class="mb-3">
+                <label asp-for="Factura.IdUsuario" class="form-label">Cliente</label>
+                <select asp-for="Factura.IdUsuario" asp-items="Model.UsuariosDisponibles" class="form-select">
+                    <option value="">Seleccione un cliente</option>
+                </select>
+                <span asp-validation-for="Factura.IdUsuario" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Fecha" class="control-label"></label>
-                <input asp-for="Fecha" class="form-control" />
-                <span asp-validation-for="Fecha" class="text-danger"></span>
+
+            <div class="mb-3">
+                <label asp-for="Factura.Fecha" class="form-label">Fecha</label>
+                <input asp-for="Factura.Fecha" class="form-control" type="datetime-local" />
+                <span asp-validation-for="Factura.Fecha" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Total" class="control-label"></label>
-                <input asp-for="Total" class="form-control" />
-                <span asp-validation-for="Total" class="text-danger"></span>
+
+            <h5 class="text-secondary mt-4 mb-3">Productos o Servicios</h5>
+
+            <div id="detallesFactura">
+                @for (int i = 0; i < Model.Detalles.Count; i++)
+                {
+                    var detalle = Model.Detalles[i];
+                    <div class="border rounded p-3 mb-3 shadow-sm">
+                        <input type="hidden" name="Detalles[@i].IdDetalleFactura" value="@detalle.IdDetalleFactura" />
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label">Producto o Servicio</label>
+                                <select name="Detalles[@i].IdProductoServicio" class="form-select" id="producto-@i"
+                                        onchange="validarDuplicado(@i); calcularSubtotal(@i); mostrarStock(@i); validarStock(@i);">
+                                    <option value="">Seleccione una opción</option>
+                                    @foreach (var p in ViewBag.ProductosExtendidos)
+                                    {
+                                        <option value="@p.id" selected="@(p.id == detalle.IdProductoServicio)">
+                                            @p.nombre - ₡@p.precio.ToString("N2")
+                                        </option>
+                                    }
+                                </select>
+                                <div class="text-muted small" id="stock-@i"></div>
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Cantidad</label>
+                                <input type="number" name="Detalles[@i].Cantidad" class="form-control" min="1"
+                                       value="@detalle.Cantidad" id="cantidad-@i"
+                                       onchange="calcularSubtotal(@i); validarStock(@i);" />
+                            </div>
+                            <div class="col-md-3 mb-2">
+                                <label class="form-label">Subtotal</label>
+                                <input type="text" name="Detalles[@i].Subtotal" class="form-control"
+                                       value="@detalle.Subtotal.ToString("N2")" readonly id="subtotal-@i"
+                                       data-subtotal="@detalle.Subtotal.ToString("F2")" />
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="mb-3">
+                <label asp-for="Factura.Total" class="form-label">Total</label>
+                <input type="text" asp-for="Factura.Total" class="form-control" id="totalFactura" readonly />
+                <span asp-validation-for="Factura.Total" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-warning shadow-sm">
+                    <i class="bi bi-pencil-square"></i> Actualizar Factura
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        const productos = @Html.Raw(Json.Serialize(ViewBag.ProductosExtendidos));
+        const contador = @Model.Detalles.Count;
+                function obtenerDatosProducto(id) {
+            return productos.find(p => p.id == id) || { precio: 0, tipo: "", stock: 0, nombre: "" };
+        }
+
+        function calcularSubtotal(index) {
+            const select = document.getElementById(`producto-${index}`);
+            const cantidad = parseInt(document.getElementById(`cantidad-${index}`).value) || 0;
+            const datos = obtenerDatosProducto(select.value);
+            const subtotal = datos.precio * cantidad;
+
+            const inputSubtotal = document.getElementById(`subtotal-${index}`);
+            inputSubtotal.value = subtotal.toLocaleString("es-CR", { minimumFractionDigits: 2 });
+            inputSubtotal.setAttribute("data-subtotal", subtotal.toFixed(2));
+
+            calcularTotal();
+        }
+
+        function calcularTotal() {
+            let total = 0;
+            for (let i = 0; i < contador; i++) {
+                const input = document.getElementById(`subtotal-${i}`);
+                if (input) {
+                    const raw = parseFloat(input.getAttribute("data-subtotal")) || 0;
+                    total += raw;
+                }
+            }
+            document.getElementById("totalFactura").value = total.toLocaleString("es-CR", { minimumFractionDigits: 2 });
+        }
+
+        function mostrarStock(index) {
+            const select = document.getElementById(`producto-${index}`);
+            const datos = obtenerDatosProducto(select.value);
+            const label = document.getElementById(`stock-${index}`);
+
+            if (datos.tipo.toLowerCase() === "producto") {
+                label.innerText = `Stock disponible: ${datos.stock}`;
+            } else {
+                label.innerText = "";
+            }
+        }
+
+        function validarDuplicado(index) {
+            const actual = document.getElementById(`producto-${index}`).value;
+            for (let i = 0; i < contador; i++) {
+                if (i === index) continue;
+                const otro = document.getElementById(`producto-${i}`);
+                if (otro && otro.value === actual && actual !== "") {
+                    alert("Este producto o servicio ya fue agregado.");
+                    document.getElementById(`producto-${index}`).selectedIndex = 0;
+                    calcularSubtotal(index);
+                    mostrarStock(index);
+                    break;
+                }
+            }
+        }
+
+        function validarStock(index) {
+            const select = document.getElementById(`producto-${index}`);
+            const cantidad = parseInt(document.getElementById(`cantidad-${index}`).value) || 0;
+            const datos = obtenerDatosProducto(select.value);
+
+            if (datos.tipo.toLowerCase() === "producto" && cantidad > datos.stock) {
+                alert(`La cantidad supera el stock disponible (${datos.stock}).`);
+                document.getElementById(`cantidad-${index}`).value = datos.stock;
+                calcularSubtotal(index);
+            }
+        }
+
+        // Reutilizás las funciones JS de Create: calcularSubtotal, calcularTotal, mostrarStock, validarDuplicado, validarStock
+        for (let i = 0; i < contador; i++) {
+            calcularSubtotal(i);
+            mostrarStock(i);
+        }
+    </script>
 }

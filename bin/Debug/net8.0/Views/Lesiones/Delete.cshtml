@@ -1,0 +1,44 @@
+﻿@model Tesina.Models.Lesion
+
+@{
+    ViewData["Title"] = "Delete Lesion";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <h2 class="text-center text-danger mb-4">
+                ¿Estás seguro de que deseas eliminar esta Lesión?
+            </h2>
+
+            <div class="card shadow rounded p-4">
+                <div class="card-body">
+                    <h4 class="mb-4 text-center text-primary">Detalles de la Lesión</h4>
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">Descripción:</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Descripcion)</dd>
+
+                        <dt class="col-sm-4 fw-bold">Fecha de Diagnóstico:</dt>
+                        <dd class="col-sm-8 text-muted">
+                            @Convert.ToDateTime(Model.FechaDiagnostico).ToString("dd-MM-yyyy")
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <form asp-action="Delete" class="mt-4 text-center">
+                <input type="hidden" asp-for="IdLesion" />
+                <input type="hidden" asp-for="IdUsuario" />
+                <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
+                        onclick="return confirm('¿Estás seguro de que deseas eliminar esta Lesión?')">
+                    <i class="bi bi-trash"></i> Eliminar
+                </button>
+                <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </a>
+            </form>
+
+        </div>
+    </div>
+</div>

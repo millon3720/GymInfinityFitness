@@ -1,53 +1,73 @@
-﻿@model IEnumerable<Tesina.Models.Eventos>
+﻿@model IEnumerable<Eventos>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Eventos";
 }
 
-<h1>Index</h1>
+<div class="container-fluid mt-4">
+    <h4 class="text-primary text-center mb-4">Eventos Registrados</h4>
+    <div class="card shadow rounded p-4 mb-4">
+        <div class="d-flex justify-content-end mb-3">
+            <a asp-action="Create" class="btn btn-success shadow-sm">
+                <i class="bi bi-plus-circle"></i> Nuevo Evento
+            </a>
+        </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaEvento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Imagen)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaEvento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Imagen)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.IdEvento">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdEvento">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdEvento">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover shadow-sm rounded">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var evento in Model)
+                        {
+                            <tr class="text-center">
+                                <td>@evento.Nombre</td>
+                                <td>@evento.FechaEvento.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (evento.Imagen != null)
+                                    {
+                                        <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })" width="80" class="rounded shadow-sm" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin imagen</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@evento.IdEvento" title="Detalles">
+                                            <i class="bi bi-info-circle"></i> Ver
+                                        </a>
+                                        <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@evento.IdEvento" title="Editar">
+
+                                            <i class="bi bi-pencil-square"></i> Modificar
+                                        </a>
+
+                                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@evento.IdEvento">
+                                            <i class="bi bi-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning text-center mt-5">
+                <i class="bi bi-exclamation-circle"></i> No hay Eventos registrados.
+            </div>
+        }
+    </div>
+</div>
