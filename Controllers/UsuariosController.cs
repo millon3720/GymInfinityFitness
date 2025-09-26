@@ -19,13 +19,11 @@ namespace Tesina.Controllers
         {
             _context = context;
         }
-
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
             return View(await _context.Usuarios.Where(a=> a.Rol == "Cliente").OrderBy(a => a.NombreCompleto).ToListAsync());
         }
-
         // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -90,13 +88,11 @@ namespace Tesina.Controllers
 
             return View(viewModel);
         }
-
         // GET: Usuarios/Create
         public IActionResult Create()
         {
             return View();
         }
-
         // POST: Usuarios/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -132,7 +128,6 @@ namespace Tesina.Controllers
 
             return View(usuarios);
         }
-
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -196,7 +191,6 @@ namespace Tesina.Controllers
 
             return View(viewModel);
         }
-
         // POST: Usuarios/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -294,7 +288,6 @@ namespace Tesina.Controllers
             };
             return viewModel;
         }
-
         // GET: Usuarios/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -312,7 +305,6 @@ namespace Tesina.Controllers
 
             return View(usuarios);
         }
-
         // POST: Usuarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -327,10 +319,76 @@ namespace Tesina.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
         private bool UsuariosExists(int id)
         {
             return _context.Usuarios.Any(e => e.IdUsuario == id);
+        }
+        // GET: Usuarios/Edit/5
+        public async Task<IActionResult> EditCliente(int? id)
+        {
+            if (id == null || _context.Usuarios == null)
+                return NotFound();
+
+            var cliente = await _context.Usuarios.FindAsync(id);
+            if (cliente == null)
+                return NotFound();   
+            
+            return View(cliente);
+        }
+        // POST: Usuarios/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditCliente(int id, Usuarios usuarios)
+        {
+            if (id != usuarios.IdUsuario)
+            {
+                return View(id);
+            }
+
+            if (usuarios != null)
+            {
+                try
+                {
+
+                    _context.Update(usuarios);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UsuariosExists(usuarios.IdUsuario))
+                    {
+                        return View();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                TempData["Alerta"] = "✅ Cambios guardados correctamente.";
+                return RedirectToAction("EditCliente", new { id = usuarios.IdUsuario });
+            }
+
+            return View(id);
+        }
+
+        public async Task<IActionResult> AsistenciaCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var Asistencias = await _context.Asistencias
+                .Where(e => e.IdUsuario == id)
+                .ToListAsync();
+            if (Asistencias == null)
+            {
+                return View(Asistencias);
+            }
+
+            return View(Asistencias);
         }
     }
 }

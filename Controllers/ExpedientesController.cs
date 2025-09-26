@@ -43,7 +43,24 @@ namespace Tesina.Controllers
 
             return View(expediente);
         }
+        public async Task<IActionResult> MedidasCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var expediente = await _context.Expedientes
+                .Where(e => e.IdUsuario == id)
+                .OrderByDescending(e => e.FechaRegistro)
+                .ToListAsync();
+            if (expediente == null)
+            {
+                return View(expediente);
+            }
+
+            return View(expediente);
+        }
         // GET: Expedientes/Create
         public IActionResult Create(int id)
         {        

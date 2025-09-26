@@ -55,7 +55,33 @@ namespace Tesina.Controllers
 
             return View(viewModel);
         }
+        public async Task<IActionResult> PlanCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.IdUsuario == id);
+            var alimentos = await _context.AlimentosPlanNutricional
+               .Where(a => a.IdPlan == plan.IdPlan)
+               .ToListAsync();
+
+            var viewModel = new PlanAlimenticioViewModel
+            {
+                Plan = plan,
+                Alimentos = alimentos
+            }; 
+            if (plan == null)
+            {
+                return View(viewModel);
+            }
+
+           
+
+            return View(viewModel);
+        }
 
         // GET: PlanesNutricionales/Create
         public IActionResult Create()

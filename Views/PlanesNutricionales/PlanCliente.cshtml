@@ -1,0 +1,47 @@
+﻿@model Tesina.Models.PlanAlimenticioViewModel
+<div class="accordion-body">
+    @if (Model!=null)
+    {
+        var plan = Model.Plan;
+        <div class="card shadow rounded p-4 mb-3">
+            <h6><strong>Descripción:</strong> @plan.Descripcion</h6>
+            <p><strong>Fecha de Asignación:</strong> @plan.FechaAsignacion.ToString("dd/MM/yyyy")</p>
+
+            @if (plan.Alimentos != null && plan.Alimentos.Any())
+            {
+                var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+                var alimentosPorDia = plan.Alimentos
+                .GroupBy(a => a.DiaSemana)
+                .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));
+
+                foreach (var dia in alimentosPorDia)
+                {
+                    <h6 class="text-primary mt-3">@dia.Key</h6>
+                    @foreach (var comida in dia.OrderBy(c => c.HoraEstimada))
+                    {
+                        <div class="card mb-2 shadow-sm">
+                            <div class="card-body">
+                                <p><strong>Comida:</strong> @comida.Comida</p>
+                                <p><strong>Hora Estimada:</strong> @(comida.HoraEstimada?.ToString(@"hh\:mm") ?? "-")</p>
+                                <p><strong>Alimento:</strong> @comida.Alimento</p>
+                                <p><strong>Porciones:</strong> @comida.Porciones</p>
+                                @if (!string.IsNullOrEmpty(comida.Comentarios))
+                                {
+                                    <p><strong>Comentarios:</strong> @comida.Comentarios</p>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <p class="text-muted">Este plan aún no tiene alimentos registrados.</p>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">No hay planes nutricionales asignados para este cliente.</p>
+    }
+</div>

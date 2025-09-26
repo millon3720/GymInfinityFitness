@@ -113,7 +113,22 @@ namespace Tesina.Controllers
             }
 
             return View(rutina);
-        }   
+        }
+        public async Task<IActionResult> RutinaCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+             var clienteRutina = await _context.ClienteRutina
+                .Include(cr => cr.Rutina)                       
+                .ThenInclude(r => r.RutinaEjercicio)            
+                .ThenInclude(re => re.Ejercicio)                
+                .FirstOrDefaultAsync(cr => cr.IdUsuario == id);
+
+            return View(clienteRutina);
+        }
         public async Task<IActionResult> Create()
         {
             var ejercicios = await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync();
