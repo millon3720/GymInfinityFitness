@@ -12,7 +12,7 @@
             <dd class="col-sm-9">@Model.Usuario?.NombreCompleto</dd>
 
             <dt class="col-sm-3">Fecha</dt>
-            <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy HH:mm")</dd>
+            <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
 
             <dt class="col-sm-3">Total</dt>
             <dd class="col-sm-9">₡@Model.Total.ToString("N2")</dd>
@@ -44,12 +44,22 @@
         </table>
 
         <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                <i class="bi bi-arrow-left-circle"></i> Volver
+            @if (User.HasClaim("Rol", "Cliente"))
+            {
+                var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
+                <a asp-action="FacturasCliente" asp-route-id="@idUsuario" class="btn btn-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Volver
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Volver
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.IdFactura" class="btn btn-warning shadow-sm">
+                    <i class="bi bi-pencil-square"></i> Editar
             </a>
-            <a asp-action="Edit" asp-route-id="@Model.IdFactura" class="btn btn-warning shadow-sm">
-                <i class="bi bi-pencil-square"></i> Editar
-            </a>
+            }
         </div>
     </div>
 </div>

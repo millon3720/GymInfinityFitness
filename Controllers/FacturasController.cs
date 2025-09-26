@@ -13,19 +13,26 @@ namespace Tesina.Controllers
     public class FacturasController : Controller
     {
         private readonly GymDbContext _context;
+        private readonly GenerarFacturaPDF _pdf;
 
-        public FacturasController(GymDbContext context)
+        public FacturasController(GymDbContext context, GenerarFacturaPDF pdf)
         {
-            _context = context;
+            _context = context; _pdf = pdf;
+
         }
 
+       
         // GET: Facturas
         public async Task<IActionResult> Index()
         {
             var gymDbContext = _context.Facturas.Include(f => f.Usuario);
             return View(await gymDbContext.ToListAsync());
         }
-
+        public async Task<IActionResult> FacturasCliente(int? id)
+        {
+            var gymDbContext = _context.Facturas.Where(f => f.IdUsuario==id);
+            return View(await gymDbContext.ToListAsync());
+        }
         // GET: Facturas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -87,7 +94,6 @@ namespace Tesina.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FacturaViewModel model)
         {
-            // Validación básica
             if (!ModelState.IsValid || model.Detalles == null || !model.Detalles.Any())
             {
                 await RecargarListas(model);
@@ -95,7 +101,6 @@ namespace Tesina.Controllers
                 return View(model);
             }
 
-            // Validación de duplicados
             var idsDuplicados = model.Detalles
                 .GroupBy(d => d.IdProductoServicio)
                 .Where(g => g.Count() > 1)
@@ -109,7 +114,6 @@ namespace Tesina.Controllers
                 return View(model);
             }
 
-            // Validación de stock y cálculo de subtotales
             foreach (var detalle in model.Detalles)
             {
                 var producto = await _context.ProductosServicios
@@ -134,14 +138,11 @@ namespace Tesina.Controllers
                 detalle.Subtotal = producto.Precio * detalle.Cantidad;
             }
 
-            // Calcular total
             model.Factura.Total = model.Detalles.Sum(d => d.Subtotal);
 
-            // Guardar factura
             _context.Facturas.Add(model.Factura);
             await _context.SaveChangesAsync();
 
-            // Guardar detalles y actualizar inventario
             foreach (var detalle in model.Detalles)
             {
                 detalle.IdFactura = model.Factura.IdFactura;
@@ -154,16 +155,36 @@ namespace Tesina.Controllers
                 if (producto != null && producto.Tipo.ToLower() == "producto" && producto.Inventario != null)
                 {
                     producto.Inventario.CantidadDisponible -= detalle.Cantidad;
-
-                    if (producto.Inventario.CantidadDisponible < 0)
-                        producto.Inventario.CantidadDisponible = 0;
-
+                    producto.Inventario.CantidadDisponible = Math.Max(producto.Inventario.CantidadDisponible, 0);
                     _context.Inventario.Update(producto.Inventario);
                 }
             }
 
             await _context.SaveChangesAsync();
 
+            var facturaCompleta = await _context.Facturas
+                .Include(f => f.Usuario)
+                .Include(f => f.DetallesFactura)
+                    .ThenInclude(d => d.ProductoServicio)
+                .FirstOrDefaultAsync(f => f.IdFactura == model.Factura.IdFactura);
+
+            var viewModelFinal = new FacturaViewModel
+            {
+                Factura = facturaCompleta,
+                Detalles = facturaCompleta.DetallesFactura.ToList()
+            };
+
+            var fecha = facturaCompleta.Fecha.ToString("dd-MM-yyyy");
+            var nombreArchivo = $"Factura_{fecha}.pdf";
+
+            var pdfBytes = _pdf.GenerarFactura(viewModelFinal);
+            await _pdf.EnviarFacturaPorCorreoAsync(facturaCompleta.Usuario.Correo, pdfBytes, nombreArchivo);
+
+
+            // También podés devolver el PDF si querés mostrarlo
+            //return File(pdfBytes, "application/pdf", $"Factura_{facturaCompleta.IdFactura}.pdf");
+
+            // O redirigir si no querés mostrar el PDF directamente
             return RedirectToAction(nameof(Index));
         }
 
@@ -196,8 +217,6 @@ namespace Tesina.Controllers
                 stock = p.Inventario?.CantidadDisponible ?? 0
             }).ToList();
         }
-
-
         // GET: Facturas/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
@@ -244,8 +263,6 @@ namespace Tesina.Controllers
 
             return View(viewModel);
         }
-
-
         // POST: Facturas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -335,10 +352,31 @@ namespace Tesina.Controllers
             }
 
             await _context.SaveChangesAsync();
+            var facturaCompleta = await _context.Facturas
+                .Include(f => f.Usuario)
+                .Include(f => f.DetallesFactura)
+                    .ThenInclude(d => d.ProductoServicio)
+                .FirstOrDefaultAsync(f => f.IdFactura == model.Factura.IdFactura);
+
+            var viewModelFinal = new FacturaViewModel
+            {
+                Factura = facturaCompleta,
+                Detalles = facturaCompleta.DetallesFactura.ToList()
+            };
+
+            var fecha = facturaCompleta.Fecha.ToString("dd-MM-yyyy");
+            var nombreArchivo = $"Factura_{fecha}.pdf";
+
+            var pdfBytes = _pdf.GenerarFactura(viewModelFinal);
+            await _pdf.EnviarFacturaPorCorreoAsync(facturaCompleta.Usuario.Correo, pdfBytes, nombreArchivo);
+
+
+            // También podés devolver el PDF si querés mostrarlo
+            //return File(pdfBytes, "application/pdf", $"Factura_{facturaCompleta.IdFactura}.pdf");
+
+            // O redirigir si no querés mostrar el PDF directamente
             return RedirectToAction(nameof(Index));
         }
-
-
         // GET: Facturas/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -357,7 +395,6 @@ namespace Tesina.Controllers
 
             return View(facturas);
         }
-
         // POST: Facturas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

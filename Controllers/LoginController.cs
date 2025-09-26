@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tesina.Data;
 using Tesina.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace Tesina.Controllers
 {
@@ -19,31 +22,52 @@ namespace Tesina.Controllers
         //{
         //    return View();
         //}
-        public ActionResult Login(UsuarioLogin model)
+        [HttpGet]
+        public ActionResult Login()
         {
-            return View(model);
+            return View();
         }
 
         // POST: LoginController/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(UsuarioLogin model, IFormCollection collection)
+        public async Task<ActionResult> Login(UsuarioLogin model)
         {
             if (!ModelState.IsValid)
-                return Login(model);
+                return View(model);
 
-            var usuario = await _context.UsuariosLogin
+            var usuario = await _context.UsuariosLogin.Include(p => p.InfoUsuario)
                 .FirstOrDefaultAsync(u => u.Usuario == model.Usuario && u.Contrasena == model.Contrasena);
 
             if (usuario == null)
             {
                 ModelState.AddModelError("", "Usuario o contraseña incorrectos.");
-                return Login(model);
+                return View(model);
             }
+
+            // Crear claims
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, usuario.Usuario),
+                new Claim("IdUsuario", usuario.IdUsuario.ToString()),
+                new Claim("Nombre", usuario.InfoUsuario.NombreCompleto.ToString()),
+                new Claim("Rol", usuario.InfoUsuario.Rol.ToString())
+                // Podés agregar más claims si querés (rol, nombre completo, etc.)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            // Autenticar
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return RedirectToAction("Index", "Home");
         }
-
-       
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Login");
+        }
     }
 }
+ 

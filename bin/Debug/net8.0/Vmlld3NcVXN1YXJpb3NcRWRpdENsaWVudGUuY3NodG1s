@@ -1,0 +1,106 @@
+﻿@model Tesina.Models.Usuarios
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container-fluid mt-4">
+<h4 class="text-primary text-center mb-4">Informacion Personal</h4>
+    <div class="card shadow rounded p-4 mb-4">
+        <div class="card shadow rounded p-4">
+            <form asp-action="EditCliente">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="@Model.IdUsuario" />
+
+                <div class="mb-3">
+                    <label asp-for="@Model.Cedula" class="form-label"></label> 
+                    <input asp-for="@Model.Cedula" class="form-control" disabled placeholder="Cédula" />
+                    <input asp-for="@Model.Cedula" class="form-control" hidden placeholder="Cédula" />
+                    
+                    <span asp-validation-for="@Model.Cedula" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="@Model.NombreCompleto" class="form-label"></label>
+                    <input asp-for="@Model.NombreCompleto" class="form-control" placeholder="Nombre Completo" />
+                    <span asp-validation-for="@Model.NombreCompleto" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="@Model.FechaNacimiento" class="form-label"></label>
+                        <input asp-for="@Model.FechaNacimiento" class="form-control" type="date" />
+                        <span asp-validation-for="@Model.FechaNacimiento" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="@Model.FechaRegistro" class="form-label"></label>
+                        <input asp-for="@Model.FechaRegistro" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="@Model.FechaRegistro" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="@Model.Correo" class="form-label"></label>
+                        <input asp-for="@Model.Correo" class="form-control" placeholder="Correo Electrónico" />
+                        <span asp-validation-for="@Model.Correo" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="@Model.Telefono" class="form-label"></label>
+                        <input asp-for="@Model.Telefono" class="form-control" placeholder="Número de Teléfono" />
+                        <span asp-validation-for="@Model.Telefono" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="@Model.Direccion" class="form-label"></label>
+                    <input asp-for="@Model.Direccion" class="form-control" placeholder="Dirección" />
+                    <span asp-validation-for="@Model.Direccion" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="@Model.Rol" value="Cliente" />
+
+                <div class="form-check mb-3">
+                    <input class="form-check-input" asp-for="@Model.Estado" />
+                    <label class="form-check-label" asp-for="@Model.Estado"></label>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">                    
+                    <button type="submit" class="btn btn-primary shadow-sm">
+                        <i class="bi bi-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+           
+                @if (TempData["Alerta"] != null)
+                {
+                    <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                        <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        window.addEventListener('load', function () {
+                            var toastEl = document.getElementById('liveToast');
+                            if (toastEl) {
+                                var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                                toast.show();
+                            }
+                        });
+                    </script>
+                }
+
+            
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

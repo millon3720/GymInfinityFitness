@@ -6,10 +6,15 @@ namespace Tesina.Controlador
     public class HomeController : Controller
     {
         // GET: HomeController
-        public ActionResult Index()
+        public IActionResult Index()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Login");// Página para usuarios logueados
+            }
             return View();
         }
+       
 
         // GET: HomeController/Details/5
         public ActionResult Details(int id)
