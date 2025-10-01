@@ -726,3 +726,8 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\BouncyCastle
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\MailKit.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\MimeKit.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\Views\Usuarios\EditCliente.cshtml
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\Microsoft.Extensions.WebEncoders.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Debug\net8.0\System.Security.Cryptography.Xml.dll

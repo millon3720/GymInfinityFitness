@@ -1,39 +1,49 @@
 ﻿@model ProductoInventarioViewModel
-
 @{
     ViewData["Title"] = "Detalle del Producto o Servicio";
 }
 
 <div class="container-fluid mt-4">
-    <h4 class="text-primary text-center mb-4">Detalle del Producto o Servicio</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <dl class="row">
-            <dt class="col-sm-3">Nombre</dt>
-            <dd class="col-sm-9">@Model.Producto.Nombre</dd>
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-box-seam"></i> Detalle del Producto o Servicio
+        </h4>
+        <div class="card shadow rounded p-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <strong>Nombre:</strong><br />
+                    <span class="text-muted">@Model.Producto.Nombre</span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Tipo:</strong><br />
+                    <span class="text-muted">@Model.Producto.Tipo</span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <strong>Precio:</strong><br />
+                    <span class="text-muted">@Model.Producto.Precio.ToString("C")</span>
+                </div>
+                <div class="col-md-12 mb-3">
+                    <strong>Descripción:</strong><br />
+                    <span class="text-muted">@Model.Producto.Descripcion</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Cantidad Disponible:</strong><br />
+                    <span class="text-muted">@Model.Inventario.CantidadDisponible</span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Punto de Reorden:</strong><br />
+                    <span class="text-muted">@Model.Inventario.PuntoDeReorden</span>
+                </div>
+            </div>
 
-            <dt class="col-sm-3">Descripción</dt>
-            <dd class="col-sm-9">@Model.Producto.Descripcion</dd>
-
-            <dt class="col-sm-3">Tipo</dt>
-            <dd class="col-sm-9">@Model.Producto.Tipo</dd>
-
-            <dt class="col-sm-3">Precio</dt>
-            <dd class="col-sm-9">@Model.Producto.Precio.ToString("C")</dd>
-
-            <dt class="col-sm-3">Cantidad Disponible</dt>
-            <dd class="col-sm-9">@Model.Inventario.CantidadDisponible</dd>
-
-            <dt class="col-sm-3">Punto de Reorden</dt>
-            <dd class="col-sm-9">@Model.Inventario.PuntoDeReorden</dd>
-        </dl>
-
-        <div class="d-flex justify-content-end mt-4">
-            <a asp-action="Edit" asp-route-id="@Model.Producto.IdProductoServicio" class="btn btn-warning me-2 shadow-sm">
-                <i class="bi bi-pencil-square"></i> Editar
-            </a>
-            <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                <i class="bi bi-arrow-left-circle"></i> Volver
-            </a>
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Volver
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.Producto.IdProductoServicio" class="btn btn-warning shadow-sm">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+            </div>
         </div>
     </div>
 </div>

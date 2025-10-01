@@ -1,1 +1,125 @@
-﻿  
+﻿@model IEnumerable<Eventos>
+@{
+    ViewData["Title"] = "Eventos";
+    var eventosInscritos = ViewBag.EventosInscritos as List<int>;
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-center mb-4 text-primary"><i class="bi bi-calendar-event"></i> Listado de Eventos</h4>
+        <div class="card shadow rounded p-4">
+            @if (Model.Any())
+            {
+                var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    @foreach (var evento in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm ">
+                                <div class="card-body">
+
+                                    <h5 class="card-title text-center mb-4 text-primary">@evento.Nombre</h5>
+                                    <strong>
+                                        <span class="card-title"> Descripcion:</span>
+                                    </strong>
+                                    <span>@evento.Descripcion</span>
+                                    <p class="card-text">
+                                        <strong>Fecha:</strong> @evento.FechaEvento.ToString("dd/MM/yyyy HH:mm")
+                                    </p>
+
+                                    @if (evento.Imagen != null)
+                                    {
+                                        <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })"
+                                             class="img-fluid rounded shadow-sm mb-2"
+                                             style="max-height: 350px; cursor: pointer;"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#imagenModal"
+                                             onclick="mostrarImagenModal(this.src)" />
+
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Sin imagen</span>
+                                    }
+
+
+                                    <div class="mt-3 d-flex justify-content-between">
+                                        @if (eventosInscritos != null && eventosInscritos.Contains(evento.IdEvento))
+                                        {
+                                            <!-- Botón para anular suscripción -->
+                                            <form asp-action="AnularInscripcion" method="post">
+                                                <input type="hidden" name="IdEvento" value="@evento.IdEvento" />
+                                                <input type="hidden" name="IdUsuario" value="@idUsuario" />
+
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="bi bi-x-circle"></i> Anular suscripción
+                                                </button>
+                                            </form>
+
+                                        }
+                                        else
+                                        {
+                                            <!-- Botón para inscribirse -->
+                                            <form asp-action="Inscribirse" method="post">
+                                                <input type="hidden" name="IdEvento" value="@evento.IdEvento" />
+                                                <input type="hidden" name="IdUsuario" value="@idUsuario" />
+
+                                                <button type="submit" class="btn btn-sm btn-primary">
+                                                    <i class="bi bi-check-circle"></i> Inscribirse
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay eventos registrados.
+                </div>
+            }
+            @if (TempData["Alerta"] != null)
+            {
+                <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                    <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    window.addEventListener('load', function () {
+                        var toastEl = document.getElementById('liveToast');
+                        if (toastEl) {
+                            var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                            toast.show();
+                        }
+                    });
+                </script>
+            }
+        </div>
+    </div>
+</div>
+<!-- Modal para mostrar imagen ampliada -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body p-0">
+                <img id="imagenAmpliada" src="" class="w-100 h-auto rounded" style="object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function mostrarImagenModal(src) {
+        document.getElementById("imagenAmpliada").src = src;
+    }
+</script>

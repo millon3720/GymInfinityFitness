@@ -18,10 +18,9 @@ namespace Tesina.Models
         [StringLength(50, ErrorMessage = "El usuario no puede exceder los 50 caracteres.")]
         public string Usuario { get; set; }
 
-        [Required(ErrorMessage = "La contraseña es obligatoria.")]
         [StringLength(100, ErrorMessage = "La contraseña no puede exceder los 100 caracteres.")]
         [DataType(DataType.Password)]
-        public string Contrasena { get; set; }
+        public string? Contrasena { get; set; }
     }
 
 }

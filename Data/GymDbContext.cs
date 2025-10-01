@@ -24,7 +24,7 @@ namespace Tesina.Data
         public DbSet<Facturas> Facturas { get; set; }
         public DbSet<DetalleFactura> DetalleFactura { get; set; }
         public DbSet<Eventos> Eventos { get; set; }
-        public DbSet<ClienteEvento> ClienteEventos { get; set; }
+        public DbSet<ClienteEvento> ClienteEvento { get; set; }
         public DbSet<Mensualidades> Mensualidades { get; set; }
 
     }

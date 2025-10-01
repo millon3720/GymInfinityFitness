@@ -1,66 +1,67 @@
 ﻿@model Tesina.Models.Usuarios
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar Entrenador";
 }
 <div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-danger text-center mb-3">
+            <i class="bi bi-person-x-fill"></i> Confirmación de Eliminación
+        </h4>
+        <div class="card shadow rounded p-4">
+            <h5 class="text-primary text-center mb-4">Detalles del Entrenador</h5>
 
-            <h2 class="text-center text-danger mb-4">
-                ¿Estás seguro de que deseas eliminar este Entrenador?
-            </h2>
-
-            <div class="card shadow rounded p-4">
-                <div class="card-body">
-                    <h4 class="mb-4 text-center text-primary">Detalles del Entrenador</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4 fw-bold">Cédula:</dt>
-                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Cedula)</dd>
-
-                        <dt class="col-sm-4 fw-bold">Nombre Completo:</dt>
-                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.NombreCompleto)</dd>
-
-                        <dt class="col-sm-4 fw-bold">Fecha de Nacimiento:</dt>
-                        <dd class="col-sm-8 text-muted">
-                            @Convert.ToDateTime(Model.FechaNacimiento).ToString("dd-MM-yyyy")
-                        </dd>
-
-                        <dt class="col-sm-4 fw-bold">Correo:</dt>
-                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Correo)</dd>
-
-                        <dt class="col-sm-4 fw-bold">Teléfono:</dt>
-                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Telefono)</dd>
-
-                        <dt class="col-sm-4 fw-bold">Dirección:</dt>
-                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Direccion)</dd>
-
-                        <dt class="col-sm-4 fw-bold">Fecha de Registro:</dt>
-                        <dd class="col-sm-8 text-muted">
-                            @Convert.ToDateTime(Model.FechaRegistro).ToString("dd-MM-yyyy HH:mm")
-                        </dd>
-
-                        <dt class="col-sm-4 fw-bold">Estado:</dt>
-                        <dd class="col-sm-8">
-                            <span class="badge @(Model.Estado ? "bg-success" : "bg-danger")">
-                                @(Model.Estado ? "Activo" : "Inactivo")
-                            </span>
-                        </dd>
-                    </dl>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="fw-bold">Cédula:</label>
+                    <div class="text-muted">@Model.Cedula</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Nombre Completo:</label>
+                    <div class="text-muted">@Model.NombreCompleto</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Fecha de Nacimiento:</label>
+                    <div class="text-muted">@Model.FechaNacimiento.ToString("dd-MM-yyyy")</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Fecha de Registro:</label>
+                    <div class="text-muted">@Model.FechaRegistro.ToString("dd-MM-yyyy HH:mm")</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Correo:</label>
+                    <div class="text-muted">@Model.Correo</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Teléfono:</label>
+                    <div class="text-muted">@Model.Telefono</div>
+                </div>
+                <div class="col-12">
+                    <label class="fw-bold">Dirección:</label>
+                    <div class="text-muted">@Model.Direccion</div>
+                </div>
+                <div class="col-12">
+                    <label class="fw-bold">Estado:</label>
+                    <div>
+                        <span class="badge @(Model.Estado ? "bg-success" : "bg-danger")">
+                            @(Model.Estado ? "Activo" : "Inactivo")
+                        </span>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <form asp-action="Delete" class="mt-4 text-center">
-                <input type="hidden" asp-for="IdUsuario" />
-                <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
-                        onclick="return confirm('¿Estás seguro de que deseas eliminar este Entrenador?')">
-                    <i class="bi bi-trash"></i> Eliminar
+        <form asp-action="Delete" class="mt-4 text-center">
+            <input type="hidden" asp-for="IdUsuario" />
+            <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                <button type="submit" class="btn btn-danger btn-lg shadow-sm"
+                        onclick="return confirm('Esta acción eliminará permanentemente al entrenador. ¿Deseas continuar?')">
+                    <i class="bi bi-trash3-fill"></i> Confirmar Eliminación
                 </button>
                 <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
-                    <i class="bi bi-x-circle"></i> Cancelar
+                    <i class="bi bi-arrow-left-circle"></i> Volver al Listado
                 </a>
-            </form>
-
-        </div>
+            </div>
+        </form>
     </div>
 </div>

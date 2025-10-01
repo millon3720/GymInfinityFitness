@@ -726,3 +726,8 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\refint\Tes
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\Tesina.pdb
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\Tesina.genruntimeconfig.cache
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\ref\Tesina.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.ObjectPool.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.WebEncoders.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Security.Cryptography.Xml.dll

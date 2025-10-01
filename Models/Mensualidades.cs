@@ -14,11 +14,9 @@ namespace Tesina.Models
         [ForeignKey("IdUsuario")]
         public Usuarios Usuario { get; set; }
 
-        [Required(ErrorMessage = "La fecha de inicio es obligatoria.")]
         [DataType(DataType.Date)]
         public DateTime FechaInicio { get; set; }
 
-        [Required(ErrorMessage = "La fecha de fin es obligatoria.")]
         [DataType(DataType.Date)]
         public DateTime FechaFin { get; set; }
     }

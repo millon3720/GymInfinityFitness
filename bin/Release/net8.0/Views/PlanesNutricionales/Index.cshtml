@@ -1,63 +1,130 @@
 ﻿@model IEnumerable<Tesina.Models.PlanesNutricionales>
-
 @{
     ViewData["Title"] = "Planes Nutricionales";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center text-primary mb-4">
-        <i class="bi bi-journal-medical"></i> Lista de Planes Nutricionales
-    </h2>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-journal-medical"></i> Planes Nutricionales
+        </h4>
+        <div class="card shadow rounded p-4">
 
-    <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-success" asp-action="Create">
-            <i class="bi bi-plus-circle"></i> Crear Nuevo Plan
-        </a>
-    </div>
+            <!-- Filtro y botón -->
+            <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filtroPlanes" class="form-control" placeholder="Buscar por cliente o descripción..." />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-md-end mt-2 mt-md-0">
+                        <a class="btn btn-success shadow-sm" asp-action="Create">
+                            <i class="bi bi-plus-circle"></i> Crear Nuevo Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Descripción</th>
-                        <th>Fecha de Asignación</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+            <!-- Mensaje sin resultados -->
+            <div id="sinResultados" class="alert alert-warning text-center d-none">
+                <i class="bi bi-exclamation-circle"></i> No se encontraron planes que coincidan.
+            </div>
+
+            @if (Model.Any())
+            {
+                <!-- Vista escritorio -->
+                <div class="table-responsive d-none d-md-block">
+                    <table id="tablaPlanes" class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th class="cliente">Cliente</th>
+                                <th class="descripcion">Descripción</th>
+                                <th>Fecha de Asignación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-center">
+                                    <td class="cliente">@item.Usuario.NombreCompleto</td>
+                                    <td class="descripcion">@item.Descripcion</td>
+                                    <td>@item.FechaAsignacion.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdPlan"><i class="bi bi-info-circle"></i> Detalles</a>
+                                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdPlan"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdPlan"><i class="bi bi-trash"></i> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista móvil -->
+                <div class="d-block d-md-none">
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@item.Usuario.NombreCompleto</td>
-                            <td>@item.Descripcion</td>
-                            <td>@item.FechaAsignacion.ToString("dd/MM/yyyy")</td>
-                            <td class="text-center">
-                                <div class="btn-group">
-                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdPlan" title="Detalles">
-                                    <i class="bi bi-info-circle"></i> Ver
-                                </a>
-                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdPlan" title="Editar">
-                                    <i class="bi bi-pencil-square"></i> Modificar
-                                </a>
-                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdPlan" title="Eliminar">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </a>
+                        <div class="card card-plan mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary cliente">@item.Usuario.NombreCompleto</h5>
+                                <p class="mb-1 descripcion"><strong>Descripción:</strong> @item.Descripcion</p>
+                                <p class="mb-3"><strong>Fecha de Asignación:</strong> @item.FechaAsignacion.ToString("dd/MM/yyyy")</p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdPlan"><i class="bi bi-info-circle"></i> Detalles</a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdPlan"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdPlan"><i class="bi bi-trash"></i> Eliminar</a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay planes nutricionales registrados.
+                </div>
+            }
         </div>
-    }
-    else
-    {
-        <div class="alert alert-warning text-center mt-5">
-            <i class="bi bi-exclamation-circle"></i> No hay planes nutricionales registrados.
-        </div>
-    }
+    </div>
 </div>
 
+<!-- Script de filtrado -->
+<script>
+    document.getElementById("filtroPlanes").addEventListener("input", function () {
+        const filtro = this.value.toLowerCase();
+
+        const filas = document.querySelectorAll("#tablaPlanes tbody tr");
+        let coincidenciasTabla = 0;
+
+        filas.forEach(fila => {
+            const cliente = fila.querySelector(".cliente").textContent.toLowerCase();
+            const descripcion = fila.querySelector(".descripcion").textContent.toLowerCase();
+            const coincide = cliente.includes(filtro) || descripcion.includes(filtro);
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasTabla++;
+        });
+
+        const cards = document.querySelectorAll(".card-plan");
+        let coincidenciasCards = 0;
+
+        cards.forEach(card => {
+            const cliente = card.querySelector(".cliente").textContent.toLowerCase();
+            const descripcion = card.querySelector(".descripcion").textContent.toLowerCase();
+            const coincide = cliente.includes(filtro) || descripcion.includes(filtro);
+            card.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasCards++;
+        });
+
+        const totalCoincidencias = coincidenciasTabla + coincidenciasCards;
+        const mensaje = document.getElementById("sinResultados");
+        if (mensaje) {
+            mensaje.classList.toggle("d-none", totalCoincidencias > 0);
+        }
+    });
+</script>

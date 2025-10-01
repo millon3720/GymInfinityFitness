@@ -183,7 +183,7 @@
                                     <a class="nav-link text-white" asp-area="" asp-controller="PlanesNutricionales" asp-action="PlanCliente" asp-route-id="@idUsuario">Planes Nutricionales</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Eventos" asp-action="Index" asp-route-id="@idUsuario">Proximos Eventos</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Eventos" asp-action="EventoCliente" asp-route-id="@idUsuario">Proximos Eventos</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-white" asp-area="" asp-controller="Facturas" asp-action="FacturasCliente" asp-route-id="@idUsuario">Mis Facturas</a>

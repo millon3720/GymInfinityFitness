@@ -84,7 +84,7 @@ namespace Tesina.Controllers
                 model.Inventario.IdProductoServicio = model.Producto.IdProductoServicio;
                 _context.Inventario.Add(model.Inventario);
                 await _context.SaveChangesAsync();
-
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -124,6 +124,7 @@ namespace Tesina.Controllers
                 model.Inventario.IdProductoServicio = model.Producto.IdProductoServicio;
                 _context.Update(model.Inventario);
                 await _context.SaveChangesAsync();
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -167,7 +168,7 @@ namespace Tesina.Controllers
                 _context.ProductosServicios.Remove(producto);
                 await _context.SaveChangesAsync();
             }
-
+            TempData["Alerta"] = "✅ El Producto se elimino del sistema.";
             return RedirectToAction(nameof(Index));
         }
 

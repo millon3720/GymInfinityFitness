@@ -1,36 +1,47 @@
 ﻿@model ProductoInventarioViewModel
-
 @{
     ViewData["Title"] = "Eliminar Producto o Servicio";
 }
 
 <div class="container-fluid mt-4">
-    <h4 class="text-danger text-center mb-4">¿Estás seguro de eliminar este producto o servicio?</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <dl class="row">
-            <dt class="col-sm-3">Nombre</dt>
-            <dd class="col-sm-9">@Model.Producto.Nombre</dd>
+        <h4 class="text-danger text-center mb-3">
+            <i class="bi bi-boxes"></i> Confirmación de Eliminación
+        </h4>
+        <div class="card shadow rounded p-4">
+            <h5 class="text-primary text-center mb-4">Detalles del Producto o Servicio</h5>
 
-            <dt class="col-sm-3">Tipo</dt>
-            <dd class="col-sm-9">@Model.Producto.Tipo</dd>
-
-            <dt class="col-sm-3">Precio</dt>
-            <dd class="col-sm-9">@Model.Producto.Precio.ToString("C")</dd>
-
-            <dt class="col-sm-3">Cantidad Disponible</dt>
-            <dd class="col-sm-9">@Model.Inventario.CantidadDisponible</dd>
-        </dl>
-
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Producto.IdProductoServicio" />
-            <div class="d-flex justify-content-between mt-4">
-                <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                    <i class="bi bi-arrow-left-circle"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-danger shadow-sm">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="fw-bold">Nombre:</label>
+                    <div class="text-muted">@Model.Producto.Nombre</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Tipo:</label>
+                    <div class="text-muted">@Model.Producto.Tipo</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Precio:</label>
+                    <div class="text-muted">@Model.Producto.Precio.ToString("C")</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Cantidad Disponible:</label>
+                    <div class="text-muted">@Model.Inventario.CantidadDisponible</div>
+                </div>
             </div>
-        </form>
+
+            <form asp-action="Delete" class="mt-4 text-center">
+                <input type="hidden" asp-for="Producto.IdProductoServicio" />
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <button type="submit" class="btn btn-danger btn-lg shadow-sm"
+                            onclick="return confirm('Esta acción eliminará permanentemente el producto o servicio. ¿Deseas continuar?')">
+                        <i class="bi bi-trash3-fill"></i> Confirmar Eliminación
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

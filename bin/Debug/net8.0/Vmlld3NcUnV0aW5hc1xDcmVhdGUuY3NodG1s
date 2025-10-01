@@ -1,38 +1,50 @@
 ﻿@model Tesina.Models.RutinaCreateViewModel
 @{
-    ViewData["Title"] = "Crear Rutina";
+    ViewData["Title"] = "Agregar Nueva Rutina";
 }
-<h4>Crear Rutina</h4>
-<hr />
-<div class="card shadow rounded p-4">
-    <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <div class="mb-3">
-            <label asp-for="Rutina.Nombre" class="form-label">Nombre de la Rutina</label>
-            <input asp-for="Rutina.Nombre" class="form-control" placeholder="Nombre de la Rutina" />
-            <span asp-validation-for="Rutina.Nombre" class="text-danger"></span>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4"><i class="bi-clipboard-check	"></i> Agregar Nueva Rutina</h4>
+        <div class="card shadow rounded p-4">
+
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Rutina.Nombre" class="form-label">Nombre de la Rutina</label>
+                    <input asp-for="Rutina.Nombre" class="form-control" placeholder="Nombre de la Rutina" />
+                    <span asp-validation-for="Rutina.Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Rutina.Descripcion" class="form-label">Descripción</label>
+                    <textarea asp-for="Rutina.Descripcion" class="form-control" rows="3" placeholder="Descripción detallada"></textarea>
+                    <span asp-validation-for="Rutina.Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="card shadow rounded p-4">
+
+                    <h4 class="text-primary mb-3"><i class="bi-clipboard-check"></i> Ejercicios de la Rutina</h4>
+                <div id="ejerciciosContainer">
+                    <!-- Aquí se añadirán dinámicamente los ejercicios -->
+                </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-success mt-2" onclick="agregarEjercicio()"><i class="bi bi-plus-circle"></i> Agregar Ejercicio</button>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success shadow-sm">
+                        <i class="bi bi-check-circle"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="mb-3">
-            <label asp-for="Rutina.Descripcion" class="form-label">Descripción</label>
-            <textarea asp-for="Rutina.Descripcion" class="form-control" rows="3" placeholder="Descripción detallada"></textarea>
-            <span asp-validation-for="Rutina.Descripcion" class="text-danger"></span>
-        </div>
-
-        <hr />
-        <h5 class="text-primary mb-3">Ejercicios de la Rutina</h5>
-        <div id="ejerciciosContainer">
-            <!-- Aquí se añadirán dinámicamente los ejercicios -->
-        </div>
-
-        <button type="button" class="btn btn-success mt-2" onclick="agregarEjercicio()"><i class="bi bi-plus-circle"></i> Agregar Ejercicio</button>
-
-        <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
-            <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Guardar Rutina</button>
-        </div>
-    </form>
+    </div>
 </div>
 
 

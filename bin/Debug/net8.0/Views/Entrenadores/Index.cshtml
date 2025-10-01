@@ -1,97 +1,174 @@
 ﻿@model IEnumerable<Tesina.Models.Usuarios>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Entrenadores";
 }
 
 
-<div class="container mt-5">
-    <h2 class="text-center text-primary mb-4">
-        <i class="bi bi-people-fill"></i> Lista de Entrenadores
-    </h2>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4"><i class="bi bi-people-fill"></i> Lista de Entrenadores</h4>
+        <div class="card shadow rounded p-4">
+            
+            <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filtroEntrenadores" class="form-control" placeholder="Buscar por nombre o cédula..." />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-md-end mt-2 mt-md-0">
+                        <a class="btn btn-success shadow-sm" asp-action="Create">
+                            <i class="bi bi-plus-circle"></i> Crear Nuevo Entrenador
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Mensaje sin resultados -->
+            <div id="sinResultados" class="alert alert-warning text-center d-none">
+                <i class="bi bi-exclamation-circle"></i> No se encontraron entrenadores que coincidan.
+            </div>
 
-    <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-success" asp-action="Create">
-            <i class="bi bi-plus-circle"></i> Crear Nuevo Entrenador
-        </a>
-    </div>
+            @if (Model.Any())
+            {
+                <!-- Vista en escritorio -->
+                <div class="table-responsive d-none d-md-block">
+                    <table id="tablaEntrenadores" class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th class="cedula">Cédula</th>
+                                <th class="nombre">Nombre Completo</th>
+                                <th>Fecha Nacimiento</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Dirección</th>
+                                <th>Registro</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-center">
+                                    <td class="cedula">@item.Cedula</td>
+                                    <td class="nombre">@item.NombreCompleto</td>
+                                    <td>@item.FechaNacimiento.ToShortDateString()</td>
+                                    <td>@item.Correo</td>
+                                    <td>@item.Telefono</td>
+                                    <td>@item.Direccion</td>
+                                    <td>@item.FechaRegistro.ToShortDateString()</td>
+                                    <td class="fw-bold @(item.Estado ? "text-success" : "text-danger")">
+                                        @(item.Estado ? "Activo" : "Inactivo")
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdUsuario"><i class="bi bi-info-circle"></i> Detalles</a>
+                                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdUsuario"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario"><i class="bi bi-trash"></i> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                <thead class="table-dark">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Cedula)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.NombreCompleto)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FechaNacimiento)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Correo)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Telefono)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Direccion)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FechaRegistro)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Estado)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+                <!-- Vista en móvil -->
+                <div class="d-block d-md-none">
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@item.Cedula</td>
-                            <td>@item.NombreCompleto</td>
-                            <td>@item.FechaNacimiento.ToShortDateString()</td>
-                            <td>@item.Correo</td>
-                            <td>@item.Telefono</td>
-                            <td>@item.Direccion</td>
-                            <td>@item.FechaRegistro.ToShortDateString()</td>
-                            @if (@item.Estado)
-                            {
-                                <td>Activo</td>
-                            }
-                            else
-                            {
-                                <td>Inactivo</td>
-                            }
-
-                            <td class="text-center">
-                                <div class="btn-group">
-                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdUsuario" title="Detalles">
-                                    <i class="bi bi-info-circle"></i> Ver</a> 
-                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdUsuario" title="Editar">
-
-                                    <i class="bi bi-pencil-square"></i> Modificar</a>
-                               
-                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario">
-                                    <i class="bi bi-trash"></i> Eliminar</a>
+                        <div class="card card-entrenador mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary nombre">@item.NombreCompleto</h5>
+                                <p class="mb-1 cedula"><strong>Cédula:</strong> @item.Cedula</p>
+                                <p class="mb-1"><strong>Fecha Nacimiento:</strong> @item.FechaNacimiento.ToShortDateString()</p>
+                                <p class="mb-1"><strong>Correo:</strong> @item.Correo</p>
+                                <p class="mb-1"><strong>Teléfono:</strong> @item.Telefono</p>
+                                <p class="mb-1"><strong>Dirección:</strong> @item.Direccion</p>
+                                <p class="mb-1"><strong>Registro:</strong> @item.FechaRegistro.ToShortDateString()</p>
+                                <p class="mb-3 fw-bold @(item.Estado ? "text-success" : "text-danger")">
+                                    <strong>Estado:</strong> @(item.Estado ? "Activo" : "Inactivo")
+                                </p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdUsuario"><i class="bi bi-info-circle"></i> Detalles</a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdUsuario"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdUsuario"><i class="bi bi-trash"></i> Eliminar</a>
                                 </div>
-                            </td>
-                        </tr>
-
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay Entrenadores registrados.
+                </div>
+            }
+            @if (TempData["Alerta"] != null)
+            {
+                <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                    <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    window.addEventListener('load', function () {
+                        var toastEl = document.getElementById('liveToast');
+                        if (toastEl) {
+                            var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                            toast.show();
+                        }
+                    });
+                </script>
+            }
         </div>
-    }
-    else
-    {
-        <div class="alert alert-warning text-center mt-5">
-            <i class="bi bi-exclamation-circle"></i> No hay Entrenadores registrados.
-        </div>
-    }
+    </div>
 </div>
+
+<!-- Script de filtrado -->
+<script>
+    document.getElementById("filtroEntrenadores").addEventListener("input", function () {
+        const filtro = this.value.toLowerCase();
+
+        // Filtrar tabla
+        const filas = document.querySelectorAll("#tablaEntrenadores tbody tr");
+        let coincidenciasTabla = 0;
+
+        filas.forEach(fila => {
+            const cedula = fila.querySelector(".cedula").textContent.toLowerCase();
+            const nombre = fila.querySelector(".nombre").textContent.toLowerCase();
+            const coincide = cedula.includes(filtro) || nombre.includes(filtro);
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasTabla++;
+        });
+
+        // Filtrar cards
+        const cards = document.querySelectorAll(".card-entrenador");
+        let coincidenciasCards = 0;
+
+        cards.forEach(card => {
+            const cedula = card.querySelector(".cedula").textContent.toLowerCase();
+            const nombre = card.querySelector(".nombre").textContent.toLowerCase();
+            const coincide = cedula.includes(filtro) || nombre.includes(filtro);
+            card.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasCards++;
+        });
+
+        // Mostrar mensaje si no hay coincidencias
+        const totalCoincidencias = coincidenciasTabla + coincidenciasCards;
+        const mensaje = document.getElementById("sinResultados");
+        if (mensaje) {
+            mensaje.classList.toggle("d-none", totalCoincidencias > 0);
+        }
+    });
+</script>
+

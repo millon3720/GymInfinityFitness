@@ -17,7 +17,8 @@ namespace Tesina.Controllers
 
         public FacturasController(GymDbContext context, GenerarFacturaPDF pdf)
         {
-            _context = context; _pdf = pdf;
+            _context = context; 
+            _pdf = pdf;
 
         }
 
@@ -30,7 +31,7 @@ namespace Tesina.Controllers
         }
         public async Task<IActionResult> FacturasCliente(int? id)
         {
-            var gymDbContext = _context.Facturas.Where(f => f.IdUsuario==id);
+            var gymDbContext = _context.Facturas.Where(f => f.IdUsuario==id).OrderByDescending(e => e.Fecha);
             return View(await gymDbContext.ToListAsync());
         }
         // GET: Facturas/Details/5
@@ -50,8 +51,6 @@ namespace Tesina.Controllers
 
             return View(factura);
         }
-
-
         // GET: Facturas/Create
         public async Task<IActionResult> Create()
         {
@@ -88,7 +87,6 @@ namespace Tesina.Controllers
 
             return View(viewModel);
         }
-
         // POST: Facturas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -180,14 +178,9 @@ namespace Tesina.Controllers
             var pdfBytes = _pdf.GenerarFactura(viewModelFinal);
             await _pdf.EnviarFacturaPorCorreoAsync(facturaCompleta.Usuario.Correo, pdfBytes, nombreArchivo);
 
-
-            // También podés devolver el PDF si querés mostrarlo
-            //return File(pdfBytes, "application/pdf", $"Factura_{facturaCompleta.IdFactura}.pdf");
-
-            // O redirigir si no querés mostrar el PDF directamente
+            TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction(nameof(Index));
         }
-
         private async Task RecargarListas(FacturaViewModel model)
         {
             var productos = await _context.ProductosServicios
@@ -371,10 +364,8 @@ namespace Tesina.Controllers
             await _pdf.EnviarFacturaPorCorreoAsync(facturaCompleta.Usuario.Correo, pdfBytes, nombreArchivo);
 
 
-            // También podés devolver el PDF si querés mostrarlo
-            //return File(pdfBytes, "application/pdf", $"Factura_{facturaCompleta.IdFactura}.pdf");
+            TempData["Alerta"] = "✅ Información actualizada con éxito.";
 
-            // O redirigir si no querés mostrar el PDF directamente
             return RedirectToAction(nameof(Index));
         }
         // GET: Facturas/Delete/5
@@ -406,10 +397,10 @@ namespace Tesina.Controllers
                 _context.Facturas.Remove(facturas);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
+            TempData["Alerta"] = "✅ La Factura se elimino del sistema.";
             return RedirectToAction(nameof(Index));
         }
-
         private bool FacturasExists(int id)
         {
             return _context.Facturas.Any(e => e.IdFactura == id);

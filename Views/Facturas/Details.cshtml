@@ -7,59 +7,83 @@
 <div class="container-fluid mt-4">
     <h4 class="text-info text-center mb-4">Detalle de Factura</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <dl class="row">
-            <dt class="col-sm-3">Cliente</dt>
-            <dd class="col-sm-9">@Model.Usuario?.NombreCompleto</dd>
+        <div class="card shadow rounded p-4">
 
-            <dt class="col-sm-3">Fecha</dt>
-            <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
+            <dl class="row">
+                <dt class="col-sm-3">Cliente</dt>
+                <dd class="col-sm-9">@Model.Usuario?.NombreCompleto</dd>
 
-            <dt class="col-sm-3">Total</dt>
-            <dd class="col-sm-9">₡@Model.Total.ToString("N2")</dd>
-        </dl>
+                <dt class="col-sm-3">Fecha</dt>
+                <dd class="col-sm-9">@Model.Fecha.ToString("dd/MM/yyyy")</dd>
 
-        <h5 class="text-secondary mt-4 mb-3">Productos o Servicios</h5>
-        <table class="table table-bordered table-hover table-striped">
-            <thead class="table-primary text-center">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Tipo</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var d in Model.DetallesFactura)
-                {
-                    <tr class="text-center">
-                        <td>@d.ProductoServicio?.Nombre</td>
-                        <td>@d.ProductoServicio?.Tipo</td>
-                        <td>@d.Cantidad</td>
-                        <td>₡@d.ProductoServicio?.Precio.ToString("N2")</td>
-                        <td>₡@d.Subtotal.ToString("N2")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                <dt class="col-sm-3">Total</dt>
+                <dd class="col-sm-9">₡@Model.Total.ToString("N2")</dd>
+            </dl>
+            <div class="card shadow rounded p-4 mb-4">
 
-        <div class="d-flex justify-content-between mt-4">
-            @if (User.HasClaim("Rol", "Cliente"))
-            {
-                var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
-                <a asp-action="FacturasCliente" asp-route-id="@idUsuario" class="btn btn-secondary shadow-sm">
-                    <i class="bi bi-arrow-left-circle"></i> Volver
-                </a>
-            }
-            else
-            {
-                <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                    <i class="bi bi-arrow-left-circle"></i> Volver
-                </a>
-                <a asp-action="Edit" asp-route-id="@Model.IdFactura" class="btn btn-warning shadow-sm">
-                    <i class="bi bi-pencil-square"></i> Editar
-            </a>
-            }
+                <h5 class="text-secondary mt-4 mb-3">Productos o Servicios</h5>
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in Model.DetallesFactura)
+                            {
+                                <tr class="text-center">
+                                    <td>@d.ProductoServicio?.Nombre</td>
+                                    <td>@d.ProductoServicio?.Tipo</td>
+                                    <td>@d.Cantidad</td>
+                                    <td>₡@d.ProductoServicio?.Precio.ToString("N2")</td>
+                                    <td>₡@d.Subtotal.ToString("N2")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-block d-md-none">
+                    @foreach (var d in Model.DetallesFactura)
+                    {
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">@d.ProductoServicio?.Nombre</h5>
+                                <p class="mb-1"><strong>Tipo:</strong> @d.ProductoServicio?.Tipo</p>
+                                <p class="mb-1"><strong>Cantidad:</strong> @d.Cantidad</p>
+                                <p class="mb-1"><strong>Precio Unitario:</strong> ₡@d.ProductoServicio?.Precio.ToString("N2")</p>
+                                <hr class="my-2" />
+                                <p class="mb-0 fw-bold text-end text-success">
+                                    Subtotal: ₡@d.Subtotal.ToString("N2")
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        @if (User.HasClaim("Rol", "Cliente"))
+                        {
+                            var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
+                            <a asp-action="FacturasCliente" asp-route-id="@idUsuario" class="btn btn-secondary shadow-sm">
+                                <i class="bi bi-arrow-left-circle"></i> Volver
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                                <i class="bi bi-arrow-left-circle"></i> Volver
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@Model.IdFactura" class="btn btn-warning shadow-sm">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
@@ -71,6 +72,8 @@ namespace Tesina.Controllers
                 .Include(p => p.Alimentos)
                 .OrderByDescending(p => p.FechaAsignacion)
                 .FirstOrDefaultAsync();
+            var mensualidad = await _context.Mensualidades.FirstOrDefaultAsync(m => m.IdUsuario == id);
+
 
             var viewModel = new ClienteDetalle
             {
@@ -82,7 +85,8 @@ namespace Tesina.Controllers
                 Lesion = lesiones,
                 Asistencias = asistencia,
                 PlanesNutricionales = planNutricional != null ? new List<PlanesNutricionales> { planNutricional } : new List<PlanesNutricionales>(),
-                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>()
+                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>(), 
+                Mensualidades = mensualidad
             };
 
 
@@ -107,22 +111,23 @@ namespace Tesina.Controllers
 
                 if (cedulaExiste)
                 {
-                    ViewBag.Alerta = "Ya existe un usuario con esta cédula.";
+                    ViewBag.Alerta = "⚠️ Ya existe un usuario con esta cédula.";
                     return View(usuarios);
                 }
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
-
+                var hasher = new PasswordHasher<object>();
+                var Contrasenahash = hasher.HashPassword(null, usuarios.Cedula);
                 var login = new UsuarioLogin
                 {
                     IdUsuario = usuarios.IdUsuario,
                     Usuario = usuarios.Correo,
-                    Contrasena = usuarios.Cedula
+                    Contrasena = Contrasenahash
                 };
 
                 _context.UsuariosLogin.Add(login);
                 await _context.SaveChangesAsync();
-
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction("Edit", new { id = usuarios.IdUsuario });
             }
 
@@ -140,7 +145,7 @@ namespace Tesina.Controllers
 
             var expedientes = await _context.Expedientes
                 .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaRegistro)
+                .OrderByDescending(e => e.FechaRegistro)
                 .ToListAsync();
 
             var clienteRutina = await _context.ClienteRutina
@@ -158,23 +163,18 @@ namespace Tesina.Controllers
             }
             var lesiones = await _context.Lesiones
                 .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaDiagnostico)
+                .OrderByDescending(e => e.FechaDiagnostico)
                 .ToListAsync();
-
-            var facturas = await _context.Lesiones
-                .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaDiagnostico)
-                .ToListAsync();
-
             var asistencia = await _context.Asistencias
                 .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaIngreso)
+                .OrderByDescending(e => e.FechaIngreso)
                 .ToListAsync();
             var planNutricional = await _context.PlanesNutricionales
                 .Where(p => p.IdUsuario == id)
                 .Include(p => p.Alimentos)
                 .OrderByDescending(p => p.FechaAsignacion)
                 .FirstOrDefaultAsync();
+            var mensualidad = await _context.Mensualidades.FirstOrDefaultAsync(m => m.IdUsuario == id); 
 
             var viewModel = new ClienteDetalle
             {
@@ -186,7 +186,8 @@ namespace Tesina.Controllers
                 Lesion = lesiones,
                 Asistencias = asistencia,
                 PlanesNutricionales = planNutricional != null ? new List<PlanesNutricionales> { planNutricional } : new List<PlanesNutricionales>(),
-                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>()
+                AlimentosPlanNutricional = planNutricional?.Alimentos?.ToList() ?? new List<AlimentosPlanNutricional>(),
+                Mensualidades = mensualidad
             };
 
             return View(viewModel);
@@ -207,9 +208,37 @@ namespace Tesina.Controllers
             {
                 try
                 {
-                    
                     _context.Update(usuarios.Cliente);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); 
+                    var loginExistente = await _context.UsuariosLogin
+                        .FirstOrDefaultAsync(l => l.IdUsuario == usuarios.Cliente.IdUsuario);
+
+                    if (loginExistente != null)
+                    {
+                        loginExistente.Usuario = usuarios.Cliente.Correo;
+
+                        _context.Update(loginExistente); 
+                        await _context.SaveChangesAsync();
+                    }
+                    var mesualidad = new Mensualidades()
+                    {
+                        IdMensualidad= usuarios.Mensualidades.IdMensualidad,
+                        IdUsuario = usuarios.Cliente.IdUsuario,
+                        FechaFin = usuarios.Mensualidades.FechaFin,
+                        FechaInicio = usuarios.Mensualidades.FechaInicio
+                    };
+                    if (MensualidadExists(usuarios.Cliente.IdUsuario)) {
+
+                        _context.Update(mesualidad);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _context.Add(mesualidad);
+                        await _context.SaveChangesAsync();
+                    }
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -222,7 +251,8 @@ namespace Tesina.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
+                return View(CargarEdit(id));
             }
             
             return View(CargarEdit(id));
@@ -315,6 +345,7 @@ namespace Tesina.Controllers
             {
                 _context.Usuarios.Remove(usuarios);
             }
+            TempData["Alerta"] = "✅ El Cliente se elimino del sistema.";
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -323,26 +354,39 @@ namespace Tesina.Controllers
         {
             return _context.Usuarios.Any(e => e.IdUsuario == id);
         }
+        private bool MensualidadExists(int id)
+        {
+            return _context.Mensualidades.Any(e => e.IdUsuario == id);
+        }        
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> EditCliente(int? id)
         {
+
             if (id == null || _context.Usuarios == null)
                 return NotFound();
 
             var cliente = await _context.Usuarios.FindAsync(id);
             if (cliente == null)
-                return NotFound();   
-            
-            return View(cliente);
+                return NotFound(); 
+            var mensualidad = await _context.Mensualidades.FirstOrDefaultAsync(m => m.IdUsuario == id);
+            var UsuarioLogin = await _context.UsuariosLogin.FindAsync(id);
+            var viewModel = new ClienteDetalle
+                {
+                    Cliente = cliente,                   
+                    Mensualidades = mensualidad,
+                    UsuarioLogin= UsuarioLogin
+            };
+
+            return View(viewModel);
         }
         // POST: Usuarios/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditCliente(int id, Usuarios usuarios)
+        public async Task<IActionResult> EditCliente(int id, ClienteDetalle usuarios)
         {
-            if (id != usuarios.IdUsuario)
+            if (id != usuarios.Cliente.IdUsuario)
             {
                 return View(id);
             }
@@ -352,13 +396,32 @@ namespace Tesina.Controllers
                 try
                 {
 
-                    _context.Update(usuarios);
+                    _context.Update(usuarios.Cliente);
                     await _context.SaveChangesAsync();
+                    
+                    var loginExistente = await _context.UsuariosLogin
+                        .FirstOrDefaultAsync(l => l.IdUsuario == usuarios.Cliente.IdUsuario);
+
+                    if (loginExistente != null)
+                    {
+                        loginExistente.Usuario = usuarios.Cliente.Correo; 
+                        if (!string.IsNullOrWhiteSpace(usuarios.UsuarioLogin.Contrasena))
+                        {
+                            var hasher = new PasswordHasher<object>(); 
+                            var hash = hasher.HashPassword(null, usuarios.UsuarioLogin.Contrasena);
+                            loginExistente.Contrasena = hash;
+                        }
+
+                        _context.Update(loginExistente); // ✅ Ahora sí, porque es una entidad rastreada
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuariosExists(usuarios.IdUsuario))
+                    if (!UsuariosExists(usuarios.Cliente.IdUsuario))
                     {
+                        TempData["Alerta"] = "❌ Error Al Guardar La Informacion.";
+
                         return View();
                     }
                     else
@@ -367,12 +430,11 @@ namespace Tesina.Controllers
                     }
                 }
                 TempData["Alerta"] = "✅ Cambios guardados correctamente.";
-                return RedirectToAction("EditCliente", new { id = usuarios.IdUsuario });
+                return RedirectToAction("EditCliente", new { id = usuarios.Cliente.IdUsuario });
             }
 
             return View(id);
         }
-
         public async Task<IActionResult> AsistenciaCliente(int? id)
         {
             if (id == null)
@@ -381,7 +443,7 @@ namespace Tesina.Controllers
             }
 
             var Asistencias = await _context.Asistencias
-                .Where(e => e.IdUsuario == id)
+                .Where(e => e.IdUsuario == id).OrderByDescending(e => e.FechaIngreso)
                 .ToListAsync();
             if (Asistencias == null)
             {

@@ -139,7 +139,8 @@ namespace Tesina.Controllers
 
                 // Guardar los alimentos
                 _context.AlimentosPlanNutricional.AddRange(model.Alimentos);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -227,6 +228,7 @@ namespace Tesina.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
@@ -268,7 +270,9 @@ namespace Tesina.Controllers
                 _context.PlanesNutricionales.Remove(planesNutricionales);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
+            TempData["Alerta"] = "✅ El Plan Nutricional se elimino del sistema.";
+
             return RedirectToAction(nameof(Index));
         }
 
