@@ -1,79 +1,154 @@
 ﻿@model List<Tesina.Models.Expediente>
 <!-- TablaMedidas -->
+@{
+    ViewData["Title"] = "Información Personal";
+}
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4"><i class="bi bi-people-fill"></i> Informacion Personal</h4>
+    <div class="card shadow rounded p-4">
+        <div class="accordion mt-4" id="accordionMedidas">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingMedidas">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseMedidas" aria-expanded="true" aria-controls="collapseMedidas">
+                        📊 Medidas Corporales
+                    </button>
+                </h2>
+                <div id="collapseMedidas" class="accordion-collapse collapse show" aria-labelledby="headingMedidas" data-bs-parent="#accordionMedidas">
+                    <div class="accordion-body">
+                            <div class="table-responsive d-none d-md-block">
+                                @if (Model.Any())
+                                {
+                                    <table class="table table-bordered table-hover table-striped">
+                                        <thead class="table-primary text-center">
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Peso (Kg)</th>
+                                                <th>Altura (cm)</th>
+                                                <th>IMC</th>
+                                                <th>Grasa (%)</th>
+                                                <th>Músculo (%)</th>
+                                                <th>Pecho (cm)</th>
+                                                <th>Espalda (cm)</th>
+                                                <th>Cintura (cm)</th>
+                                                <th>Cadera (cm)</th>
+                                                <th>Bícep Der. (cm)</th>
+                                                <th>Bícep Izq. (cm)</th>
+                                                <th>Pierna Der. (cm)</th>
+                                                <th>Pierna Izq. (cm)</th>
+                                                <th>Pant. Der. (cm)</th>
+                                                <th>Pant. Izq. (cm)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var item in Model)
+                                            {
+                                                <tr class="text-center">
+                                                    <td>@item.FechaRegistro.ToShortDateString()</td>
+                                                    <td>@item.PesoKg</td>
+                                                    <td>@item.AlturaCm</td>
+                                                    <td>@item.IMC</td>
+                                                    <td>@item.PorcentajeGrasa</td>
+                                                    <td>@item.PorcentajeMuscular</td>
+                                                    <td>@item.MedidaPecho</td>
+                                                    <td>@item.MedidaEspalda</td>
+                                                    <td>@item.MedidaCintura</td>
+                                                    <td>@item.MedidaCadera</td>
+                                                    <td>@item.BicepDerecho</td>
+                                                    <td>@item.BicepIzquierdo</td>
+                                                    <td>@item.PiernaDerecha</td>
+                                                    <td>@item.PiernaIzquierda</td>
+                                                    <td>@item.PantorrillaDerecha</td>
+                                                    <td>@item.PantorrillaIzquierda</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning text-center mt-5">
+                                        <i class="bi bi-exclamation-circle"></i> No hay registros disponibles.
+                                    </div>
+                                }
+                            </div>                           
+                        <div class="d-block d-md-none">
+                            <div class="container mt-4">
+                                @if (Model.Any())
+                                {
+                                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                                        @foreach (var item in Model)
+                                        {
+                                            <div class="col">
+                                                <div class="card h-100 shadow-sm border-1">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title text-primary">📅 @item.FechaRegistro.ToShortDateString()</h5>
+                                                        <p class="card-text">
+                                                            <strong>Peso:</strong> @item.PesoKg Kg<br />
+                                                            <strong>Altura:</strong> @item.AlturaCm cm<br />
+                                                            <strong>IMC:</strong> @item.IMC<br />
+                                                            <strong>Grasa:</strong> @item.PorcentajeGrasa %<br />
+                                                            <strong>Músculo:</strong> @item.PorcentajeMuscular %<br />
+                                                            <strong>Pecho:</strong> @item.MedidaPecho cm<br />
+                                                            <strong>Espalda:</strong> @item.MedidaEspalda cm<br />
+                                                            <strong>Cintura:</strong> @item.MedidaCintura cm<br />
+                                                            <strong>Cadera:</strong> @item.MedidaCadera cm<br />
+                                                            <strong>Bícep Der.:</strong> @item.BicepDerecho cm<br />
+                                                            <strong>Bícep Izq.:</strong> @item.BicepIzquierdo cm<br />
+                                                            <strong>Pierna Der.:</strong> @item.PiernaDerecha cm<br />
+                                                            <strong>Pierna Izq.:</strong> @item.PiernaIzquierda cm<br />
+                                                            <strong>Pant. Der.:</strong> @item.PantorrillaDerecha cm<br />
+                                                            <strong>Pant. Izq.:</strong> @item.PantorrillaIzquierda cm
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-warning text-center mt-5">
+                                        <i class="bi bi-exclamation-circle"></i> No hay registros disponibles.
+                                    </div>
+                                }
 
-<div class="card shadow p-4">
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Fecha</th>
-                    <th>Peso (Kg)</th>
-                    <th>Altura (cm)</th>
-                    <th>IMC</th>
-                    <th>% Grasa</th>
-                    <th>% Músculo</th>
-                    <th>Pecho</th>
-                    <th>Espalda</th>
-                    <th>Cintura</th>
-                    <th>Cadera</th>
-                    <th>Bícep Der.</th>
-                    <th>Bícep Izq.</th>
-                    <th>Pierna Der.</th>
-                    <th>Pierna Izq.</th>
-                    <th>Pant. Der.</th>
-                    <th>Pant. Izq.</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.FechaRegistro.ToShortDateString()</td>
-                        <td>@item.PesoKg</td>
-                        <td>@item.AlturaCm</td>
-                        <td>@item.IMC</td>
-                        <td>@item.PorcentajeGrasa</td>
-                        <td>@item.PorcentajeMuscular</td>
-                        <td>@item.MedidaPecho</td>
-                        <td>@item.MedidaEspalda</td>
-                        <td>@item.MedidaCintura</td>
-                        <td>@item.MedidaCadera</td>
-                        <td>@item.BicepDerecho</td>
-                        <td>@item.BicepIzquierdo</td>
-                        <td>@item.PiernaDerecha</td>
-                        <td>@item.PiernaIzquierda</td>
-                        <td>@item.PantorrillaDerecha</td>
-                        <td>@item.PantorrillaIzquierda</td>
-                        <td>
-                            <a class="btn btn-sm btn-info me-1" asp-action="Edit" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </a>
-                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-controller="Expedientes" asp-route-id="@item.IdExpediente">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-</div>
-            
-<!-- Graficos -->
-<div class="accordion mb-4" id="accordionGraficos">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingGraficos">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseGraficos" aria-expanded="false" aria-controls="collapseGraficos">
-                Gráficas de las Medidas Corporales
-            </button>
-        </h2>
-        <div id="collapseGraficos" class="accordion-collapse collapse" aria-labelledby="headingGraficos" data-bs-parent="#accordionGraficos">
-            <div class="accordion-body">                
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                @await Html.PartialAsync("/Views/Expedientes/Graficas.cshtml", Model)
+            </div>
+        </div>
+
+
+
+        <!-- Graficos -->
+        <div class="accordion mb-4" id="accordionGraficos">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingGraficos">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseGraficos" aria-expanded="false" aria-controls="collapseGraficos">
+                        📊 Gráficas de las Medidas Corporales
+                    </button>
+                </h2>
+                    <div id="collapseGraficos" class="accordion-collapse collapse" aria-labelledby="headingGraficos" data-bs-parent="#accordionGraficos">
+                        <div class="accordion-body">
+                            @if (Model.Any())
+                            {
+                                @await Html.PartialAsync("/Views/Expedientes/Graficas.cshtml", Model)
+                            }
+                            else
+                            {
+                                <div class="alert alert-warning text-center mt-5">
+                                    <i class="bi bi-exclamation-circle"></i> No hay registros disponibles.
+                                </div>
+                            }
+                        </div>
+                    </div>
             </div>
         </div>
     </div>
+    </div>
 </div>
+

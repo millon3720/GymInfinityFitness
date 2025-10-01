@@ -1,52 +1,66 @@
 ﻿@model Tesina.Models.Ejercicio
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalles del Ejercicio";
 }
-    <h2 class="text-center mb-4">Detalles del Ejercicio</h2>
 
-    <div class="card shadow rounded p-4">
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <strong>ID del Ejercicio:</strong><br />
-                <span class="text-muted">@Model.IdEjercicio</span>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-barbell"></i> Detalles del Ejercicio
+        </h4>
+        <div class="card shadow rounded p-4">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <strong>ID del Ejercicio:</strong><br />
+                    <span class="text-muted">@Model.IdEjercicio</span>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <strong>Nombre:</strong><br />
+                    <span class="text-muted">@Model.Nombre</span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <strong>Descripción:</strong><br />
+                    <span class="text-muted">@Model.Descripcion</span>
+                </div>
+                <div class="card shadow rounded p-4">
+
+                    <div class="col-md-12 mb-3">
+                        <strong>Video:</strong><br />
+                        @if (!string.IsNullOrEmpty(Model.VideoURL) && Model.VideoURL.Contains("youtube.com"))
+                        {
+                            var videoId = System.Text.RegularExpressions.Regex.Match(
+                            Model.VideoURL ?? "",
+                            @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
+                            ).Groups[1].Value;
+
+                            if (!string.IsNullOrEmpty(videoId))
+                            {
+                                <div class="mt-2">
+                                    <div class="ratio ratio-16x9">
+                                        <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">Sin video disponible</span>
+                        }
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-3 mb-3">
-                <strong>Nombre:</strong><br />
-                <span class="text-muted">@Model.Nombre</span>
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Index" class="btn btn-secondary me-2 shadow-sm">
+                    <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+                </a>
+                <a asp-action="Edit" asp-route-id="@Model.IdEjercicio" class="btn btn-warning shadow-sm">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+
             </div>
-
-            <div class="col-md-6 mb-3">
-                <strong>Descripción:</strong><br />
-                <span class="text-muted">@Model.Descripcion</span>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <strong>Video:</strong><br />               
-
-                @if (!string.IsNullOrEmpty(Model.VideoURL) && Model.VideoURL.Contains("youtube.com"))
-                {
-                    var videoId = System.Text.RegularExpressions.Regex.Match(
-                    Model.VideoURL ?? "",
-                    @"(?:v=|\/embed\/|\/shorts\/|\.be\/)([a-zA-Z0-9_-]{11})"
-                    ).Groups[1].Value;
-                    if (!string.IsNullOrEmpty(videoId))
-                    {
-                        <div class="mt-2">
-                            <div class="ratio ratio-16x9">
-                                <iframe src="https://www.youtube.com/embed/@videoId" frameborder="0" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    }
-                }
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-between mt-4">
-            <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@Model.IdEjercicio">
-                <i class="bi bi-pencil-square"></i> Editar
-            </a>
-        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
         </div>
     </div>
+</div>

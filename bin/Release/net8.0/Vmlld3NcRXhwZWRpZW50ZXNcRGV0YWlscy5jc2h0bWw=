@@ -1,0 +1,126 @@
+﻿@model Tesina.Models.Expediente
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Expediente</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Usuario)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Cedula)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FechaRegistro)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FechaRegistro)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PesoKg)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PesoKg)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AlturaCm)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AlturaCm)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IMC)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IMC)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PorcentajeGrasa)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PorcentajeGrasa)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PorcentajeMuscular)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PorcentajeMuscular)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MedidaPecho)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MedidaPecho)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MedidaEspalda)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MedidaEspalda)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MedidaCintura)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MedidaCintura)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MedidaCadera)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MedidaCadera)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BicepDerecho)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BicepDerecho)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BicepIzquierdo)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BicepIzquierdo)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PiernaDerecha)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PiernaDerecha)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PiernaIzquierda)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PiernaIzquierda)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PantorrillaDerecha)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PantorrillaDerecha)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PantorrillaIzquierda)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PantorrillaIzquierda)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Observaciones)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Observaciones)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.IdExpediente">Edit</a> 
+    <a asp-action="Details" asp-controller="Usuarios" asp-route-id="IdUsuario"><i class="bi bi-arrow-left-circle"></i> Volver a la Lista</a>
+</div>

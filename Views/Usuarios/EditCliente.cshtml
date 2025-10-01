@@ -1,69 +1,88 @@
-﻿@model Tesina.Models.Usuarios
+﻿@model Tesina.Models.ClienteDetalle
 
 @{
     ViewData["Title"] = "Edit";
 }
 
 <div class="container-fluid mt-4">
-<h4 class="text-primary text-center mb-4">Informacion Personal</h4>
     <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4"><i class="bi bi-people-fill"></i> Informacion Personal</h4>
+
         <div class="card shadow rounded p-4">
             <form asp-action="EditCliente">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                <input type="hidden" asp-for="@Model.IdUsuario" />
+                <input type="hidden" asp-for="@Model.Cliente.IdUsuario" />
 
                 <div class="mb-3">
-                    <label asp-for="@Model.Cedula" class="form-label"></label> 
-                    <input asp-for="@Model.Cedula" class="form-control" disabled placeholder="Cédula" />
-                    <input asp-for="@Model.Cedula" class="form-control" hidden placeholder="Cédula" />
+                    <label asp-for="@Model.Cliente.Cedula" class="form-label"></label>
+                    <input asp-for="@Model.Cliente.Cedula" class="form-control" disabled placeholder="Cédula" />
+                    <input asp-for="@Model.Cliente.Cedula" class="form-control" hidden placeholder="Cédula" />
                     
-                    <span asp-validation-for="@Model.Cedula" class="text-danger"></span>
+                    <span asp-validation-for="@Model.Cliente.Cedula" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="@Model.NombreCompleto" class="form-label"></label>
-                    <input asp-for="@Model.NombreCompleto" class="form-control" placeholder="Nombre Completo" />
-                    <span asp-validation-for="@Model.NombreCompleto" class="text-danger"></span>
+                    <label asp-for="@Model.Cliente.NombreCompleto" class="form-label"></label>
+                    <input asp-for="@Model.Cliente.NombreCompleto" class="form-control" placeholder="Nombre Completo" />
+                    <span asp-validation-for="@Model.Cliente.NombreCompleto" class="text-danger"></span>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="@Model.FechaNacimiento" class="form-label"></label>
-                        <input asp-for="@Model.FechaNacimiento" class="form-control" type="date" />
-                        <span asp-validation-for="@Model.FechaNacimiento" class="text-danger"></span>
+                        <label asp-for="@Model.Cliente.FechaNacimiento" class="form-label"></label>
+                        <input asp-for="@Model.Cliente.FechaNacimiento" class="form-control" type="date" />
+                        <span asp-validation-for="@Model.Cliente.FechaNacimiento" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label asp-for="@Model.FechaRegistro" class="form-label"></label>
-                        <input asp-for="@Model.FechaRegistro" class="form-control" type="datetime-local" />
-                        <span asp-validation-for="@Model.FechaRegistro" class="text-danger"></span>
+                        <label asp-for="@Model.Cliente.FechaRegistro" class="form-label"></label>
+                        <input asp-for="@Model.Cliente.FechaRegistro" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="@Model.Cliente.FechaRegistro" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="@Model.Correo" class="form-label"></label>
-                        <input asp-for="@Model.Correo" class="form-control" placeholder="Correo Electrónico" />
-                        <span asp-validation-for="@Model.Correo" class="text-danger"></span>
+                        <label asp-for="@Model.Cliente.Correo" class="form-label"></label>
+                        <input asp-for="@Model.Cliente.Correo" class="form-control" placeholder="Correo Electrónico" />
+                        <span asp-validation-for="@Model.Cliente.Correo" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label asp-for="@Model.Telefono" class="form-label"></label>
-                        <input asp-for="@Model.Telefono" class="form-control" placeholder="Número de Teléfono" />
-                        <span asp-validation-for="@Model.Telefono" class="text-danger"></span>
+                        <label asp-for="@Model.Cliente.Telefono" class="form-label"></label>
+                        <input asp-for="@Model.Cliente.Telefono" class="form-control" placeholder="Número de Teléfono" />
+                        <span asp-validation-for="@Model.Cliente.Telefono" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="@Model.Direccion" class="form-label"></label>
-                    <input asp-for="@Model.Direccion" class="form-control" placeholder="Dirección" />
-                    <span asp-validation-for="@Model.Direccion" class="text-danger"></span>
+                    <label asp-for="@Model.Cliente.Direccion" class="form-label"></label>
+                    <input asp-for="@Model.Cliente.Direccion" class="form-control" placeholder="Dirección" />
+                    <span asp-validation-for="@Model.Cliente.Direccion" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <strong>Ultimo Pago Mensualidad:</strong><br />
+                        <span class="text-muted">@Model.Mensualidades.FechaInicio.ToString("dd-MM-yyyy HH:mm")</span>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <strong>Proximo Pago Mensualidad:</strong><br />
+                        <span class="text-muted">@Model.Mensualidades.FechaFin.ToString("dd-MM-yyyy HH:mm")</span>
+                    </div>
                 </div>
 
-                <input type="hidden" asp-for="@Model.Rol" value="Cliente" />
-
-                <div class="form-check mb-3">
-                    <input class="form-check-input" asp-for="@Model.Estado" />
-                    <label class="form-check-label" asp-for="@Model.Estado"></label>
-                </div>
+                <input type="hidden" asp-for="@Model.Cliente.Rol" value="Cliente" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="@Model.UsuarioLogin.Contrasena" class="form-label"></label>
+                        <input type="password" asp-for="@Model.UsuarioLogin.Contrasena" class="form-control" placeholder="Contraseña" />
+                        <span asp-validation-for="@Model.UsuarioLogin.Contrasena" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" asp-for="@Model.Cliente.Estado"></label>
+                        <span class="form-control  @(Model.Cliente.Estado ? " text-success" : "text-danger")">
+                            @(Model.Cliente.Estado ? "Activo" : "Inactivo")
+                        </span>
+                    </div>
+                </div>              
 
                 <div class="d-flex justify-content-between mt-4">                    
                     <button type="submit" class="btn btn-primary shadow-sm">

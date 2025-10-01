@@ -19,7 +19,6 @@ namespace Tesina.Models
         [DataType(DataType.DateTime)]
         public DateTime FechaIngreso { get; set; }
 
-        [Required(ErrorMessage = "La fecha de salida es obligatoria.")]
         [DataType(DataType.DateTime)]
         public DateTime? FechaSalida { get; set; }
     }

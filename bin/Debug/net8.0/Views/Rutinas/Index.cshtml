@@ -1,65 +1,155 @@
 ﻿@model IEnumerable<Tesina.Models.Rutina>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista de Rutinas";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center text-primary mb-4">
-        <i class="bi bi-bar-chart-fill"></i> Lista de Rutinas
-    </h2>
 
-    <div class="d-flex justify-content-end mb-3">
-        <a class="btn btn-success" asp-action="Create">
-            <i class="bi bi-plus-circle"></i> Crear Nueva Rutina
-        </a>
-    </div>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4"><i class="bi-clipboard-check"></i> Lista de Rutinas</h4>
+        <div class="card shadow rounded p-4">
 
-    @if (Model.Any())
-    {
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                <thead class="table-dark">
-                    <tr>
-                        <th>@Html.DisplayNameFor(model => model.Nombre)</th>
-                        <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
-                        <th>@Html.DisplayNameFor(model => model.FechaCreacion)</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+                <div class="row align-items-center mb-4">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filtroRutinas" class="form-control" placeholder="Buscar por nombre o cédula..." />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-md-end mt-2 mt-md-0">
+                        <a class="btn btn-success shadow-sm" asp-action="Create">
+                            <i class="bi bi-plus-circle"></i> Crear Nueva Rutina
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Mensaje sin resultados -->
+            <div id="sinResultados" class="alert alert-warning text-center d-none">
+                <i class="bi bi-exclamation-circle"></i> No se encontraron rutinas que coincidan.
+            </div>
+
+            @if (Model.Any())
+            {
+                <!-- Vista en escritorio -->
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                                <th>@Html.DisplayNameFor(model => model.Descripcion)</th>
+                                <th>Fecha de Creacion</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-center">
+                                    <td class="nombre">@item.Nombre</td>
+                                    <td class="descripcion">@item.Descripcion</td>
+                                    <td>@item.FechaCreacion.ToShortDateString()</td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdRutina"><i class="bi bi-info-circle"></i> Detalles</a>
+                                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdRutina"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdRutina"><i class="bi bi-trash"></i> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista en móvil -->
+                <div class="d-block d-md-none">
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>@item.Nombre</td>
-                            <td>@item.Descripcion</td>
-                            <td>@item.FechaCreacion.ToShortDateString()</td>
-                            <td class="text-center">
-                                <div class="btn-group">
+                        <div class="card card-rutina mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary nombre">@item.Nombre</h5>
+                                <p class="mb-1 descripcion"><strong>Descripción:</strong> @item.Descripcion</p>
+                                <p class="mb-3"><strong>Creación:</strong> @item.FechaCreacion.ToShortDateString()</p>
 
-                                <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdRutina" title="Detalles">
-                                    <i class="bi bi-info-circle"></i> Ver
-                                </a>
-                                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.IdRutina" title="Editar">
-
-                                    <i class="bi bi-pencil-square"></i> Modificar
-                                </a>
-                                
-                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdRutina" title="Eliminar">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </a>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.IdRutina"><i class="bi bi-info-circle"></i> Detalles</a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.IdRutina"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.IdRutina"><i class="bi bi-trash"></i> Eliminar</a>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay rutinas registradas.
+                </div>
+            }
+            @if (TempData["Alerta"] != null)
+            {
+                <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                    <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    window.addEventListener('load', function () {
+                        var toastEl = document.getElementById('liveToast');
+                        if (toastEl) {
+                            var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                            toast.show();
+                        }
+                    });
+                </script>
+            }
         </div>
-    }
-    else
-    {
-        <div class="alert alert-warning text-center mt-5">
-            <i class="bi bi-exclamation-circle"></i> No hay rutinas registradas.
-        </div>
-    }
+    </div>
 </div>
+
+<!-- Script de filtrado -->
+<script>
+    document.getElementById("filtroRutinas").addEventListener("input", function () {
+        const filtro = this.value.toLowerCase();
+
+        // Filtrar tabla
+        const filas = document.querySelectorAll("table tbody tr");
+        let coincidenciasTabla = 0;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector(".nombre").textContent.toLowerCase();
+            const descripcion = fila.querySelector(".descripcion").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro) || descripcion.includes(filtro);
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasTabla++;
+        });
+
+        // Filtrar cards
+        const cards = document.querySelectorAll(".card-rutina");
+        let coincidenciasCards = 0;
+
+        cards.forEach(card => {
+            const nombre = card.querySelector(".nombre").textContent.toLowerCase();
+            const descripcion = card.querySelector(".descripcion").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro) || descripcion.includes(filtro);
+            card.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasCards++;
+        });
+
+        // Mostrar mensaje si no hay coincidencias
+        const totalCoincidencias = coincidenciasTabla + coincidenciasCards;
+        const mensaje = document.getElementById("sinResultados");
+        if (mensaje) {
+            mensaje.classList.toggle("d-none", totalCoincidencias > 0);
+        }
+    });
+</script>

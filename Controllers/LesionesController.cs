@@ -76,6 +76,7 @@ namespace Tesina.Controllers
                     _context.Lesiones.Add(l);
                 }
                 await _context.SaveChangesAsync();
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 // Usa el IdUsuario de la primera lesión para redirigir
                 return RedirectToAction("Details", "Usuarios", new { id = model.Lesion.First().IdUsuario });
             }
@@ -133,6 +134,8 @@ namespace Tesina.Controllers
                         throw;
                     }
                 }
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
+
                 return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
             }
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", lesion.IdUsuario);
@@ -169,7 +172,9 @@ namespace Tesina.Controllers
                 _context.Lesiones.Remove(lesion);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
+            TempData["Alerta"] = "✅ La Lesion se elimino del sistema.";
+
             return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
         }
 

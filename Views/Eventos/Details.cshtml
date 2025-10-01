@@ -1,42 +1,118 @@
 ﻿@model Eventos
 
 @{
-    ViewData["Title"] = "Detalle del Evento";
+    ViewData["Title"] = "Detalles del Evento";
 }
-
 <div class="container-fluid mt-4">
-    <h4 class="text-primary text-center mb-4">Detalle del Evento</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <dl class="row">
-            <dt class="col-sm-3">Nombre</dt>
-            <dd class="col-sm-9">@Model.Nombre</dd>
+        <h4 class="text-primary text-center mb-4"><i class="bi bi-calendar-plus"></i>  Detalles del Evento</h4>
 
-            <dt class="col-sm-3">Descripción</dt>
-            <dd class="col-sm-9">@Model.Descripcion</dd>
+        <div class="card shadow rounded p-4">
 
-            <dt class="col-sm-3">Fecha</dt>
-            <dd class="col-sm-9">@Model.FechaEvento.ToString("dd/MM/yyyy HH:mm")</dd>
+            <div class="row">
+                <!-- Columna izquierda: información -->
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-4">Nombre</dt>
+                        <dd class="row-cols-sm-4">@Model.Nombre</dd>
 
-            <dt class="col-sm-3">Imagen</dt>
-            <dd class="col-sm-9">
-                @if (Model.Imagen != null)
+                        <dt class="col-sm-4">Descripción</dt>
+                        <dd class="row-cols-sm-4">@Model.Descripcion</dd>
+
+                        <dt class="col-sm-4">Fecha</dt>
+                        <dd class="row-cols-sm-4">@Model.FechaEvento.ToString("dd/MM/yyyy HH:mm")</dd>
+                    </dl>
+                </div>
+
+                <!-- Columna derecha: imagen -->
+                <div class="col-md-4 text-center">
+                    @if (Model.Imagen != null)
+                    {
+                        <img src="@Url.Action("VerImagen", "Eventos", new { id = Model.IdEvento })"
+                             class="img-fluid rounded shadow-sm"
+                             style="max-width: 80%; cursor: pointer;"
+                             data-bs-toggle="modal"
+                             data-bs-target="#imagenModal"
+                             onclick="mostrarImagenModal(this.src)" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Sin imagen</span>
+                    }
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 text-start">
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+                    </a>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a asp-action="Edit" asp-route-id="@Model.IdEvento" class="btn btn-warning shadow-sm">
+                        <i class="bi bi-pencil-square"></i> Modificar
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        <div class="card shadow rounded p-4 mb-3 mt-2">
+            <h5 class="text-primary text-center mb-4">Clientes Registrados</h5>
+            <div class="table-responsive d-none d-md-block">
+
+                <table class="table table-bordered table-hover table-striped">
+                    <thead class="table-primary text-center">
+                        <tr>
+                            <th>Cedula</th>
+                            <th>Nombre Completo</th>
+                            <th>Correo</th>
+                            <th>Telefono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Inscripciones)
+                        {
+                            <tr class="text-center">
+                                <td>@item.Usuario.Cedula</td>
+                                <td>@item.Usuario.NombreCompleto</td>
+                                <td>@item.Usuario.Correo</td>
+                                <td>@item.Usuario.Telefono</td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-block d-md-none">
+                @foreach (var item in Model.Inscripciones)
                 {
-                    <img src="@Url.Action("VerImagen", "Eventos", new { id = Model.IdEvento })" class="img-fluid rounded shadow-sm" />
-                }
-                else
-                {
-                    <span class="text-muted">Sin imagen</span>
-                }
-            </dd>
-        </dl>
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">@item.Usuario.NombreCompleto</h5>
+                            <p class="mb-1"><strong>Cédula:</strong> @item.Usuario.Cedula</p>
+                            <p class="mb-1"><strong>Correo:</strong> @item.Usuario.Correo</p>
+                            <p class="mb-1"><strong>Teléfono:</strong> @item.Usuario.Telefono</p>
 
-        <div class="d-flex justify-content-end mt-4">
-            <a asp-action="Edit" asp-route-id="@Model.IdEvento" class="btn btn-info me-2 shadow-sm">
-                <i class="bi bi-pencil-square"></i> Modificar
-            </a>
-            <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                <i class="bi bi-arrow-left-circle"></i> Volver a la lista
-            </a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
+<!-- Modal para mostrar imagen ampliada -->
+<div class="modal fade" id="imagenModal" tabindex="-1" aria-labelledby="imagenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body p-0">
+                <img id="imagenAmpliada" src="" class="w-100 h-auto rounded" style="object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function mostrarImagenModal(src) {
+        document.getElementById("imagenAmpliada").src = src;
+    }
+</script>

@@ -1,44 +1,43 @@
 ﻿@model Tesina.Models.Facturas
-
 @{
     ViewData["Title"] = "Eliminar Factura";
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-danger text-center mb-3">
+            <i class="bi bi-receipt-x"></i> Confirmación de Eliminación
+        </h4>
+        <div class="card shadow rounded p-4">
+            <h5 class="text-primary text-center mb-4">Detalles de la Factura</h5>
 
-            <h2 class="text-center text-danger mb-4">
-                ¿Estás seguro de que deseas eliminar esta Factura?
-            </h2>
-
-            <div class="card shadow rounded p-4">
-                <div class="card-body">
-                    <h4 class="mb-4 text-center text-primary">Detalles de la Factura</h4>
-                    <dl class="row">
-                        <dt class="col-sm-4 fw-bold">Cliente:</dt>
-                        <dd class="col-sm-8 text-muted">@Model.Usuario?.NombreCompleto</dd>
-
-                        <dt class="col-sm-4 fw-bold">Fecha:</dt>
-                        <dd class="col-sm-8 text-muted">@Model.Fecha.ToString("dd-MM-yyyy")</dd>
-
-                        <dt class="col-sm-4 fw-bold">Total:</dt>
-                        <dd class="col-sm-8 text-muted">₡@Model.Total.ToString("N2")</dd>
-                    </dl>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="fw-bold">Cliente:</label>
+                    <div class="text-muted">@Model.Usuario?.NombreCompleto</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold">Fecha:</label>
+                    <div class="text-muted">@Model.Fecha.ToString("dd-MM-yyyy HH:mm")</div>
+                </div>
+                <div class="col-12">
+                    <label class="fw-bold">Total:</label>
+                    <div class="text-muted">₡@Model.Total.ToString("N2")</div>
                 </div>
             </div>
 
             <form asp-action="Delete" class="mt-4 text-center">
                 <input type="hidden" asp-for="IdFactura" />
-                <button type="submit" class="btn btn-danger btn-lg me-2 shadow-sm"
-                        onclick="return confirm('¿Estás seguro de que deseas eliminar esta Factura?')">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
-                <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
-                    <i class="bi bi-x-circle"></i> Cancelar
-                </a>
+                <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                    <button type="submit" class="btn btn-danger btn-lg shadow-sm"
+                            onclick="return confirm('Esta acción eliminará permanentemente la factura. ¿Deseas continuar?')">
+                        <i class="bi bi-trash3-fill"></i> Confirmar Eliminación
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                </div>
             </form>
-
         </div>
     </div>
 </div>

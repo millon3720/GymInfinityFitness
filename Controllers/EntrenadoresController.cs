@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Tesina.Data;
 using Tesina.Models;
 
@@ -80,7 +81,7 @@ namespace Tesina.Controllers
 
                 _context.UsuariosLogin.Add(login);
                 await _context.SaveChangesAsync();
-
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }            
             return View(usuarios);
@@ -99,7 +100,13 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-            return View(usuarios);
+            var UsuarioLogin = await _context.UsuariosLogin.FindAsync(id);
+            var viewModel = new ClienteDetalle
+            {
+                Cliente = usuarios,
+                UsuarioLogin = new UsuarioLogin()
+            };
+            return View(viewModel);
         }
 
         // POST: Entrenadores/Edit/5
@@ -107,30 +114,41 @@ namespace Tesina.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
+        public async Task<IActionResult> Edit(int id,ClienteDetalle usuarios)
         {
-            if (id != usuarios.IdUsuario)
+            if (id != usuarios.Cliente.IdUsuario)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (usuarios != null)
             {
-                try { 
-                    bool cedulaExiste = await _context.Usuarios
-                        .AnyAsync(u => u.Cedula == usuarios.Cedula);
+                try
+                {
 
-                    if (cedulaExiste)
-                    {
-                        ViewBag.Alerta = "Ya existe un usuario con esta cedula.";
-                        return View(usuarios);
-                    }
-                    _context.Update(usuarios);
+                    _context.Update(usuarios.Cliente);
                     await _context.SaveChangesAsync();
+
+                    var loginExistente = await _context.UsuariosLogin
+                        .FirstOrDefaultAsync(l => l.IdUsuario == usuarios.Cliente.IdUsuario);
+
+                    if (loginExistente != null)
+                    {
+                        loginExistente.Usuario = usuarios.Cliente.Correo;
+                        if (!string.IsNullOrWhiteSpace(usuarios.UsuarioLogin.Contrasena))
+                        {
+                            var hasher = new PasswordHasher<object>();
+                            var hash = hasher.HashPassword(null, usuarios.UsuarioLogin.Contrasena);
+                            loginExistente.Contrasena = hash;
+                        }
+
+                        _context.Update(loginExistente); // ✅ Ahora sí, porque es una entidad rastreada
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuariosExists(usuarios.IdUsuario))
+                    if (!UsuariosExists(usuarios.Cliente.IdUsuario))
                     {
                         return NotFound();
                     }
@@ -139,6 +157,7 @@ namespace Tesina.Controllers
                         throw;
                     }
                 }
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
             return View(usuarios);
@@ -173,7 +192,8 @@ namespace Tesina.Controllers
                 _context.Usuarios.Remove(usuarios);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
+            TempData["Alerta"] = "✅ El Entrenador se elimino del sistema.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -97,6 +97,7 @@ namespace Tesina.Controllers
                 "NombreCompleto",
                 expediente.IdUsuario // <- mantiene el valor seleccionado
             );
+            TempData["Alerta"] = "✅ Información guardada con éxito.";
 
             // 🔹 Mantener el valor de Agregar en la vista
 
@@ -139,6 +140,8 @@ namespace Tesina.Controllers
                 {
                     _context.Update(expediente);
                     await _context.SaveChangesAsync();
+                    TempData["Alerta"] = "✅ Información actualizada con éxito.";
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -190,6 +193,7 @@ namespace Tesina.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ El Registro se elimino del sistema.";
             return RedirectToAction("Details",
                                                     "Usuarios",
                                                     new { id = expediente.IdUsuario });

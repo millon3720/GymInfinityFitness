@@ -1,61 +1,77 @@
 ﻿@model Tesina.Models.PlanAlimenticioViewModel
-
 @{
     ViewData["Title"] = "Crear Plan Nutricional";
 }
-<h2 class="text-center mb-4">Crear Plan Nutricional</h2>
 
-<div class="card shadow rounded p-4">
-    <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-clipboard-heart"></i> Crear Plan Nutricional
+        </h4>
+        <div class="card shadow rounded p-4">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
-                <select asp-for="Plan.IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
-            </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
+                        <select asp-for="Plan.IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
+                        <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
+                    </div>
 
-            <div class="col-md-4 mb-3">
-                <label asp-for="Plan.Descripcion" class="form-label">Descripción</label>
-                <input asp-for="Plan.Descripcion" class="form-control" />
-                <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
-            </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Plan.Descripcion" class="form-label">Descripción</label>
+                        <input asp-for="Plan.Descripcion" class="form-control" placeholder="Descripción general del plan" />
+                        <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
+                    </div>
 
-            <div class="col-md-4 mb-3">
-                <label asp-for="Plan.FechaAsignacion" class="form-label">Fecha de Asignación</label>
-                <input asp-for="Plan.FechaAsignacion" type="date" class="form-control" />
-                <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
-            </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Plan.FechaAsignacion" class="form-label">Fecha de Asignación</label>
+                        <input asp-for="Plan.FechaAsignacion" type="date" class="form-control" />
+                        <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="card shadow rounded p-4">
+                    <h5 class="text-primary mt-4 mb-3">Alimentos del Plan</h5>
+
+                <div id="alimentosContainer">
+                    <!-- Alimentos dinámicos se agregan aquí -->
+                </div>
+
+                <div class="mb-3">
+                    <button type="button" class="btn btn-success shadow-sm" onclick="agregarAlimento()">
+                        <i class="bi bi-plus-circle"></i> Agregar Alimento
+                    </button>
+                    </div>
+                </div>
+
+                @if (ViewBag.ExistePlan == true)
+                {
+                    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Ya existe un plan nutricional para este cliente.
+                        </div>
+                        <button type="submit" name="Sobreescribir" value="true" class="btn btn-danger btn-sm">
+                            <i class="bi bi-arrow-repeat"></i> Sobreescribir
+                        </button>
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+                    </a>
+                    @if (ViewBag.ExistePlan != true)
+                    {
+                        <button type="submit" class="btn btn-success shadow-sm">
+                            <i class="bi bi-check-circle"></i> Guardar Plan
+                        </button>
+                    }
+                </div>
+            </form>
         </div>
-
-        <hr />
-        <h5 class="text-primary mb-3">Alimentos del Plan</h5>
-        <div id="alimentosContainer">
-            <!-- Alimentos dinámicos se agregan aquí -->
-        </div>
-
-        <button type="button" class="btn btn-sm btn-success mb-3" onclick="agregarAlimento()">
-            <i class="bi bi-plus-circle"></i> Agregar Alimento
-        </button>
-        @if (ViewBag.ExistePlan == true)
-        {
-            <div class="alert alert-warning">
-                Ya existe un plan nutricional para este cliente.
-                <button type="submit" name="Sobreescribir" value="true" class="btn btn-danger btn-sm ms-2">
-                    Sobreescribir plan existente
-                </button>
-            </div>
-        }
-
-        <div class="d-flex justify-content-between mt-4">
-            <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver a la lista</a>
-            @if (ViewBag.ExistePlan != true)
-            {
-                <button type="submit" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Guardar Plan</button>
-            }
-
-        </div>
-    </form>
+    </div>
 </div>
 
 @section Scripts {
@@ -64,7 +80,7 @@
         function agregarAlimento() {
             const container = document.getElementById("alimentosContainer");
             const div = document.createElement("div");
-            div.classList.add("card", "shadow-sm", "border-0", "mb-3");
+            div.classList.add("card", "shadow-sm", "border-1", "mb-3");
 
             div.innerHTML = `
                 <div class="card-body">
@@ -113,5 +129,4 @@
             index++;
         }
     </script>
-
 }

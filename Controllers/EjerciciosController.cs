@@ -60,6 +60,7 @@ namespace Tesina.Controllers
             {
                 _context.Add(ejercicio);
                 await _context.SaveChangesAsync();
+                TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
             return View(ejercicio);
@@ -111,6 +112,8 @@ namespace Tesina.Controllers
                         throw;
                     }
                 }
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
+
                 return RedirectToAction(nameof(Index));
             }
             return View(ejercicio);
@@ -145,7 +148,9 @@ namespace Tesina.Controllers
                 _context.Ejercicios.Remove(ejercicio);
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); 
+            TempData["Alerta"] = "✅ El Ejerccio se elimino del sistema.";
+
             return RedirectToAction(nameof(Index));
         }
 

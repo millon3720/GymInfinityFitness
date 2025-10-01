@@ -1,88 +1,95 @@
 ﻿@model FacturaViewModel
-
 @{
     ViewData["Title"] = "Editar Factura";
 }
 
 <div class="container-fluid mt-4">
-    <h4 class="text-warning text-center mb-4">Editar Factura</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <form asp-action="Edit" method="post">
-            <input type="hidden" asp-for="Factura.IdFactura" />
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-receipt"></i> Editar Factura
+        </h4>
+        <div class="card shadow rounded p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Factura.IdFactura" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <h5 class="text-secondary mb-3">Información de la Factura</h5>
 
-            <h5 class="text-secondary mb-3">Información de la Factura</h5>
+                <div class="mb-3">
+                    <label asp-for="Factura.IdUsuario" class="form-label">Cliente</label>
+                    <select asp-for="Factura.IdUsuario" asp-items="Model.UsuariosDisponibles" class="form-select">
+                        <option value="">Seleccione un cliente</option>
+                    </select>
+                    <span asp-validation-for="Factura.IdUsuario" class="text-danger"></span>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="Factura.IdUsuario" class="form-label">Cliente</label>
-                <select asp-for="Factura.IdUsuario" asp-items="Model.UsuariosDisponibles" class="form-select">
-                    <option value="">Seleccione un cliente</option>
-                </select>
-                <span asp-validation-for="Factura.IdUsuario" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="Factura.Fecha" class="form-label">Fecha</label>
+                    <input asp-for="Factura.Fecha" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="Factura.Fecha" class="text-danger"></span>
+                </div>
+                <div class="card shadow rounded p-4">
 
-            <div class="mb-3">
-                <label asp-for="Factura.Fecha" class="form-label">Fecha</label>
-                <input asp-for="Factura.Fecha" class="form-control" type="datetime-local" />
-                <span asp-validation-for="Factura.Fecha" class="text-danger"></span>
-            </div>
+                <h5 class="text-secondary mb-3">Productos o Servicios</h5>
 
-            <h5 class="text-secondary mt-4 mb-3">Productos o Servicios</h5>
-
-            <div id="detallesFactura">
-                @for (int i = 0; i < Model.Detalles.Count; i++)
-                {
-                    var detalle = Model.Detalles[i];
-                    <div class="border rounded p-3 mb-3 shadow-sm">
-                        <input type="hidden" name="Detalles[@i].IdDetalleFactura" value="@detalle.IdDetalleFactura" />
-                        <div class="row">
-                            <div class="col-md-6 mb-2">
-                                <label class="form-label">Producto o Servicio</label>
-                                <select name="Detalles[@i].IdProductoServicio" class="form-select" id="producto-@i"
-                                        onchange="validarDuplicado(@i); calcularSubtotal(@i); mostrarStock(@i); validarStock(@i);">
-                                    <option value="">Seleccione una opción</option>
-                                    @foreach (var p in ViewBag.ProductosExtendidos)
-                                    {
-                                        <option value="@p.id" selected="@(p.id == detalle.IdProductoServicio)">
-                                            @p.nombre - ₡@p.precio.ToString("N2")
-                                        </option>
-                                    }
-                                </select>
-                                <div class="text-muted small" id="stock-@i"></div>
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label">Cantidad</label>
-                                <input type="number" name="Detalles[@i].Cantidad" class="form-control" min="1"
-                                       value="@detalle.Cantidad" id="cantidad-@i"
-                                       onchange="calcularSubtotal(@i); validarStock(@i);" />
-                            </div>
-                            <div class="col-md-3 mb-2">
-                                <label class="form-label">Subtotal</label>
-                                <input type="text" name="Detalles[@i].Subtotal" class="form-control"
-                                       value="@detalle.Subtotal.ToString("N2")" readonly id="subtotal-@i"
-                                       data-subtotal="@detalle.Subtotal.ToString("F2")" />
+                <div id="detallesFactura">
+                    @for (int i = 0; i < Model.Detalles.Count; i++)
+                    {
+                        var detalle = Model.Detalles[i];
+                        <div class="card shadow-sm border-1 mb-3">
+                            <div class="card-body">
+                                <input type="hidden" name="Detalles[@i].IdDetalleFactura" value="@detalle.IdDetalleFactura" />
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <label class="form-label">Producto o Servicio</label>
+                                        <select name="Detalles[@i].IdProductoServicio" class="form-select" id="producto-@i"
+                                                onchange="validarDuplicado(@i); calcularSubtotal(@i); mostrarStock(@i); validarStock(@i);">
+                                            <option value="">Seleccione una opción</option>
+                                            @foreach (var p in ViewBag.ProductosExtendidos)
+                                            {
+                                                <option value="@p.id" selected="@(p.id == detalle.IdProductoServicio)">
+                                                    @p.nombre - ₡@p.precio.ToString("N2")
+                                                </option>
+                                            }
+                                        </select>
+                                        <div class="text-muted small" id="stock-@i"></div>
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label">Cantidad</label>
+                                        <input type="number" name="Detalles[@i].Cantidad" class="form-control" min="1"
+                                               value="@detalle.Cantidad" id="cantidad-@i"
+                                               onchange="calcularSubtotal(@i); validarStock(@i);" />
+                                    </div>
+                                    <div class="col-md-3 mb-2">
+                                        <label class="form-label">Subtotal</label>
+                                        <input type="text" name="Detalles[@i].Subtotal" class="form-control"
+                                               value="@detalle.Subtotal.ToString("N2")" readonly id="subtotal-@i"
+                                               data-subtotal="@detalle.Subtotal.ToString("F2")" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                    }
                     </div>
-                }
-            </div>
+                    <div class="mb-3">
+                        <label asp-for="Factura.Total" class="form-label">Total</label>
+                        <input type="text" asp-for="Factura.Total" class="form-control" id="totalFactura" readonly />
+                        <span asp-validation-for="Factura.Total" class="text-danger"></span>
+                    </div>
+                </div>
 
-            <div class="mb-3">
-                <label asp-for="Factura.Total" class="form-label">Total</label>
-                <input type="text" asp-for="Factura.Total" class="form-control" id="totalFactura" readonly />
-                <span asp-validation-for="Factura.Total" class="text-danger"></span>
-            </div>
+                
 
-            <div class="d-flex justify-content-between mt-4">
-                <a asp-action="Index" class="btn btn-secondary shadow-sm">
-                    <i class="bi bi-arrow-left-circle"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-warning shadow-sm">
-                    <i class="bi bi-pencil-square"></i> Actualizar Factura
-                </button>
-            </div>
-        </form>
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-action="Index" class="btn btn-secondary shadow-sm">
+                        <i class="bi bi-arrow-left-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success shadow-sm">
+                        <i class="bi bi-check-circle"></i> Actualizar Factura
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -90,7 +97,8 @@
     <script>
         const productos = @Html.Raw(Json.Serialize(ViewBag.ProductosExtendidos));
         const contador = @Model.Detalles.Count;
-                function obtenerDatosProducto(id) {
+
+        function obtenerDatosProducto(id) {
             return productos.find(p => p.id == id) || { precio: 0, tipo: "", stock: 0, nombre: "" };
         }
 
@@ -123,12 +131,7 @@
             const select = document.getElementById(`producto-${index}`);
             const datos = obtenerDatosProducto(select.value);
             const label = document.getElementById(`stock-${index}`);
-
-            if (datos.tipo.toLowerCase() === "producto") {
-                label.innerText = `Stock disponible: ${datos.stock}`;
-            } else {
-                label.innerText = "";
-            }
+            label.innerText = datos.tipo.toLowerCase() === "producto" ? `Stock disponible: ${datos.stock}` : "";
         }
 
         function validarDuplicado(index) {
@@ -158,7 +161,6 @@
             }
         }
 
-        // Reutilizás las funciones JS de Create: calcularSubtotal, calcularTotal, mostrarStock, validarDuplicado, validarStock
         for (let i = 0; i < contador; i++) {
             calcularSubtotal(i);
             mostrarStock(i);

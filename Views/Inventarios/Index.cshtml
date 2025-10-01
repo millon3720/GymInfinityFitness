@@ -1,81 +1,149 @@
 ﻿@model IEnumerable<Tesina.Models.ProductoInventarioViewModel>
-
 @{
     ViewData["Title"] = "Inventario de Productos y Servicios";
 }
 
 <div class="container-fluid mt-4">
-    <h4 class="text-primary text-center mb-4">Inventario de Productos y Servicios</h4>
-
     <div class="card shadow rounded p-4 mb-4">
-        <div class="d-flex justify-content-end mb-3">
-            <a asp-action="Create" class="btn btn-success shadow-sm">
-                <i class="bi bi-plus-circle"></i> Registrar nuevo
-            </a>
-        </div>
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-box-seam"></i> Inventario de Productos y Servicios
+        </h4>
+        <div class="card shadow rounded p-4">
 
-        @if (Model.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Tipo</th>
-                            <th>Precio</th>
-                            <th>Cantidad Disponible</th>
-                            <th>Punto de Reorden</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            var requiereReorden = item.Inventario.CantidadDisponible <= item.Inventario.PuntoDeReorden;
-                            <tr class="text-center">
-                                <td>@item.Producto.Nombre</td>
-                                <td>@item.Producto.Tipo</td>
-                                <td>@item.Producto.Precio.ToString("C")</td>
-                                <td>@item.Inventario.CantidadDisponible</td>
-                                <td>@item.Inventario.PuntoDeReorden</td>
-                                <td>
-                                    @if (requiereReorden&& item.Producto.Tipo.ToLower()!="servicio")
-                                    {
-                                        <span class="badge bg-danger">Reabastecer</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">Stock OK</span>
-                                    }
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Producto.IdProductoServicio" title="Detalles">
-                                            <i class="bi bi-info-circle"></i> Ver
-                                        </a>
-                                        <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Producto.IdProductoServicio" title="Editar">
+            <!-- Filtro y botón -->
+            <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filtroInventario" class="form-control" placeholder="Buscar por nombre o tipo..." />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-md-end mt-2 mt-md-0">
+                        <a asp-action="Create" class="btn btn-success shadow-sm">
+                            <i class="bi bi-plus-circle"></i> Registrar nuevo
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-                                            <i class="bi bi-pencil-square"></i> Modificar
-                                        </a>
+            <!-- Mensaje sin resultados -->
+            <div id="sinResultados" class="alert alert-warning text-center d-none">
+                <i class="bi bi-exclamation-circle"></i> No se encontraron productos que coincidan.
+            </div>
 
-                                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Producto.IdProductoServicio">
-                                            <i class="bi bi-trash"></i> Eliminar
-                                        </a>
-                                    </div>
-                                </td>
+            @if (Model.Any())
+            {
+                <!-- Vista escritorio -->
+                <div class="table-responsive d-none d-md-block">
+                    <table id="tablaInventario" class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th class="nombre">Nombre</th>
+                                <th class="tipo">Tipo</th>
+                                <th>Precio</th>
+                                <th>Cantidad Disponible</th>
+                                <th>Punto de Reorden</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var requiereReorden = item.Inventario.CantidadDisponible <= item.Inventario.PuntoDeReorden;
+                                <tr class="text-center">
+                                    <td class="nombre">@item.Producto.Nombre</td>
+                                    <td class="tipo">@item.Producto.Tipo</td>
+                                    <td>@item.Producto.Precio.ToString("C")</td>
+                                    <td>@item.Inventario.CantidadDisponible</td>
+                                    <td>@item.Inventario.PuntoDeReorden</td>
+                                    <td>
+                                        <span class="badge @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "bg-danger" : "bg-success")">
+                                            @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "Reabastecer" : "Stock OK")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-info-circle"></i> Detalles</a>
+                                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-trash"></i> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-warning text-center mt-5">
-                <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
-            </div>
-        }
+                <!-- Vista móvil -->
+                <div class="d-block d-md-none">
+                    @foreach (var item in Model)
+                    {
+                        var requiereReorden = item.Inventario.CantidadDisponible <= item.Inventario.PuntoDeReorden;
+                        <div class="card card-inventario mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary nombre">@item.Producto.Nombre</h5>
+                                <p class="mb-1 tipo"><strong>Tipo:</strong> @item.Producto.Tipo</p>
+                                <p class="mb-1"><strong>Precio:</strong> @item.Producto.Precio.ToString("C")</p>
+                                <p class="mb-1"><strong>Cantidad Disponible:</strong> @item.Inventario.CantidadDisponible</p>
+                                <p class="mb-1"><strong>Punto de Reorden:</strong> @item.Inventario.PuntoDeReorden</p>
+                                <p class="mb-3">
+                                    <strong>Estado:</strong>
+                                    <span class="badge @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "bg-danger" : "bg-success")">
+                                        @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "Reabastecer" : "Stock OK")
+                                    </span>
+                                </p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-info-circle"></i> Detalles</a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-trash"></i> Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay productos registrados.
+                </div>
+            }
+        </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("filtroInventario").addEventListener("input", function () {
+        const filtro = this.value.toLowerCase();
+
+        const filas = document.querySelectorAll("#tablaInventario tbody tr");
+        let coincidenciasTabla = 0;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector(".nombre").textContent.toLowerCase();
+            const tipo = fila.querySelector(".tipo").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro) || tipo.includes(filtro);
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasTabla++;
+        });
+
+        const cards = document.querySelectorAll(".card-inventario");
+        let coincidenciasCards = 0;
+
+        cards.forEach(card => {
+            const nombre = card.querySelector(".nombre").textContent.toLowerCase();
+            const tipo = card.querySelector(".tipo").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro) || tipo.includes(filtro);
+            card.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasCards++;
+        });
+
+        const totalCoincidencias = coincidenciasTabla + coincidenciasCards;
+        const mensaje = document.getElementById("sinResultados");
+        if (mensaje) {
+            mensaje.classList.toggle("d-none", totalCoincidencias > 0);
+        }
+    });
+</script>

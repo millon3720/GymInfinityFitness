@@ -1,73 +1,146 @@
 ﻿@model IEnumerable<Eventos>
-
 @{
     ViewData["Title"] = "Eventos";
 }
 
 <div class="container-fluid mt-4">
-    <h4 class="text-primary text-center mb-4">Eventos Registrados</h4>
     <div class="card shadow rounded p-4 mb-4">
-        <div class="d-flex justify-content-end mb-3">
-            <a asp-action="Create" class="btn btn-success shadow-sm">
-                <i class="bi bi-plus-circle"></i> Nuevo Evento
-            </a>
-        </div>
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-calendar-event"></i> Eventos Registrados
+        </h4>
+        <div class="card shadow rounded p-4">
 
-        @if (Model.Any())
-        {
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover shadow-sm rounded">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Fecha</th>
-                            <th>Imagen</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var evento in Model)
-                        {
-                            <tr class="text-center">
-                                <td>@evento.Nombre</td>
-                                <td>@evento.FechaEvento.ToString("dd/MM/yyyy HH:mm")</td>
-                                <td>
+            <!-- Filtro y botón -->
+            <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+                <div class="row align-items-center mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-search"></i></span>
+                            <input type="text" id="filtroEventos" class="form-control" placeholder="Buscar por nombre..." />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-12 text-md-end mt-2 mt-md-0">
+                        <a asp-action="Create" class="btn btn-success shadow-sm">
+                            <i class="bi bi-plus-circle"></i> Nuevo Evento
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensaje sin resultados -->
+            <div id="sinResultados" class="alert alert-warning text-center d-none">
+                <i class="bi bi-exclamation-circle"></i> No se encontraron eventos que coincidan.
+            </div>
+
+            @if (Model.Any())
+            {
+                <!-- Vista escritorio -->
+                <div class="table-responsive d-none d-md-block">
+                    <table id="tablaEventos" class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th class="text-start nombre">Nombre</th>
+                                <th>Fecha</th>
+                                <th>Imagen</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var evento in Model)
+                            {
+                                <tr class="text-center">
+                                    <td class="text-start nombre">@evento.Nombre</td>
+                                    <td>@evento.FechaEvento.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        @if (evento.Imagen != null)
+                                        {
+                                            <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })" width="80" class="rounded shadow-sm" />
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Sin imagen</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@evento.IdEvento"><i class="bi bi-info-circle"></i> Detalles</a>
+                                            <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@evento.IdEvento"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@evento.IdEvento"><i class="bi bi-trash"></i> Eliminar</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Vista móvil -->
+                <div class="d-block d-md-none">
+                    @foreach (var evento in Model)
+                    {
+                        <div class="card card-evento mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary nombre">@evento.Nombre</h5>
+                                <p class="mb-1"><strong>Fecha:</strong> @evento.FechaEvento.ToString("dd/MM/yyyy HH:mm")</p>
+                                <p class="mb-3">
+                                    <strong>Imagen:</strong>
                                     @if (evento.Imagen != null)
                                     {
-                                        <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })" width="80" class="rounded shadow-sm" />
+                                        <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })" width="100" class="rounded shadow-sm mt-2" />
                                     }
                                     else
                                     {
                                         <span class="text-muted">Sin imagen</span>
                                     }
-                                </td>
-                                <td class="text-center">
-                                    <div class="btn-group">
-                                        <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@evento.IdEvento" title="Detalles">
-                                            <i class="bi bi-info-circle"></i> Ver
-                                        </a>
-                                        <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@evento.IdEvento" title="Editar">
-
-                                            <i class="bi bi-pencil-square"></i> Modificar
-                                        </a>
-
-                                        <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@evento.IdEvento">
-                                            <i class="bi bi-trash"></i> Eliminar
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-warning text-center mt-5">
-                <i class="bi bi-exclamation-circle"></i> No hay Eventos registrados.
-            </div>
-        }
+                                </p>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@evento.IdEvento"><i class="bi bi-info-circle"></i> Detalles</a>
+                                    <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@evento.IdEvento"><i class="bi bi-pencil-square"></i> Modificar</a>
+                                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@evento.IdEvento"><i class="bi bi-trash"></i> Eliminar</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay eventos registrados.
+                </div>
+            }
+        </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("filtroEventos").addEventListener("input", function () {
+        const filtro = this.value.toLowerCase();
+
+        const filas = document.querySelectorAll("#tablaEventos tbody tr");
+        let coincidenciasTabla = 0;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector(".nombre").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro);
+            fila.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasTabla++;
+        });
+
+        const cards = document.querySelectorAll(".card-evento");
+        let coincidenciasCards = 0;
+
+        cards.forEach(card => {
+            const nombre = card.querySelector(".nombre").textContent.toLowerCase();
+            const coincide = nombre.includes(filtro);
+            card.style.display = coincide ? "" : "none";
+            if (coincide) coincidenciasCards++;
+        });
+
+        const totalCoincidencias = coincidenciasTabla + coincidenciasCards;
+        const mensaje = document.getElementById("sinResultados");
+        if (mensaje) {
+            mensaje.classList.toggle("d-none", totalCoincidencias > 0);
+        }
+    });
+</script>

@@ -40,7 +40,7 @@ namespace Tesina.Controllers
                     IdRutina = r.IdRutina,
                     Nombre = r.Nombre,
                     Descripcion = r.Descripcion
-                }).ToList()
+                }).OrderBy(a => a.Nombre).ToList()
             };
 
             return View(model);
@@ -91,6 +91,7 @@ namespace Tesina.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction("Details", "Usuarios", new { id = model.IdUsuario });
         }
         
@@ -178,6 +179,7 @@ namespace Tesina.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction("Index");
         }
 
@@ -257,7 +259,7 @@ namespace Tesina.Controllers
 
                     _context.RutinaEjercicios.Add(rutinaEjercicio);
                 }
-
+                TempData["Alerta"] = "✅ Información actualizada con éxito.";
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -300,6 +302,8 @@ namespace Tesina.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ La Rutina se elimino del sistema.";
+
             return RedirectToAction(nameof(Index));
         }
 

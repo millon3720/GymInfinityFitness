@@ -161,5 +161,37 @@ namespace Tesina.Controllers
             await cliente.SendAsync(mensaje);
             await cliente.DisconnectAsync(true);
         }
+        public async Task EnviarRecuperacionContrasenaAsync(string correoDestino, string nombreUsuario, string nuevaContrasena)
+        {
+            var mensaje = new MimeMessage();
+            mensaje.From.Add(new MailboxAddress("Infinity Fitness", _email.User));
+            mensaje.To.Add(new MailboxAddress(nombreUsuario, correoDestino));
+            mensaje.Subject = "Recuperación de contraseña - Infinity Fitness";
+
+            var builder = new BodyBuilder
+            {
+                TextBody = $@"
+                    Hola {nombreUsuario},
+
+                    Hemos recibido una solicitud para recuperar tu contraseña.
+
+                    Tu nueva contraseña temporal es: {nuevaContrasena}
+
+                    Por favor, inicia sesión y cámbiala lo antes posible desde tu perfil.
+
+                    Si no solicitaste este cambio, comunicate con nosotros de inmediato.
+
+                    Gracias por confiar en Infinity Fitness."
+            };
+
+            mensaje.Body = builder.ToMessageBody();
+
+            using var cliente = new SmtpClient();
+            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await cliente.AuthenticateAsync(_email.User, _email.Password);
+            await cliente.SendAsync(mensaje);
+            await cliente.DisconnectAsync(true);
+        }
+
     }
 }

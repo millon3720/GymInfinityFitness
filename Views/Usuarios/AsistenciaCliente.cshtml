@@ -1,32 +1,81 @@
 ﻿@model List<Tesina.Models.Asistencias>
+@{
+    ViewData["Title"] = "Registro de Asistencia";
 
-@if (Model != null)
-{
-    <div class="card shadow rounded p-4">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped">
-                <thead class="table-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Fecha de Ingreso</th>
-                        <th>Fecha de Salida</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.IdAsistencia</td>
-                            <td>@item.FechaIngreso</td>
-                            <td>@item.FechaSalida</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    int Contador = 1;
+}
+<div class="container-fluid mt-4">
+    <h4 class="text-primary text-center mb-4">Registro de Asistencia</h4>
+    <div class="card shadow rounded p-4 mb-4">
+        <div class="card shadow rounded p-4">
+            @if (Model != null)
+            {
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha de Ingreso</th>
+                                <th>Fecha de Salida</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-center">
+                                    <td>@Contador</td>
+                                    @{
+                                        Contador++;
+                                    }
+                                    <td>@item.FechaIngreso.ToString("dd/MM/yyyy HH:mm")</td>
+                                    @if (item.FechaSalida == null)
+                                    {
+                                        <td><span class="badge bg-warning text-dark">Pendiente de salida</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td>@(item.FechaSalida?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-block d-md-none mt-4">
+                    <div class="row row-cols-1 g-3">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col">
+                                <div class="card shadow-sm border-1 h-100">
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            <strong>Fecha de Ingreso:</strong><br />
+                                            @item.FechaIngreso.ToString("dd/MM/yyyy HH:mm")<br />
+                                            <strong>Fecha de Salida:</strong><br />
+                                            @if (item.FechaSalida == null)
+                                            {
+                                                <span class="badge bg-warning text-dark">Pendiente de salida</span>
+                                            }
+                                            else
+                                            {
+                                                @(item.FechaSalida?.ToString("dd/MM/yyyy HH:mm"))
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay registros de asistencia.
+                </div>
+            }
         </div>
     </div>
-}
-else
-{
-    <p class="text-muted">No hay registros de asistencia.</p>
-}
+</div>
