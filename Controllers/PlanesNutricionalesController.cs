@@ -63,16 +63,21 @@ namespace Tesina.Controllers
             }
 
             var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.IdUsuario == id);
-            var alimentos = await _context.AlimentosPlanNutricional
-               .Where(a => a.IdPlan == plan.IdPlan)
-               .ToListAsync();
-
-            var viewModel = new PlanAlimenticioViewModel
+                .FirstOrDefaultAsync(p => p.IdUsuario == id); 
+            var alimentos = new List<AlimentosPlanNutricional>();
+            if (plan != null)
             {
-                Plan = plan,
-                Alimentos = alimentos
-            }; 
+                alimentos = await _context.AlimentosPlanNutricional
+                   .Where(a => a.IdPlan == plan.IdPlan)
+                   .ToListAsync();
+
+            }
+
+                var viewModel = new PlanAlimenticioViewModel
+                {
+                    Plan = plan,
+                    Alimentos = alimentos
+                }; 
             if (plan == null)
             {
                 return View(viewModel);
@@ -131,7 +136,7 @@ namespace Tesina.Controllers
                         TempData["Alimentos"].ToString()
                     );
                 }
-                // Asignar el IdPlan generado a cada alimento
+                 // Asignar el IdPlan generado a cada alimento
                 foreach (var alimento in model.Alimentos)
                 {
                     alimento.IdPlan = plan.IdPlan;
@@ -144,11 +149,9 @@ namespace Tesina.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", model.Plan.IdUsuario);
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "Cedula", model.Plan.IdUsuario);
             return View(model);
         }
-
-
 
         // GET: PlanesNutricionales/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -167,7 +170,7 @@ namespace Tesina.Controllers
                 Alimentos = plan.Alimentos.ToList()
             };
             ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", plan.IdUsuario);
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto", plan.IdUsuario);
             return View(viewModel);
         }
 
@@ -232,7 +235,7 @@ namespace Tesina.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "NombreCompleto", model.Plan.IdUsuario);
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto", model.Plan.IdUsuario);
             return View(model);
         }
 

@@ -22,6 +22,6 @@ namespace Tesina.Models
 
         [Display(Name = "Imagen del evento")]
         public byte[]? Imagen { get; set; }
-        public ICollection<ClienteEvento> Inscripciones { get; set; }
+        public ICollection<ClienteEvento>? Inscripciones { get; set; }
     }
 }

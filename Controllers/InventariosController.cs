@@ -23,7 +23,7 @@ namespace Tesina.Controllers
         public async Task<IActionResult> Index()
         {
             var productos = await _context.ProductosServicios
-                .Include(p => p.Inventario)
+                .Include(p => p.Inventario).OrderBy(a => a.Nombre)
                 .ToListAsync();
 
             var viewModel = productos

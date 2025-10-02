@@ -26,14 +26,25 @@
                     <strong>Descripción:</strong><br />
                     <span class="text-muted">@Model.Producto.Descripcion</span>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <strong>Cantidad Disponible:</strong><br />
-                    <span class="text-muted">@Model.Inventario.CantidadDisponible</span>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <strong>Punto de Reorden:</strong><br />
-                    <span class="text-muted">@Model.Inventario.PuntoDeReorden</span>
-                </div>
+                @if (@Model.Producto.Tipo == "Producto")
+                {
+                    <div class="col-md-6 mb-3">
+                        <strong>Cantidad Disponible:</strong><br />
+                        <span class="text-muted">@Model.Inventario.CantidadDisponible</span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Punto de Reorden:</strong><br />
+                        <span class="text-muted">@Model.Inventario.PuntoDeReorden</span>
+                    </div>
+                }
+                @if (@Model.Producto.Tipo == "Membresía")
+                {
+                    <div class="col-md-6 mb-3">
+                        <strong>Duración (en días):</strong><br />
+                        <span class="text-muted">@Model.Inventario.CantidadDisponible</span>
+                    </div>
+                   
+                }
             </div>
 
             <div class="d-flex justify-content-between mt-4">

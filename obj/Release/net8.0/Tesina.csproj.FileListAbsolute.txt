@@ -397,7 +397,6 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Ruti
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Rutinas\Edit.cshtml
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Rutinas\Index.cshtml
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Shared\Error.cshtml
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Shared\_AlimentosPlanNutricional.cshtml
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Shared\_Layout.cshtml
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Shared\_ValidationScriptsPartial.cshtml
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Views\Usuarios\Create.cshtml

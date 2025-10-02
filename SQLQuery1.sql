@@ -1,11 +1,11 @@
-CREATE DATABASE GymInfinityFitness1;
+CREATE DATABASE GymInfinityFitness;
 GO
-USE GymInfinityFitness1;
+USE GymInfinityFitness;
 GO
 
 -- Usuarios generales
 CREATE TABLE Usuarios (
-    IdUsuario INT PRIMARY KEY IDENTITY(1,1),
+    IdUsuario INT PRIMARY KEY IDENTITY(1000,1),
     Cedula NVARCHAR(20) UNIQUE NOT NULL,
     NombreCompleto NVARCHAR(100) NOT NULL,
     FechaNacimiento DATE,

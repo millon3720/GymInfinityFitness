@@ -157,6 +157,53 @@ namespace Tesina.Controllers
                     _context.Inventario.Update(producto.Inventario);
                 }
             }
+            var membresiaFacturada = model.Detalles
+    .FirstOrDefault(d => d.ProductoServicio.Tipo.ToLower() == "membresía");
+
+            if (membresiaFacturada != null)
+            {
+                var producto = await _context.ProductosServicios
+                    .Include(p => p.Inventario)
+                    .FirstOrDefaultAsync(p => p.IdProductoServicio == membresiaFacturada.IdProductoServicio);
+
+                var membresisas = await _context.Mensualidades
+                    .Where(m => m.IdUsuario == model.Factura.IdUsuario)
+                    .OrderByDescending(m => m.FechaFin)
+                    .FirstOrDefaultAsync();
+
+                var diasDuracion = (int)(producto?.Inventario?.CantidadDisponible ?? 0);
+
+                if (diasDuracion > 0)
+                {
+                    if (membresisas != null)
+                    {
+                        if (membresisas.FechaFin <= DateTime.Now)
+                        {
+                            membresisas.FechaInicio = DateTime.Now;
+                            membresisas.FechaFin = DateTime.Now.AddDays(diasDuracion);
+                        }
+                        else
+                        {
+                            var fechaBase = membresisas.FechaFin;
+                            membresisas.FechaInicio = fechaBase;
+                            membresisas.FechaFin = fechaBase.Value.AddDays(diasDuracion);
+                        }
+
+                        _context.Mensualidades.Update(membresisas);
+                    }
+                    else
+                    {
+                        var nuevaMensualidad = new Mensualidades
+                        {
+                            IdUsuario = model.Factura.IdUsuario,
+                            FechaInicio = DateTime.Now,
+                            FechaFin = DateTime.Now.AddDays(diasDuracion)
+                        };
+
+                        _context.Mensualidades.Add(nuevaMensualidad);
+                    }
+                }
+            }
 
             await _context.SaveChangesAsync();
 

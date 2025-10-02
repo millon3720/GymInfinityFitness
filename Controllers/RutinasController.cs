@@ -51,7 +51,7 @@ namespace Tesina.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GuardarAsignar(AsignarRutinaViewModel model)
         {
-            if (!ModelState.IsValid || model.RutinaSeleccionada == 0)
+            if (model.RutinaSeleccionada == 0)
             {
                 ModelState.AddModelError("", "Debes seleccionar una rutina.");
                 // Recargar las rutinas en caso de error
@@ -62,6 +62,7 @@ namespace Tesina.Controllers
                     Nombre = r.Nombre,
                     Descripcion = r.Descripcion
                 }).ToList();
+                TempData["Alerta"] = "Por Favor Seleccione Una Rutina.";
                 return View("AsignarRutina", model);
             }
 
@@ -208,7 +209,7 @@ namespace Tesina.Controllers
                 }).ToList()
             };
 
-            ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
+            ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync(), "IdEjercicio", "Nombre");
             ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
 
             return View(viewModel);
@@ -223,7 +224,7 @@ namespace Tesina.Controllers
 
             if (!ModelState.IsValid || model.Ejercicios == null || !model.Ejercicios.Any())
             {
-                ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.ToListAsync(), "IdEjercicio", "Nombre");
+                ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync(), "IdEjercicio", "Nombre");
                 ViewBag.DiasSemana = new SelectList(new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
 
                 return View(model);

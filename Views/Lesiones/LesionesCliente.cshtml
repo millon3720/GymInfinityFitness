@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Tesina.Models.Lesion>
+@{
+    ViewData["Title"] = "Lista de Lesiones"; 
+    var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow rounded p-4 mb-4">
+        <h4 class="text-primary text-center mb-4">
+            <i class="bi bi-clipboard-plus"></i> Registro de Lesiones
+        </h4>
+        <div class="card shadow rounded p-4">
+
+            <div class="text-end mb-3">
+                <a asp-action="Create" asp-route-id="@idUsuario" asp-controller="Lesiones" class="btn btn-success shadow-sm">
+                    <i class="bi bi-plus-circle"></i> Agregar Lesión
+                </a>
+            </div>
+
+            @if (Model.Any())
+            {
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="table-primary text-center">
+                            <tr>
+                                <th>Descripción</th>
+                                <th>Fecha de Diagnóstico</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr class="text-center">
+                                    <td>@item.Descripcion</td>
+                                    <td>@item.FechaDiagnostico.ToShortDateString()</td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a class="btn btn-sm btn-warning" asp-controller="Lesiones" asp-action="Edit" asp-route-id="@item.IdLesion">
+                                                <i class="bi bi-pencil-square"></i> Modificar
+                                            </a>
+                                            <a class="btn btn-sm btn-danger" asp-controller="Lesiones" asp-action="Delete" asp-route-id="@item.IdLesion">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-block d-md-none mt-4">
+                    <div class="row row-cols-1 g-3">
+                        @foreach (var item in Model)
+                        {
+                            <div class="col">
+                                <div class="card shadow-sm border-1 h-100">
+                                    <div class="card-body">
+                                        <p class="card-text">
+                                            <strong>Descripcion:</strong><br />
+                                            @item.Descripcion<br />
+                                            <strong>Fecha de Diagnostico:</strong><br />
+                                            @item.FechaDiagnostico.ToString("dd/MM/yyyy")<br />
+                                            <div class="btn-group">
+                                                <a class="btn btn-sm btn-warning" asp-controller="Lesiones" asp-action="Edit" asp-route-id="@item.IdLesion">
+                                                    <i class="bi bi-pencil-square"></i> Modificar
+                                                </a>
+                                                <a class="btn btn-sm btn-danger" asp-controller="Lesiones" asp-action="Delete" asp-route-id="@item.IdLesion">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </a>
+                                            </div>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning text-center mt-5">
+                    <i class="bi bi-exclamation-circle"></i> No hay lesiones registradas.
+                </div>
+            }
+        </div>
+        @if (TempData["Alerta"] != null)
+        {
+            <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                window.addEventListener('load', function () {
+                    var toastEl = document.getElementById('liveToast');
+                    if (toastEl) {
+                        var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                        toast.show();
+                    }
+                });
+            </script>
+        }
+    </div>
+</div>
+
+

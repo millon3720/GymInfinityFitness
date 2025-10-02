@@ -20,9 +20,9 @@ namespace Tesina.Controllers
         }
 
         // GET: Lesiones
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> LesionesCliente(int? Id)
         {
-            var gymDbContext = _context.Lesiones.Include(l => l.Usuario).OrderBy(a => a.FechaDiagnostico);
+            var gymDbContext = _context.Lesiones.Where(l => l.IdUsuario==Id).OrderBy(a => a.FechaDiagnostico);
             return View(await gymDbContext.ToListAsync());
         }
 
@@ -78,15 +78,19 @@ namespace Tesina.Controllers
                 await _context.SaveChangesAsync();
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
                 // Usa el IdUsuario de la primera lesión para redirigir
-                return RedirectToAction("Details", "Usuarios", new { id = model.Lesion.First().IdUsuario });
+                if (User.HasClaim("Rol", "Cliente"))
+                {
+                    return RedirectToAction("LesionesCliente", "Lesiones", new { id = model.Lesion.First().IdUsuario });
+                }
+                if (User.HasClaim("Rol", "Entrenador"))
+                {
+                    return RedirectToAction("Details", "Usuarios", new { id = model.Lesion.First().IdUsuario });
+                }
             }
 
             ViewBag.Usuarios = new SelectList(_context.Usuarios.Where(u => u.Rol == "Cliente"), "IdUsuario", "NombreCompleto");
             return View(model);
         }
-
-
-
         // GET: Lesiones/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -135,8 +139,14 @@ namespace Tesina.Controllers
                     }
                 }
                 TempData["Alerta"] = "✅ Información actualizada con éxito.";
-
-                return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+                if (User.HasClaim("Rol", "Cliente"))
+                {
+                    return RedirectToAction("LesionesCliente", "Lesiones", new { id = lesion.IdUsuario });
+                }
+                if (User.HasClaim("Rol", "Entrenador"))
+                {
+                    return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+                }
             }
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", lesion.IdUsuario);
             return View(lesion);
@@ -174,7 +184,14 @@ namespace Tesina.Controllers
 
             await _context.SaveChangesAsync(); 
             TempData["Alerta"] = "✅ La Lesion se elimino del sistema.";
-
+            if (User.HasClaim("Rol", "Cliente"))
+            {
+                return RedirectToAction("LesionesCliente", "Lesiones", new { id = lesion.IdUsuario });
+            }
+            if (User.HasClaim("Rol", "Entrenador"))
+            {
+                return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+            }
             return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
         }
 

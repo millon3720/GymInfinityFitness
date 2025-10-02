@@ -1,20 +1,38 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Tesina.Data;
 
 namespace Tesina.Controlador
 {
     public class HomeController : Controller
     {
-        // GET: HomeController
-        public IActionResult Index()
+        // GET: HomeController 
+        private readonly GymDbContext _context;
+
+        public HomeController(GymDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<IActionResult> Index()
         {
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Login");// Página para usuarios logueados
             }
-            return View();
+            var eventos = await _context.Eventos
+                .Where(e => e.FechaEvento >= DateTime.Now)
+                .OrderBy(e => e.FechaEvento)
+                .ToListAsync(); 
+            return View(eventos);
         }
-       
+
+        public IActionResult VerImagen(int id)
+        {
+            var evento = _context.Eventos.FirstOrDefault(e => e.IdEvento == id);
+            if (evento?.Imagen == null) return NotFound();
+            return File(evento.Imagen, "image/jpeg"); // o "image/png"
+        }
 
         // GET: HomeController/Details/5
         public ActionResult Details(int id)

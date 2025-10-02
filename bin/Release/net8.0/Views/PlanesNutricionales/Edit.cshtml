@@ -13,81 +13,83 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <input type="hidden" asp-for="Plan.IdPlan" />
                 <div class=" row">
-                <div class=" col-md-4 mb-3">
-                    <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
-                    <select asp-for="Plan.IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
-                    <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
-                </div>
+                    <div class=" col-md-4 mb-3">
+                        <label asp-for="Plan.IdUsuario" class="form-label">Cliente</label>
+                        <select asp-for="Plan.IdUsuario" class="form-select" asp-items="ViewBag.IdUsuario"></select>
+                        <span asp-validation-for="Plan.IdUsuario" class="text-danger"></span>
+                    </div>
 
-                <div class=" col-md-4 mb-3">
-                    <label asp-for="Plan.Descripcion" class="form-label"></label>
-                    <input asp-for="Plan.Descripcion" class="form-control" placeholder="Descripción del Plan" />
-                    <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
-                </div>
+                    <div class=" col-md-4 mb-3">
+                        <label asp-for="Plan.Descripcion" class="form-label"></label>
+                        <input asp-for="Plan.Descripcion" class="form-control" placeholder="Descripción del Plan" />
+                        <span asp-validation-for="Plan.Descripcion" class="text-danger"></span>
+                    </div>
 
-                <div class=" col-md-4 mb-3">
-                    <label asp-for="Plan.FechaAsignacion" class="form-label"></label>
-                    <input asp-for="Plan.FechaAsignacion" class="form-control" type="date" />
-                    <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
+                    <div class=" col-md-4 mb-3">
+                        <label asp-for="Plan.FechaAsignacion" class="form-label"></label>
+                        <input asp-for="Plan.FechaAsignacion" class="form-control" type="date" />
+                        <span asp-validation-for="Plan.FechaAsignacion" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="card shadow rounded p-4">
 
-                <h5 class="text-primary  mb-3">Alimentos Asignados</h5>
-                <div id="alimentosContainer">
-                    @for (int i = 0; i < Model.Alimentos.Count; i++)
-                    {
-                        <div class="card shadow-sm border-1 mb-3 alimento-item">
-                            <div class="card-body">
-                                <input type="hidden" name="Alimentos[@i].Id" value="@Model.Alimentos[i].Id" />
-                                <div class="row g-3">
-                                    <div class="col-md-2">
-                                        <label class="form-label">Día</label>
-                                        <select name="Alimentos[@i].DiaSemana" class="form-select">
-                                            @foreach (var dia in ViewBag.DiasSemana as SelectList)
-                                            {
-                                                @if (dia.Text == Model.Alimentos[i].DiaSemana.ToString())
+                    <h5 class="text-primary  mb-3">Alimentos Asignados</h5>
+                    <div id="alimentosContainer">
+                        @for (int i = 0; i < Model.Alimentos.Count; i++)
+                        {
+                            <div class="card shadow-sm border-1 mb-3 alimento-item">
+                                <div class="card-body">
+                                    <input type="hidden" name="Alimentos[@i].Id" value="@Model.Alimentos[i].Id" />
+                                    <div class="row g-3">
+                                        <div class="col-md-2">
+                                            <label class="form-label">Día</label>
+                                            <select name="Alimentos[@i].DiaSemana" class="form-select">
+                                                @foreach (var dia in ViewBag.DiasSemana as SelectList)
                                                 {
-                                                    <option value="@dia.Text" selected>@dia.Text</option>
+                                                    @if (dia.Text == Model.Alimentos[i].DiaSemana.ToString())
+                                                    {
+                                                        <option value="@dia.Text" selected>@dia.Text</option>
 
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@dia.Text">@dia.Text</option>
+                                                    }
                                                 }
-                                                else
-                                                {
-                                                    <option value="@dia.Text">@dia.Text</option>
-                                                }
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Comida</label>
-                                        <input type="text" name="Alimentos[@i].Comida" value="@Model.Alimentos[i].Comida" class="form-control" />
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Hora Estimada</label>
-                                        <input type="time" name="Alimentos[@i].HoraEstimada" value="@(Model.Alimentos[i].HoraEstimada?.ToString(@"hh\:mm"))" class="form-control" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Alimento</label>
-                                        <input type="text" name="Alimentos[@i].Alimento" value="@Model.Alimentos[i].Alimento" class="form-control" />
-                                    </div>
-                                    <div class="col-md-2">
-                                        <label class="form-label">Porciones</label>
-                                        <input type="text" name="Alimentos[@i].Porciones" value="@Model.Alimentos[i].Porciones" class="form-control" />
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label">Comentarios</label>
-                                        <input type="text" name="Alimentos[@i].Comentarios" value="@Model.Alimentos[i].Comentarios" class="form-control" />
-                                    </div>
-                                    <div class="col-12 text-end">
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.alimento-item').remove()">
-                                            <i class="bi bi-trash"></i> Eliminar
-                                        </button>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Comida</label>
+                                            <input type="text" name="Alimentos[@i].Comida" value="@Model.Alimentos[i].Comida" class="form-control" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Hora Estimada</label>
+                                            <input type="time" name="Alimentos[@i].HoraEstimada" value="@(Model.Alimentos[i].HoraEstimada?.ToString(@"hh\:mm"))" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Alimento</label>
+                                            <input type="text" name="Alimentos[@i].Alimento" value="@Model.Alimentos[i].Alimento" class="form-control" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label">Porciones</label>
+                                            <input type="text" name="Alimentos[@i].Porciones" value="@Model.Alimentos[i].Porciones" class="form-control" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label">Comentarios</label>
+                                            <input type="text" name="Alimentos[@i].Comentarios" value="@Model.Alimentos[i].Comentarios" class="form-control" />
+                                        </div>
+                                        <div class="col-12 text-end">
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.alimento-item').remove();">
+                                                <i class="bi bi-trash"></i> Eliminar
+                                            </button>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
                     </div>
+
                     <div class="mb-3">
                         <button type="button" class="btn btn-success shadow-sm" onclick="agregarAlimento()">
                             <i class="bi bi-plus-circle"></i> Agregar Alimento
@@ -95,7 +97,7 @@
                     </div>
                 </div>
 
-                
+
 
                 <div class="d-flex justify-content-between mt-4">
                     <a asp-action="Index" class="btn btn-secondary shadow-sm">
@@ -111,74 +113,72 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        let index = @Model.Alimentos.Count;
+                let index = @Model.Alimentos.Count;
 
-        function agregarAlimento() {
-            const container = document.getElementById("alimentosContainer");
-            const div = document.createElement("div");
-            div.classList.add("card", "shadow-sm", "border-1", "mb-3", "alimento-item");
+                function agregarAlimento() {
+                    const container = document.getElementById("alimentosContainer");
+                    const div = document.createElement("div");
+                    div.classList.add("card", "shadow-sm", "border-1", "mb-3", "alimento-item");
 
-            div.innerHTML = `
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-2">
-                            <label class="form-label">Día</label>
-                            <select name="Alimentos[${index}].DiaSemana" class="form-select">
-                                <option value="Lunes">Lunes</option>
-                                <option value="Martes">Martes</option>
-                                <option value="Miércoles">Miércoles</option>
-                                <option value="Jueves">Jueves</option>
-                                <option value="Viernes">Viernes</option>
-                                <option value="Sábado">Sábado</option>
-                                <option value="Domingo">Domingo</option>
-                            </select>
+                    div.innerHTML = `
+                        <div class="card-body">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-2">
+                                    <label class="form-label">Día</label>
+                                    <select name="Alimentos[${index}].DiaSemana" class="form-select">
+                                        <option value="Lunes">Lunes</option>
+                                        <option value="Martes">Martes</option>
+                                        <option value="Miércoles">Miércoles</option>
+                                        <option value="Jueves">Jueves</option>
+                                        <option value="Viernes">Viernes</option>
+                                        <option value="Sábado">Sábado</option>
+                                        <option value="Domingo">Domingo</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Comida</label>
+                                    <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Hora Estimada</label>
+                                    <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Alimento</label>
+                                    <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">Porciones</label>
+                                    <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Comentarios</label>
+                                    <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
+                                </div>
+                                <input type="hidden" name="Alimentos[${index}].Id" value="0" />
+                                <input type="hidden" name="Alimentos[${index}].IdPlan" value="@Model.Plan.IdPlan" />
+                                <div class="col-12 text-end">
+                                    <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.alimento-item').remove();">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Comida</label>
-                            <input type="text" name="Alimentos[${index}].Comida" class="form-control" />
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Hora Estimada</label>
-                            <input type="time" name="Alimentos[${index}].HoraEstimada" class="form-control" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Alimento</label>
-                            <input type="text" name="Alimentos[${index}].Alimento" class="form-control" />
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Porciones</label>
-                            <input type="text" name="Alimentos[${index}].Porciones" class="form-control" />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Comentarios</label>
-                            <input type="text" name="Alimentos[${index}].Comentarios" class="form-control" />
-                        </div>
-                        <input type="hidden" name="Alimentos[${index}].Id" value="0" />
-                        <input type="hidden" name="Alimentos[${index}].IdPlan" value="@Model.Plan.IdPlan" />
-                        <div class="col-12 text-end">
-                            <button type="button" class="btn btn-danger btn-sm mt-2" onclick="this.closest('.alimento-item').remove()">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-            index++;
-        }
+                    `;
+                    container.appendChild(div);
+                    index++;
+                }
 
-        document.querySelector("form").addEventListener("submit", function () {
+                
+                   document.querySelector("form").addEventListener("submit", function () {
             const items = document.querySelectorAll(".alimento-item");
             items.forEach((item, i) => {
-                item.querySelectorAll("input, select, textarea").forEach(input => {
+                item.querySelectorAll("select, input").forEach(input => {
                     const name = input.getAttribute("name");
                     if (name) {
-                        const newName = name.replace(/
-
-\[\d+\]
-
-/, `[${i}]`);
+                        const newName = name.replace(/\[\d+\]/, `[${i}]`);
                         input.setAttribute("name", newName);
                     }
                 });

@@ -192,6 +192,37 @@ namespace Tesina.Controllers
             await cliente.SendAsync(mensaje);
             await cliente.DisconnectAsync(true);
         }
+        public async Task EnviarNotificacionRegistroAsync(string correoDestino, string nombreUsuario, string contrasenaTemporal)
+        {
+            var mensaje = new MimeMessage();
+            mensaje.From.Add(new MailboxAddress("Infinity Fitness", _email.User));
+            mensaje.To.Add(new MailboxAddress(nombreUsuario, correoDestino));
+            mensaje.Subject = "Bienvenido a Infinity Fitness";
+
+            var builder = new BodyBuilder
+            {
+                TextBody = $@"
+                    Hola {nombreUsuario},
+
+                    Tu cuenta en Infinity Fitness ha sido creada exitosamente.
+
+                    Tu contraseña es: {contrasenaTemporal}
+
+                    Podés iniciar sesión en el sistema y cambiarla desde tu perfil en cualquier momento.
+
+                    Si no reconocés este registro, comunicate con nosotros de inmediato.
+
+                    ¡Gracias por formar parte de Infinity Fitness!"
+            };
+
+            mensaje.Body = builder.ToMessageBody();
+
+            using var cliente = new SmtpClient();
+            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await cliente.AuthenticateAsync(_email.User, _email.Password);
+            await cliente.SendAsync(mensaje);
+            await cliente.DisconnectAsync(true);
+        }
 
     }
 }

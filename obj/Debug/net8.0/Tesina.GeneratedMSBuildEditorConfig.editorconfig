@@ -52,6 +52,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Asistencias/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNpc3RlbmNpYXNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Asistencias/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNpc3RlbmNpYXNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Asistencias/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNpc3RlbmNpYXNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Asistencias/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNpc3RlbmNpYXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Asistencias/RegistrarAsistencia.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXNpc3RlbmNpYXNcUmVnaXN0cmFyQXNpc3RlbmNpYS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Ejercicios/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRWplcmNpY2lvc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -208,6 +228,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVzaW9uZXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Lesiones/LesionesCliente.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVzaW9uZXNcTGVzaW9uZXNDbGllbnRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Login/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTG9naW5cTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -270,10 +294,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Shared/_AlimentosPlanNutricional.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BbGltZW50b3NQbGFuTnV0cmljaW9uYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/josed/OneDrive/Desktop/GymInfinityFitness/Views/Shared/_ValidationScriptsPartial.cshtml]

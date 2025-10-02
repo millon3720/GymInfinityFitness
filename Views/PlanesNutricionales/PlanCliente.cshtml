@@ -14,7 +14,7 @@
 
                 @if (plan.Alimentos.Any())
                 {
-                    var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" };
+                    var diasSemanaOrdenados = new[] { "Lunes", "Martes", "Miércoles", "Jueves", "Vierne s", "Sábado", "Domingo" };
                     var alimentosPorDia = plan.Alimentos
                     .GroupBy(a => a.DiaSemana)
                     .OrderBy(g => Array.IndexOf(diasSemanaOrdenados, g.Key));

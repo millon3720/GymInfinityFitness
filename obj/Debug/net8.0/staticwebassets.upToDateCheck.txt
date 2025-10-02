@@ -46,6 +46,13 @@ wwwroot\css\Menu.css
 wwwroot\css\Menu1.css
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\img\Gym1.jpg
+wwwroot\img\Gym2.jpg
+wwwroot\img\Gym3.jpg
+wwwroot\img\Gym4.jpg
+wwwroot\img\Gym5.jpg
+wwwroot\img\Gym6.jpg
+wwwroot\img\Gym7.jpg
 wwwroot\img\Logo 1.jpg
 wwwroot\img\Logo.jpg
 wwwroot\img\Logo11.jpg

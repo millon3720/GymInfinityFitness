@@ -15,9 +15,9 @@ namespace Tesina.Models
         public Usuarios Usuario { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FechaInicio { get; set; }
+        public DateTime? FechaInicio { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime FechaFin { get; set; }
+        public DateTime? FechaFin { get; set; }
     }
 }

@@ -28,9 +28,17 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a asp-action="Details" asp-route-id="@Model.IdUsuario" asp-controller="Usuarios" class="btn btn-secondary shadow-sm">
-                        <i class="bi bi-arrow-left-circle"></i> Volver a la Lista
-                    </a>
+                    @if (User.HasClaim("Rol", "Cliente"))
+                    {
+                        <a asp-action="LesionesCliente" asp-route-id="@Model.IdUsuario" asp-controller="Lesiones" class="btn btn-secondary shadow-sm">
+                            <i class="bi bi-arrow-left-circle"></i> Volver a la Lista
+                    </a>}
+                    @if (User.HasClaim("Rol", "Entrenador"))
+                    {
+                        <a asp-action="Details" asp-route-id="@Model.IdUsuario" asp-controller="Usuarios" class="btn btn-secondary shadow-sm">
+                            <i class="bi bi-arrow-left-circle"></i> Volver a la Lista
+                        </a>
+                    }
                     <button type="submit" class="btn btn-success shadow-sm">
                         <i class="bi bi-check-circle"></i> Guardar Cambios
                     </button>

@@ -12,6 +12,7 @@
             <form asp-action="EditCliente">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <input type="hidden" asp-for="@Model.Cliente.IdUsuario" />
+                <input type="hidden" asp-for="@Model.Cliente.Estado" />
 
                 <div class="mb-3">
                     <label asp-for="@Model.Cliente.Cedula" class="form-label"></label>
@@ -58,16 +59,26 @@
                     <input asp-for="@Model.Cliente.Direccion" class="form-control" placeholder="Dirección" />
                     <span asp-validation-for="@Model.Cliente.Direccion" class="text-danger"></span>
                 </div>
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <strong>Ultimo Pago Mensualidad:</strong><br />
-                        <span class="text-muted">@Model.Mensualidades.FechaInicio.ToString("dd-MM-yyyy HH:mm")</span>
+                @if (Model.Mensualidades != null)
+                {
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <strong>Último Pago Mensualidad:</strong><br />
+                            <span class="text-muted">@Model.Mensualidades.FechaInicio.Value.ToString("dd-MM-yyyy HH:mm")</span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <strong>Próximo Pago Mensualidad:</strong><br />
+                            <span class="text-muted">@Model.Mensualidades.FechaFin.Value.ToString("dd-MM-yyyy HH:mm")</span>
+                        </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <strong>Proximo Pago Mensualidad:</strong><br />
-                        <span class="text-muted">@Model.Mensualidades.FechaFin.ToString("dd-MM-yyyy HH:mm")</span>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i> Este cliente aún no tiene mensualidad registrada.
                     </div>
-                </div>
+                }
+
 
                 <input type="hidden" asp-for="@Model.Cliente.Rol" value="Cliente" />
                 <div class="row">

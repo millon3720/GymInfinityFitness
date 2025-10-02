@@ -14,10 +14,12 @@ namespace Tesina.Controllers
     public class EntrenadoresController : Controller
     {
         private readonly GymDbContext _context;
+        private readonly GenerarFacturaPDF _pdf;
 
-        public EntrenadoresController(GymDbContext context)
+        public EntrenadoresController(GymDbContext context, GenerarFacturaPDF pdf)
         {
             _context = context;
+            _pdf = pdf;
         }
 
         // GET: Entrenadores
@@ -71,16 +73,18 @@ namespace Tesina.Controllers
 
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
-
+               
+                var hasher = new PasswordHasher<object>();
+                var Contrasenahash = Guid.NewGuid().ToString("N")[..10];
                 var login = new UsuarioLogin
                 {
                     IdUsuario = usuarios.IdUsuario,
                     Usuario = usuarios.Correo,
-                    Contrasena = usuarios.Cedula
+                    Contrasena = hasher.HashPassword(null, Contrasenahash)
                 };
-
                 _context.UsuariosLogin.Add(login);
                 await _context.SaveChangesAsync();
+                await _pdf.EnviarNotificacionRegistroAsync(login.Usuario, usuarios.NombreCompleto, Contrasenahash);
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }            

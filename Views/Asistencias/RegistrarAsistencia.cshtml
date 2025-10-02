@@ -1,0 +1,94 @@
+﻿@model Tesina.Models.AsistenciaViewModel
+
+<div class="card shadow rounded p-4 mb-4">
+
+    <div class="card shadow rounded p-4">
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+
+                    <!-- Logo del gimnasio -->
+                    <div class="text-center mb-4">
+                        <img src="~/img/Logo.jpg" alt="Logo del Gimnasio"
+                             class="img-thumbnail shadow-sm rounded-circle"
+                             style="max-height: 120px;" />
+                    </div>
+
+                    <!-- Campo de código -->
+                    <div class="mb-3">
+                        <input type="text" id="codigoUsuario" name="CodigoUsuario"
+                               class="form-control text-center fs-4 fw-bold"
+                               maxlength="4" readonly placeholder="Digite Su Codigo De Acceso"/>
+                    </div>
+
+                    <!-- Teclado numérico -->
+                    <div class="d-grid gap-2 mb-3">
+                        <div class="row g-2">
+                            @for (int i = 1; i <= 9; i++)
+                            {
+                                <div class="col-4">
+                                    <button type="button" class="btn btn-outline-primary w-100 fs-5" onclick="agregarDigito('@i')">@i</button>
+                                </div>
+                            }
+                            <div class="col-4">
+                                <button type="button" class="btn btn-outline-danger w-100 fs-5" onclick="borrarDigito()">
+                                    <i class="bi bi-backspace"></i>
+                                </button>
+                            </div>
+                            <div class="col-4">
+                                <button type="button" class="btn btn-outline-primary w-100 fs-5" onclick="agregarDigito('0')">0</button>
+                            </div>
+                            <div class="col-4">
+                                <form asp-action="RegistrarAsistencia" method="post">
+                                    <input type="hidden" id="codigoOculto" name="CodigoUsuario" />
+                                    <button type="submit" class="btn btn-success w-100 fs-5">
+                                        <i class="bi bi-check-circle"></i> Registrar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resultado -->
+                    @if (Model != null && Model.Usuario != null)
+                    {
+                        <div class="alert @(Model.MembresiaActiva ? "alert-success" : "alert-danger") mt-3">
+                            <strong>@Model.Usuario.NombreCompleto</strong><br />
+                            Estado:
+                            <span class="badge @(Model.MembresiaActiva ? "bg-success" : "bg-danger")">
+                                @(Model.MembresiaActiva ? "Membresía Activa" : "Membresía Vencida")
+                            </span><br />
+
+                            @if (Model.MembresiaActiva)
+                            {
+                                <span>Asistencia registrada el: @DateTime.Now.ToString("dd-MM-yyyy HH:mm")</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">No se puede registrar asistencia.</span>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para manejar el teclado -->
+<script>
+    function agregarDigito(digito) {
+        const campo = document.getElementById("codigoUsuario");
+        if (campo.value.length < 4) {
+            campo.value += digito;
+        }
+        document.getElementById("codigoOculto").value = campo.value;
+    }
+
+    function borrarDigito() {
+        const campo = document.getElementById("codigoUsuario");
+        campo.value = campo.value.slice(0, -1);
+        document.getElementById("codigoOculto").value = campo.value;
+    }
+</script>

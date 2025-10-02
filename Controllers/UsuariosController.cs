@@ -15,10 +15,12 @@ namespace Tesina.Controllers
     public class UsuariosController : Controller
     {
         private readonly GymDbContext _context;
+        private readonly GenerarFacturaPDF _pdf;
 
-        public UsuariosController(GymDbContext context)
+        public UsuariosController(GymDbContext context, GenerarFacturaPDF pdf)
         {
             _context = context;
+            _pdf = pdf;
         }
         // GET: Usuarios
         public async Task<IActionResult> Index()
@@ -58,10 +60,6 @@ namespace Tesina.Controllers
                 .OrderBy(e => e.FechaDiagnostico)
                 .ToListAsync();
 
-            var facturas = await _context.Lesiones
-                .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaDiagnostico)
-                .ToListAsync();
 
             var asistencia = await _context.Asistencias
                 .Where(e => e.IdUsuario == id)
@@ -117,16 +115,17 @@ namespace Tesina.Controllers
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
                 var hasher = new PasswordHasher<object>();
-                var Contrasenahash = hasher.HashPassword(null, usuarios.Cedula);
+                var Contrasenahash = Guid.NewGuid().ToString("N")[..10]; 
                 var login = new UsuarioLogin
                 {
                     IdUsuario = usuarios.IdUsuario,
                     Usuario = usuarios.Correo,
-                    Contrasena = Contrasenahash
+                    Contrasena = hasher.HashPassword(null, Contrasenahash)
                 };
 
                 _context.UsuariosLogin.Add(login);
                 await _context.SaveChangesAsync();
+                await _pdf.EnviarNotificacionRegistroAsync(login.Usuario, usuarios.NombreCompleto, Contrasenahash);
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction("Edit", new { id = usuarios.IdUsuario });
             }
@@ -234,8 +233,12 @@ namespace Tesina.Controllers
                     }
                     else
                     {
-                        _context.Add(mesualidad);
-                        await _context.SaveChangesAsync();
+                        if (mesualidad.FechaInicio != null && mesualidad.FechaFin != null)
+                        {
+                            _context.Add(mesualidad);
+                            await _context.SaveChangesAsync();
+                        }
+                        
                     }
 
 
@@ -252,10 +255,10 @@ namespace Tesina.Controllers
                     }
                 }
                 TempData["Alerta"] = "✅ Información actualizada con éxito.";
-                return View(CargarEdit(id));
+                return View(await CargarEdit(id));
             }
-            
-            return View(CargarEdit(id));
+
+            return View(await CargarEdit(id));
         }
         private async Task<ClienteDetalle> CargarEdit(int? id)
         {
@@ -288,12 +291,6 @@ namespace Tesina.Controllers
                 .Where(e => e.IdUsuario == id)
                 .OrderBy(e => e.FechaDiagnostico)
                 .ToListAsync();
-
-            var facturas = await _context.Lesiones
-                .Where(e => e.IdUsuario == id)
-                .OrderBy(e => e.FechaDiagnostico)
-                .ToListAsync();
-
             var asistencia = await _context.Asistencias
                 .Where(e => e.IdUsuario == id)
                 .OrderBy(e => e.FechaIngreso)

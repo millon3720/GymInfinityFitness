@@ -8,7 +8,7 @@ namespace Tesina.Models
     {
         public Usuarios Cliente { get; set; }
         public List<Expediente> Expedientes { get; set; }
-        public Mensualidades Mensualidades { get; set; }
+        public Mensualidades? Mensualidades { get; set; }
         public ClienteRutina? ClienteRutina { get; set; }      
         public Rutina? Rutina { get; set; }                    
         public List<RutinaEjercicio>? RutinaEjercicios { get; set; }

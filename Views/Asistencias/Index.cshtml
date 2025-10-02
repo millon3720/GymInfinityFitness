@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Tesina.Models.Asistencias>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Usuario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaIngreso)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaSalida)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Usuario.Cedula)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaIngreso)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaSalida)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdAsistencia">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdAsistencia">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdAsistencia">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -25,17 +25,36 @@
 }
 
     .slider img {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        max-width: 100%;AsignarRutina
-        max-height: 100%;
-        transform: translate(-50%, -50%);
-        object-fit: contain;
+        transition: opacity 0.5s ease-in-out;
         opacity: 0;
-        transition: opacity 1s ease-in-out;
+        position: absolute;
+        top: 0;
+        left: 0;
+        object-fit: cover; /* o 'contain' si querés mostrar toda la imagen */
     }
 
         .slider img.active {
             opacity: 1;
+            position: relative;
         }
+
+.carousel-item img {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.carousel-item {
+    transition: opacity 0.8s ease-in-out;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.6); /* fondo oscuro semitransparente */
+    border-radius: 50%;
+    padding: 15px;
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.3s ease;
+}
+
+    .carousel-control-prev-icon:hover,
+    .carousel-control-next-icon:hover {
+        background-color: rgba(0, 0, 0, 0.9); /* más oscuro al pasar el mouse */
+    }

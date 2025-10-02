@@ -21,12 +21,24 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <a asp-action="Details" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Usuarios" class="btn btn-secondary shadow-sm">
-                        <i class="bi bi-arrow-left-circle"></i> Volver a la lista
-                    </a>
-                    <button type="submit" class="btn btn-success shadow-sm">
-                        <i class="bi bi-check-circle"></i></i> Guardar Todas las Lesiones
-                    </button>
+                    @if (User.HasClaim("Rol", "Cliente"))
+                    {
+                        <a asp-action="LesionesCliente" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Lesiones" class="btn btn-secondary shadow-sm">
+                            <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+                        </a>
+                        <button type="submit" class="btn btn-success shadow-sm">
+                            <i class="bi bi-check-circle"></i> Guardar Todas las Lesiones
+                        </button>
+                    }
+                    @if (User.HasClaim("Rol", "Entrenador"))
+                    {
+                        <a asp-action="Details" asp-route-id="@Model.Cliente.IdUsuario" asp-controller="Usuarios" class="btn btn-secondary shadow-sm">
+                            <i class="bi bi-arrow-left-circle"></i> Volver a la lista
+                        </a>
+                        <button type="submit" class="btn btn-success shadow-sm">
+                            <i class="bi bi-check-circle"></i> Guardar Todas las Lesiones
+                        </button>
+                    }
                 </div>
             </form>
         </div>
@@ -53,7 +65,7 @@
                         <input type="date" name="Lesion[${index}].FechaDiagnostico" class="form-control" />
                     </div>
                     <div class="col-12 text-end">
-                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.closest('.lesion-item').remove()">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.lesion-item').remove()">
                             <i class="bi bi-trash"></i> Eliminar
                         </button>
                     </div>

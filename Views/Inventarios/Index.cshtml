@@ -42,7 +42,7 @@
                                 <th class="nombre">Nombre</th>
                                 <th class="tipo">Tipo</th>
                                 <th>Precio</th>
-                                <th>Cantidad Disponible</th>
+                                <th>Cantidad Disponible o duración</th>
                                 <th>Punto de Reorden</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -56,7 +56,14 @@
                                     <td class="nombre">@item.Producto.Nombre</td>
                                     <td class="tipo">@item.Producto.Tipo</td>
                                     <td>@item.Producto.Precio.ToString("C")</td>
-                                    <td>@item.Inventario.CantidadDisponible</td>
+                                    @if (item.Producto.Tipo == "Membresía")
+                                    {
+                                        <td>@item.Inventario.CantidadDisponible Dias</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Inventario.CantidadDisponible Unidades</td>
+                                    }
                                     <td>@item.Inventario.PuntoDeReorden</td>
                                     <td>
                                         <span class="badge @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "bg-danger" : "bg-success")">
@@ -86,14 +93,22 @@
                                 <h5 class="card-title text-primary nombre">@item.Producto.Nombre</h5>
                                 <p class="mb-1 tipo"><strong>Tipo:</strong> @item.Producto.Tipo</p>
                                 <p class="mb-1"><strong>Precio:</strong> @item.Producto.Precio.ToString("C")</p>
-                                <p class="mb-1"><strong>Cantidad Disponible:</strong> @item.Inventario.CantidadDisponible</p>
-                                <p class="mb-1"><strong>Punto de Reorden:</strong> @item.Inventario.PuntoDeReorden</p>
-                                <p class="mb-3">
-                                    <strong>Estado:</strong>
-                                    <span class="badge @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "bg-danger" : "bg-success")">
-                                        @(requiereReorden && item.Producto.Tipo.ToLower() != "servicio" ? "Reabastecer" : "Stock OK")
-                                    </span>
-                                </p>
+                                @if (item.Producto.Tipo == "Producto")
+                                {
+                                    <p class="mb-1"><strong>Cantidad Disponible:</strong> @item.Inventario.CantidadDisponible</p>
+                                    <p class="mb-1"><strong>Punto de Reorden:</strong> @item.Inventario.PuntoDeReorden</p>
+                                    <p class="mb-3">
+                                        <strong>Estado:</strong>
+                                        <span class="badge @(requiereReorden ? "bg-danger" : "bg-success")">
+                                            @(requiereReorden ? "Reabastecer" : "Stock OK")
+                                        </span>
+                                    </p>
+                                }
+                                @if (item.Producto.Tipo == "Membresía")
+                                {
+                                    <p class="mb-1"><strong>Duración (en días):</strong> @item.Inventario.CantidadDisponible</p>
+                                    
+                                }
                                 <div class="d-flex justify-content-end gap-2">
                                     <a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-info-circle"></i> Detalles</a>
                                     <a class="btn btn-sm btn-warning" asp-action="Edit" asp-route-id="@item.Producto.IdProductoServicio"><i class="bi bi-pencil-square"></i> Modificar</a>
@@ -111,6 +126,29 @@
                 </div>
             }
         </div>
+        @if (TempData["Alerta"] != null)
+        {
+            <div class="toast-container position-fixed top-0 start-50 translate-middle-x mt-5 p-3" style="z-index: 1055;">
+                <div id="liveToast" class="toast bg-success text-white border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Alerta"]
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                window.addEventListener('load', function () {
+                    var toastEl = document.getElementById('liveToast');
+                    if (toastEl) {
+                        var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                        toast.show();
+                    }
+                });
+            </script>
+        }
     </div>
 </div>
 

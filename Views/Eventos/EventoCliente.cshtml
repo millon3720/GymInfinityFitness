@@ -29,12 +29,15 @@
 
                                     @if (evento.Imagen != null)
                                     {
-                                        <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })"
-                                             class="img-fluid rounded shadow-sm mb-2"
-                                             style="max-height: 350px; cursor: pointer;"
-                                             data-bs-toggle="modal"
-                                             data-bs-target="#imagenModal"
-                                             onclick="mostrarImagenModal(this.src)" />
+                                        <div class="d-flex justify-content-center mb-2">
+                                            <img src="@Url.Action("VerImagen", "Eventos", new { id = evento.IdEvento })"
+                                                 class="img-fluid rounded shadow-sm"
+                                                 style="max-height: 350px; cursor: pointer;"
+                                                 data-bs-toggle="modal"
+                                                 data-bs-target="#imagenModal"
+                                                 onclick="mostrarImagenModal(this.src)" />
+                                        </div>
+
 
                                     }
                                     else
