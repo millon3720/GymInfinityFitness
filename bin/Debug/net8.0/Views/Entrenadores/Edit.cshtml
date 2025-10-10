@@ -14,25 +14,25 @@
 
                 <div class="mb-3">
 
-                    <label asp-for="Cliente.Cedula" class="form-label"></label>
+                    <label asp-for="Cliente.Cedula" class="form-label">Cédula</label>
                     <input asp-for="Cliente.Cedula" class="form-control" disabled placeholder="Cédula" />
                     <input asp-for="Cliente.Cedula" class="form-control" hidden placeholder="Cédula" />
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Cliente.NombreCompleto" class="form-label"></label>
+                    <label asp-for="Cliente.NombreCompleto" class="form-label">Nombre Completo</label>
                     <input asp-for="Cliente.NombreCompleto" class="form-control" placeholder="Nombre Completo" />
                     <span asp-validation-for="Cliente.NombreCompleto" class="text-danger"></span>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Cliente.FechaNacimiento" class="form-label"></label>
+                        <label asp-for="Cliente.FechaNacimiento" class="form-label">Fecha De Nacimiento</label>
                         <input asp-for="Cliente.FechaNacimiento" class="form-control" type="date" />
                         <span asp-validation-for="Cliente.FechaNacimiento" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Cliente.FechaRegistro" class="form-label"></label>
+                        <label asp-for="Cliente.FechaRegistro" class="form-label">Fecha De Registro</label>
                         <input asp-for="Cliente.FechaRegistro" class="form-control" type="datetime-local" />
                         <span asp-validation-for="Cliente.FechaRegistro" class="text-danger"></span>
                     </div>
@@ -40,19 +40,19 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Cliente.Correo" class="form-label"></label>
+                        <label asp-for="Cliente.Correo" class="form-label">Correo Electrónico</label>
                         <input asp-for="Cliente.Correo" class="form-control" placeholder="Correo Electrónico" />
                         <span asp-validation-for="Cliente.Correo" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label asp-for="Cliente.Telefono" class="form-label"></label>
-                        <input asp-for="Cliente.Telefono" class="form-control" placeholder="Número de Teléfono" />
+                        <label asp-for="Cliente.Telefono" class="form-label">Número De Teléfono</label>
+                        <input asp-for="Cliente.Telefono" class="form-control" placeholder="Número De Teléfono" />
                         <span asp-validation-for="Cliente.Telefono" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Cliente.Direccion" class="form-label"></label>
+                    <label asp-for="Cliente.Direccion" class="form-label">Dirección</label>
                     <input asp-for="Cliente.Direccion" class="form-control" placeholder="Dirección" />
                     <span asp-validation-for="Cliente.Direccion" class="text-danger"></span>
                 </div>
@@ -64,7 +64,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label asp-for="@Model.UsuarioLogin.Contrasena" class="form-label"></label>
+                        <label asp-for="@Model.UsuarioLogin.Contrasena" class="form-label">Modificar Contraseña</label>
                         <input type="password" asp-for="@Model.UsuarioLogin.Contrasena" class="form-control" placeholder="Modificar Contraseña" />
                         <span asp-validation-for="@Model.UsuarioLogin.Contrasena" class="text-danger"></span>
                     </div>

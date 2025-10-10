@@ -13,43 +13,22 @@ namespace Tesina.Controllers
     public class EventosController : Controller
     {
         private readonly GymDbContext _context;
-
         public EventosController(GymDbContext context)
         {
             _context = context;
         }
-
-        // INDEX
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> VerImagen(int id)
         {
-            var eventos = await _context.Eventos.OrderBy(e => e.FechaEvento).ToListAsync();
-            return View(eventos);
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento?.Imagen != null)
+            {
+                return File(evento.Imagen, "image/jpeg");
+            }
+
+            return NotFound();
         }
-        public async Task<IActionResult> EventoCliente()
-        {
 
-            var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
-
-            var eventos = await _context.Eventos
-                .Where(e => e.FechaEvento > DateTime.Now)
-                .OrderBy(e => e.FechaEvento)
-                .ToListAsync();
-
-            var inscripciones = await _context.ClienteEvento
-                .Where(i => i.IdUsuario == idUsuario)
-                .Select(i => i.IdEvento)
-                .ToListAsync();
-
-            ViewBag.EventosInscritos = inscripciones;
-
-            return View(eventos);
-        }
-        // CREATE (GET)
-        public IActionResult Create()
-        {
-            return View();
-        }
-        // CREATE (POST)
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Inscribirse(int IdEvento, int IdUsuario)
@@ -77,7 +56,15 @@ namespace Tesina.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Alerta"] = "✅ Inscripción realizada con éxito.";
-            return RedirectToAction("EventoCliente");
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("EventoCliente");
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,11 +83,16 @@ namespace Tesina.Controllers
             {
                 TempData["Alerta"] = "⚠️ No estás inscrito en este evento.";
             }
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("EventoCliente");
 
-            return RedirectToAction("EventoCliente");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-        // CREATE (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Eventos evento, IFormFile imagenArchivo)
@@ -115,50 +107,23 @@ namespace Tesina.Controllers
                 }
 
                 _context.Eventos.Add(evento);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
 
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(evento);
-        }
-
-        // DETAILS
-        public async Task<IActionResult> Details(int id)
-        {
-            var evento = await _context.Eventos
-                .Include(e => e.Inscripciones)
-                .ThenInclude(ce => ce.Usuario)
-                .FirstOrDefaultAsync(e => e.IdEvento == id);
-
-            if (evento != null)
+            if (User.Identity.IsAuthenticated)
             {
-                evento.Inscripciones = evento.Inscripciones
-                    .OrderBy(i => i.Usuario.NombreCompleto)
-                    .ToList();
+                return View(evento);
+
             }
-
-            if (evento == null)
-                return View("index");
-
-            return View(evento);
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-
-        // EDIT (GET)
-        public async Task<IActionResult> Edit(int id)
-        {
-            var evento = await _context.Eventos.FindAsync(id);
-            if (evento == null)
-                return NotFound();
-
-            return View(evento);
-        }
-
-        // EDIT (POST)
         [HttpPost]
-        [ValidateAntiForgeryToken]    
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Eventos evento, IFormFile imagenArchivo)
         {
             if (id != evento.IdEvento)
@@ -193,17 +158,6 @@ namespace Tesina.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // DELETE (GET)
-        public async Task<IActionResult> Delete(int id)
-        {
-            var evento = await _context.Eventos.FindAsync(id);
-            if (evento == null)
-                return NotFound();
-
-            return View(evento);
-        }
-
-        // DELETE (POST)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -217,18 +171,116 @@ namespace Tesina.Controllers
             TempData["Alerta"] = "✅ El Evento se elimino del sistema.";
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
-        // IMAGEN (GET)
-        public async Task<IActionResult> VerImagen(int id)
+        #region Views
+        public async Task<IActionResult> Index()
         {
-            var evento = await _context.Eventos.FindAsync(id);
-            if (evento?.Imagen != null)
+            var eventos = await _context.Eventos.OrderBy(e => e.FechaEvento).ToListAsync();
+            if (User.Identity.IsAuthenticated)
             {
-                return File(evento.Imagen, "image/jpeg");
+                return View(eventos);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> EventoCliente()
+        {
+
+            var idUsuario = Convert.ToInt32(User.FindFirst("IdUsuario")?.Value);
+
+            var eventos = await _context.Eventos
+                .Where(e => e.FechaEvento > DateTime.Now)
+                .OrderBy(e => e.FechaEvento)
+                .ToListAsync();
+
+            var inscripciones = await _context.ClienteEvento
+                .Where(i => i.IdUsuario == idUsuario)
+                .Select(i => i.IdEvento)
+                .ToListAsync();
+
+            ViewBag.EventosInscritos = inscripciones;
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(eventos);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View();
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int id)
+        {
+            var evento = await _context.Eventos
+                .Include(e => e.Inscripciones)
+                .ThenInclude(ce => ce.Usuario)
+                .FirstOrDefaultAsync(e => e.IdEvento == id);
+
+            if (evento != null)
+            {
+                evento.Inscripciones = evento.Inscripciones
+                    .OrderBy(i => i.Usuario.NombreCompleto)
+                    .ToList();
             }
 
-            return NotFound();
-        }
-    }
+            if (evento == null)
+                return View("index");
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(evento);
 
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento == null)
+                return NotFound();
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(evento);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var evento = await _context.Eventos.FindAsync(id);
+            if (evento == null)
+                return NotFound();
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(evento);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        #endregion
+    }
 }

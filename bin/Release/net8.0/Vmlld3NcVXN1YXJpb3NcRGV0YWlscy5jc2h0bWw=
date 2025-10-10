@@ -24,12 +24,12 @@
                     <span class="text-muted">@Model.Cliente.NombreCompleto</span>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <strong>Fecha Nacimiento:</strong><br />
+                    <strong>Fecha De Nacimiento:</strong><br />
                     <span class="text-muted">@Model.Cliente.FechaNacimiento.ToString("dd-MM-yyyy")</span>
                 </div>
 
                 <div class="col-md-3 mb-3">
-                    <strong>Correo:</strong><br />
+                    <strong>Correo Electrónico:</strong><br />
                     <span class="text-muted">@Model.Cliente.Correo</span>
                 </div>
                 <div class="col-md-3 mb-3">
@@ -41,7 +41,7 @@
                     <span class="text-muted">@Model.Cliente.Direccion</span>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <strong>Fecha de Registro:</strong><br />
+                    <strong>Fecha De Registro:</strong><br />
                     <span class="text-muted">@Model.Cliente.FechaRegistro.ToString("dd-MM-yyyy HH:mm")</span>
                 </div>
                 @if (Model.Mensualidades != null)

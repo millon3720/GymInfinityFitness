@@ -15,46 +15,17 @@ namespace Tesina.Controllers
     {
         private readonly GymDbContext _context;
         private readonly GenerarFacturaPDF _pdf;
-
         public EntrenadoresController(GymDbContext context, GenerarFacturaPDF pdf)
         {
             _context = context;
             _pdf = pdf;
         }
-
-        // GET: Entrenadores
-        public async Task<IActionResult> Index()
+        private bool UsuariosExists(int id)
         {
-            return View(await _context.Usuarios.Where(a=> a.Rol=="Entrenador").OrderBy(a => a.NombreCompleto).ToListAsync());
+            return _context.Usuarios.Any(e => e.IdUsuario == id);
         }
 
-        // GET: Entrenadores/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuarios = await _context.Usuarios
-                .FirstOrDefaultAsync(m => m.IdUsuario == id);
-            if (usuarios == null)
-            {
-                return NotFound();
-            }
-
-            return View(usuarios);
-        }
-
-        // GET: Entrenadores/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Entrenadores/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUsuario,Cedula,NombreCompleto,FechaNacimiento,Correo,Telefono,Direccion,Rol,FechaRegistro,Estado")] Usuarios usuarios)
@@ -68,12 +39,12 @@ namespace Tesina.Controllers
                 if (cedulaExiste)
                 {
                     ViewBag.Alerta = "Ya existe un usuario con esta cédula.";
-                    return View(usuarios); 
+                    return View(usuarios);
                 }
 
                 _context.Add(usuarios);
                 await _context.SaveChangesAsync();
-               
+
                 var hasher = new PasswordHasher<object>();
                 var Contrasenahash = Guid.NewGuid().ToString("N")[..10];
                 var login = new UsuarioLogin
@@ -87,38 +58,12 @@ namespace Tesina.Controllers
                 await _pdf.EnviarNotificacionRegistroAsync(login.Usuario, usuarios.NombreCompleto, Contrasenahash);
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
-            }            
+            }
             return View(usuarios);
         }
-
-        // GET: Entrenadores/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios == null)
-            {
-                return NotFound();
-            }
-            var UsuarioLogin = await _context.UsuariosLogin.FindAsync(id);
-            var viewModel = new ClienteDetalle
-            {
-                Cliente = usuarios,
-                UsuarioLogin = new UsuarioLogin()
-            };
-            return View(viewModel);
-        }
-
-        // POST: Entrenadores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,ClienteDetalle usuarios)
+        public async Task<IActionResult> Edit(int id, ClienteDetalle usuarios)
         {
             if (id != usuarios.Cliente.IdUsuario)
             {
@@ -166,8 +111,98 @@ namespace Tesina.Controllers
             }
             return View(usuarios);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var usuarios = await _context.Usuarios.FindAsync(id);
+            if (usuarios != null)
+            {
+                _context.Usuarios.Remove(usuarios);
+            }
 
-        // GET: Entrenadores/Delete/5
+            await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ El Entrenador se elimino del sistema.";
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> Index()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await _context.Usuarios.Where(a => a.Rol == "Entrenador").OrderBy(a => a.NombreCompleto).ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var usuarios = await _context.Usuarios
+                .FirstOrDefaultAsync(m => m.IdUsuario == id);
+            if (usuarios == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(usuarios);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View();
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var usuarios = await _context.Usuarios.FindAsync(id);
+            if (usuarios == null)
+            {
+                return NotFound();
+            }
+            var UsuarioLogin = await _context.UsuariosLogin.FindAsync(id);
+            var viewModel = new ClienteDetalle
+            {
+                Cliente = usuarios,
+                UsuarioLogin = new UsuarioLogin()
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -181,29 +216,16 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-
-            return View(usuarios);
-        }
-
-        // POST: Entrenadores/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var usuarios = await _context.Usuarios.FindAsync(id);
-            if (usuarios != null)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.Usuarios.Remove(usuarios);
+                return View(usuarios);
+
             }
-
-            await _context.SaveChangesAsync(); 
-            TempData["Alerta"] = "✅ El Entrenador se elimino del sistema.";
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-        private bool UsuariosExists(int id)
-        {
-            return _context.Usuarios.Any(e => e.IdUsuario == id);
-        }
+        #endregion         
     }
 }

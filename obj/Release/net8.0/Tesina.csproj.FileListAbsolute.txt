@@ -449,10 +449,14 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.ObjectPool.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Primitives.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.WebEncoders.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Identity.Client.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.IdentityModel.Abstractions.dll
@@ -500,6 +504,7 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Mem
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Reflection.MetadataLoadContext.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Security.Cryptography.Xml.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Text.Encodings.Web.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Text.Json.dll
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\af\Humanizer.resources.dll
@@ -725,8 +730,3 @@ C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\refint\Tes
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\Tesina.pdb
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\Tesina.genruntimeconfig.cache
 C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\obj\Release\net8.0\ref\Tesina.dll
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.ObjectPool.dll
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\Microsoft.Extensions.WebEncoders.dll
-C:\Users\josed\OneDrive\Desktop\GymInfinityFitness\bin\Release\net8.0\System.Security.Cryptography.Xml.dll

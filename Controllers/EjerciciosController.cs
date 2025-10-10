@@ -13,45 +13,16 @@ namespace Tesina.Controllers
     public class EjerciciosController : Controller
     {
         private readonly GymDbContext _context;
-
         public EjerciciosController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: Ejercicios
-        public async Task<IActionResult> Index()
+        private bool EjercicioExists(int id)
         {
-            return View(await _context.Ejercicios.ToListAsync());
+            return _context.Ejercicios.Any(e => e.IdEjercicio == id);
         }
 
-        // GET: Ejercicios/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var ejercicio = await _context.Ejercicios
-                .FirstOrDefaultAsync(m => m.IdEjercicio == id);
-            if (ejercicio == null)
-            {
-                return NotFound();
-            }
-
-            return View(ejercicio);
-        }
-
-        // GET: Ejercicios/Create
-        public IActionResult Create()
-        {
-            return View(new Ejercicio());
-        }
-
-        // POST: Ejercicios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdEjercicio,Nombre,Descripcion,VideoURL")] Ejercicio ejercicio)
@@ -65,26 +36,6 @@ namespace Tesina.Controllers
             }
             return View(ejercicio);
         }
-
-        // GET: Ejercicios/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var ejercicio = await _context.Ejercicios.FindAsync(id);
-            if (ejercicio == null)
-            {
-                return NotFound();
-            }
-            return View(ejercicio);
-        }
-
-        // POST: Ejercicios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdEjercicio,Nombre,Descripcion,VideoURL")] Ejercicio ejercicio)
@@ -118,8 +69,93 @@ namespace Tesina.Controllers
             }
             return View(ejercicio);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var ejercicio = await _context.Ejercicios.FindAsync(id);
+            if (ejercicio != null)
+            {
+                _context.Ejercicios.Remove(ejercicio);
+            }
 
-        // GET: Ejercicios/Delete/5
+            await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ El Ejerccio se elimino del sistema.";
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> Index()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await _context.Ejercicios.ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ejercicio = await _context.Ejercicios
+                .FirstOrDefaultAsync(m => m.IdEjercicio == id);
+            if (ejercicio == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(ejercicio);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(new Ejercicio());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var ejercicio = await _context.Ejercicios.FindAsync(id);
+            if (ejercicio == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(ejercicio);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,30 +169,16 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-
-            return View(ejercicio);
-        }
-
-        // POST: Ejercicios/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var ejercicio = await _context.Ejercicios.FindAsync(id);
-            if (ejercicio != null)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.Ejercicios.Remove(ejercicio);
+                return View(ejercicio);
+
             }
-
-            await _context.SaveChangesAsync(); 
-            TempData["Alerta"] = "✅ El Ejerccio se elimino del sistema.";
-
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-        private bool EjercicioExists(int id)
-        {
-            return _context.Ejercicios.Any(e => e.IdEjercicio == id);
-        }
+        #endregion
     }
 }

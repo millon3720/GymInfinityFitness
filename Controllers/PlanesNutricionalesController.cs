@@ -14,90 +14,16 @@ namespace Tesina.Controllers
     public class PlanesNutricionalesController : Controller
     {
         private readonly GymDbContext _context;
-
         public PlanesNutricionalesController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: PlanesNutricionales
-        public async Task<IActionResult> Index()
+        private bool PlanesNutricionalesExists(int id)
         {
-            var gymDbContext = _context.PlanesNutricionales.Include(p => p.Usuario);
-            return View(await gymDbContext.ToListAsync());
+            return _context.PlanesNutricionales.Any(e => e.IdPlan == id);
         }
 
-        // GET: PlanesNutricionales/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.IdPlan == id);
-
-            if (plan == null)
-            {
-                return NotFound();
-            }
-
-            var alimentos = await _context.AlimentosPlanNutricional
-                .Where(a => a.IdPlan == id)
-                .ToListAsync();
-
-            var viewModel = new PlanAlimenticioViewModel
-            {
-                Plan = plan,
-                Alimentos = alimentos
-            };
-
-            return View(viewModel);
-        }
-        public async Task<IActionResult> PlanCliente(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.IdUsuario == id); 
-            var alimentos = new List<AlimentosPlanNutricional>();
-            if (plan != null)
-            {
-                alimentos = await _context.AlimentosPlanNutricional
-                   .Where(a => a.IdPlan == plan.IdPlan)
-                   .ToListAsync();
-
-            }
-
-                var viewModel = new PlanAlimenticioViewModel
-                {
-                    Plan = plan,
-                    Alimentos = alimentos
-                }; 
-            if (plan == null)
-            {
-                return View(viewModel);
-            }
-
-           
-
-            return View(viewModel);
-        }
-
-        // GET: PlanesNutricionales/Create
-        public IActionResult Create()
-        {
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto");
-            return View();
-        }
-
-        // POST: PlanesNutricionales/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(PlanAlimenticioViewModel model)
@@ -117,7 +43,7 @@ namespace Tesina.Controllers
             {
                 var plan = model.Plan;
                 plan.Alimentos = model.Alimentos;
-                
+
                 // Si ya existe y se desea sobreescribir, eliminamos el anterior
                 if (existePlan)
                 {
@@ -136,7 +62,7 @@ namespace Tesina.Controllers
                         TempData["Alimentos"].ToString()
                     );
                 }
-                 // Asignar el IdPlan generado a cada alimento
+                // Asignar el IdPlan generado a cada alimento
                 foreach (var alimento in model.Alimentos)
                 {
                     alimento.IdPlan = plan.IdPlan;
@@ -144,7 +70,7 @@ namespace Tesina.Controllers
 
                 // Guardar los alimentos
                 _context.AlimentosPlanNutricional.AddRange(model.Alimentos);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
                 TempData["Alerta"] = "✅ Información guardada con éxito.";
                 return RedirectToAction(nameof(Index));
             }
@@ -152,35 +78,12 @@ namespace Tesina.Controllers
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "Cedula", model.Plan.IdUsuario);
             return View(model);
         }
-
-        // GET: PlanesNutricionales/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var plan = await _context.PlanesNutricionales
-                .Include(p => p.Alimentos).Include(p => p.Usuario)
-                .FirstOrDefaultAsync(p => p.IdPlan == id);
-
-            if (plan == null) return NotFound();
-
-            var viewModel = new PlanAlimenticioViewModel
-            {
-                Plan = plan,
-                Alimentos = plan.Alimentos.ToList()
-            };
-            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto", plan.IdUsuario);
-            return View(viewModel);
-        }
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, PlanAlimenticioViewModel model)
         {
             if (id != model.Plan.IdPlan) return NotFound();
-            
+
             if (ModelState.IsValid)
             {
                 var planDb = await _context.PlanesNutricionales
@@ -238,12 +141,151 @@ namespace Tesina.Controllers
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto", model.Plan.IdUsuario);
             return View(model);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var planesNutricionales = await _context.PlanesNutricionales.FindAsync(id);
+            if (planesNutricionales != null)
+            {
+                _context.PlanesNutricionales.Remove(planesNutricionales);
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ El Plan Nutricional se elimino del sistema.";
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> Index()
+        {
+            var gymDbContext = _context.PlanesNutricionales.Include(p => p.Usuario);
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await gymDbContext.ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.IdPlan == id);
+
+            if (plan == null)
+            {
+                return NotFound();
+            }
+
+            var alimentos = await _context.AlimentosPlanNutricional
+                .Where(a => a.IdPlan == id)
+                .ToListAsync();
+
+            var viewModel = new PlanAlimenticioViewModel
+            {
+                Plan = plan,
+                Alimentos = alimentos
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> PlanCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var plan = await _context.PlanesNutricionales.Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.IdUsuario == id);
+            var alimentos = new List<AlimentosPlanNutricional>();
+            if (plan != null)
+            {
+                alimentos = await _context.AlimentosPlanNutricional
+                   .Where(a => a.IdPlan == plan.IdPlan)
+                   .ToListAsync();
+
+            }
+
+            var viewModel = new PlanAlimenticioViewModel
+            {
+                Plan = plan,
+                Alimentos = alimentos
+            };
+            if (plan == null)
+            {
+                return View(viewModel);
+            }
 
 
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
 
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create()
+        {
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto");
+            if (User.Identity.IsAuthenticated)
+            {
+                return View();
 
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
 
-        // GET: PlanesNutricionales/Delete/5
+            var plan = await _context.PlanesNutricionales
+                .Include(p => p.Alimentos).Include(p => p.Usuario)
+                .FirstOrDefaultAsync(p => p.IdPlan == id);
+
+            if (plan == null) return NotFound();
+
+            var viewModel = new PlanAlimenticioViewModel
+            {
+                Plan = plan,
+                Alimentos = plan.Alimentos.ToList()
+            };
+            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios.Where(a => a.Rol == "Cliente"), "IdUsuario", "NombreCompleto", plan.IdUsuario);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -258,31 +300,16 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-
-            return View(planesNutricionales);
-        }
-
-        // POST: PlanesNutricionales/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var planesNutricionales = await _context.PlanesNutricionales.FindAsync(id);
-            if (planesNutricionales != null)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.PlanesNutricionales.Remove(planesNutricionales);
+                return View(planesNutricionales);
+
             }
-
-            await _context.SaveChangesAsync(); 
-            TempData["Alerta"] = "✅ El Plan Nutricional se elimino del sistema.";
-
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-        private bool PlanesNutricionalesExists(int id)
-        {
-            return _context.PlanesNutricionales.Any(e => e.IdPlan == id);
-        }
+        #endregion        
     }
 }
-

@@ -13,57 +13,16 @@ namespace Tesina.Controllers
     public class LesionesController : Controller
     {
         private readonly GymDbContext _context;
-
         public LesionesController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: Lesiones
-        public async Task<IActionResult> LesionesCliente(int? Id)
+        private bool LesionExists(int id)
         {
-            var gymDbContext = _context.Lesiones.Where(l => l.IdUsuario==Id).OrderBy(a => a.FechaDiagnostico);
-            return View(await gymDbContext.ToListAsync());
+            return _context.Lesiones.Any(e => e.IdLesion == id);
         }
 
-        // GET: Lesiones/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var lesion = await _context.Lesiones
-                .Include(l => l.Usuario)
-                .FirstOrDefaultAsync(m => m.IdLesion == id);
-            if (lesion == null)
-            {
-                return NotFound();
-            }
-
-            return View(lesion);
-        }
-
-        // GET: Lesiones/Create
-        // GET: Lesiones/Create
-        public IActionResult Create(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var cliente = _context.Usuarios.FirstOrDefault(u => u.IdUsuario == id);
-            if (cliente == null) return NotFound();
-
-            var viewModel = new ClienteDetalle
-            {
-                Cliente = cliente,
-                Lesion = new List<Lesion>() // inicializamos la lista para agregar dinámicamente
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: Lesiones/CrearLesiones
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CrearLesiones(ClienteDetalle model)
@@ -87,30 +46,18 @@ namespace Tesina.Controllers
                     return RedirectToAction("Details", "Usuarios", new { id = model.Lesion.First().IdUsuario });
                 }
             }
-
             ViewBag.Usuarios = new SelectList(_context.Usuarios.Where(u => u.Rol == "Cliente"), "IdUsuario", "NombreCompleto");
-            return View(model);
-        }
-        // GET: Lesiones/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var lesion = await _context.Lesiones.FindAsync(id);
-            if (lesion == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", lesion.IdUsuario);
-            return View(lesion);
-        }
+                return View(model);
 
-        // POST: Lesiones/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdLesion,IdUsuario,Descripcion,FechaDiagnostico")] Lesion lesion)
@@ -151,8 +98,113 @@ namespace Tesina.Controllers
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", lesion.IdUsuario);
             return View(lesion);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var lesion = await _context.Lesiones.FindAsync(id);
+            if (lesion != null)
+            {
+                _context.Lesiones.Remove(lesion);
+            }
 
-        // GET: Lesiones/Delete/5
+            await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ La Lesion se elimino del sistema.";
+            if (User.HasClaim("Rol", "Cliente"))
+            {
+                return RedirectToAction("LesionesCliente", "Lesiones", new { id = lesion.IdUsuario });
+            }
+            if (User.HasClaim("Rol", "Entrenador"))
+            {
+                return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+            }
+            return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> LesionesCliente(int? Id)
+        {
+            var gymDbContext = _context.Lesiones.Where(l => l.IdUsuario == Id).OrderBy(a => a.FechaDiagnostico);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await gymDbContext.ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var lesion = await _context.Lesiones
+                .Include(l => l.Usuario)
+                .FirstOrDefaultAsync(m => m.IdLesion == id);
+            if (lesion == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(lesion);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var cliente = _context.Usuarios.FirstOrDefault(u => u.IdUsuario == id);
+            if (cliente == null) return NotFound();
+
+            var viewModel = new ClienteDetalle
+            {
+                Cliente = cliente,
+                Lesion = new List<Lesion>() // inicializamos la lista para agregar dinámicamente
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var lesion = await _context.Lesiones.FindAsync(id);
+            if (lesion == null)
+            {
+                return NotFound();
+            }
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", lesion.IdUsuario);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(lesion);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -167,37 +219,16 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-
-            return View(lesion);
-        }
-
-        // POST: Lesiones/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var lesion = await _context.Lesiones.FindAsync(id);
-            if (lesion != null)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.Lesiones.Remove(lesion);
-            }
+                return View(lesion);
 
-            await _context.SaveChangesAsync(); 
-            TempData["Alerta"] = "✅ La Lesion se elimino del sistema.";
-            if (User.HasClaim("Rol", "Cliente"))
-            {
-                return RedirectToAction("LesionesCliente", "Lesiones", new { id = lesion.IdUsuario });
             }
-            if (User.HasClaim("Rol", "Entrenador"))
+            else
             {
-                return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
+                return RedirectToAction("Login", "Login");
             }
-            return RedirectToAction("Details", "Usuarios", new { id = lesion.IdUsuario });
         }
-
-        private bool LesionExists(int id)
-        {
-            return _context.Lesiones.Any(e => e.IdLesion == id);
-        }
+        #endregion            
     }
 }

@@ -13,65 +13,16 @@ namespace Tesina.Controllers
     public class InventariosController : Controller
     {
         private readonly GymDbContext _context;
-
         public InventariosController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: Inventarios
-        public async Task<IActionResult> Index()
+        private bool InventarioExists(int id)
         {
-            var productos = await _context.ProductosServicios
-                .Include(p => p.Inventario).OrderBy(a => a.Nombre)
-                .ToListAsync();
-
-            var viewModel = productos
-                .Where(p => p.Inventario != null)
-                .Select(p => new ProductoInventarioViewModel
-                {
-                    Producto = p,
-                    Inventario = p.Inventario
-                }).ToList();
-
-            return View(viewModel);
+            return _context.Inventario.Any(e => e.IdInventario == id);
         }
 
-
-        // GET: Inventarios/Details/5
-        public async Task<IActionResult> Details(int id)
-        {
-            var producto = await _context.ProductosServicios
-                .Include(p => p.Inventario)
-                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
-
-            if (producto == null || producto.Inventario == null)
-                return NotFound();
-
-            var viewModel = new ProductoInventarioViewModel
-            {
-                Producto = producto,
-                Inventario = producto.Inventario
-            };
-
-            return View(viewModel);
-        }
-
-        // GET: Inventarios/Create
-        public IActionResult Create()
-        {
-            var viewModel = new ProductoInventarioViewModel
-            {
-                Producto = new ProductosServicios(),
-                Inventario = new Inventario()
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: Inventarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductoInventarioViewModel model)
@@ -90,30 +41,6 @@ namespace Tesina.Controllers
 
             return View(model);
         }
-
-
-        // GET: Inventarios/Edit/5
-        public async Task<IActionResult> Edit(int id)
-        {
-            var producto = await _context.ProductosServicios
-                .Include(p => p.Inventario)
-                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
-
-            if (producto == null || producto.Inventario == null)
-                return NotFound();
-
-            var viewModel = new ProductoInventarioViewModel
-            {
-                Producto = producto,
-                Inventario = producto.Inventario
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: Inventarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProductoInventarioViewModel model)
@@ -131,27 +58,6 @@ namespace Tesina.Controllers
 
             return View(model);
         }
-
-        // GET: Inventarios/Delete/5
-        public async Task<IActionResult> Delete(int id)
-        {
-            var producto = await _context.ProductosServicios
-                .Include(p => p.Inventario)
-                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
-
-            if (producto == null || producto.Inventario == null)
-                return NotFound();
-
-            var viewModel = new ProductoInventarioViewModel
-            {
-                Producto = producto,
-                Inventario = producto.Inventario
-            };
-
-            return View(viewModel);
-        }
-
-        // POST: Inventarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -171,10 +77,121 @@ namespace Tesina.Controllers
             TempData["Alerta"] = "✅ El Producto se elimino del sistema.";
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
-        private bool InventarioExists(int id)
+        #region Views
+        public async Task<IActionResult> Index()
         {
-            return _context.Inventario.Any(e => e.IdInventario == id);
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario).OrderBy(a => a.Nombre)
+                .ToListAsync();
+
+            var viewModel = productos
+                .Where(p => p.Inventario != null)
+                .Select(p => new ProductoInventarioViewModel
+                {
+                    Producto = p,
+                    Inventario = p.Inventario
+                }).ToList();
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
+        public async Task<IActionResult> Details(int id)
+        {
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
+
+            if (producto == null || producto.Inventario == null)
+                return NotFound();
+
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult Create()
+        {
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = new ProductosServicios(),
+                Inventario = new Inventario()
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
+
+            if (producto == null || producto.Inventario == null)
+                return NotFound();
+
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var producto = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .FirstOrDefaultAsync(p => p.IdProductoServicio == id);
+
+            if (producto == null || producto.Inventario == null)
+                return NotFound();
+
+            var viewModel = new ProductoInventarioViewModel
+            {
+                Producto = producto,
+                Inventario = producto.Inventario
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        #endregion               
     }
 }

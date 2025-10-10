@@ -17,7 +17,6 @@ CREATE TABLE Usuarios (
     Estado BIT DEFAULT 1
 );
 GO
-
 CREATE TABLE UsuariosLogin (
     IdUsuarioLogin INT PRIMARY KEY IDENTITY(1,1),
     IdUsuario INT,
@@ -26,7 +25,6 @@ CREATE TABLE UsuariosLogin (
     FOREIGN KEY (IdUsuario) REFERENCES Usuarios(IdUsuario) ON DELETE CASCADE
 );
 GO
-
 CREATE TABLE Expedientes (
     IdExpediente INT PRIMARY KEY IDENTITY(1,1),
     IdUsuario INT,

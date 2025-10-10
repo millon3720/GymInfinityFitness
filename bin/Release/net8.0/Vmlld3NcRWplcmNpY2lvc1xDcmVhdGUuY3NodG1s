@@ -24,7 +24,7 @@
             </div>
 
             <div class="mb-3">
-                <label asp-for="VideoURL" class="form-label"></label>
+                <label asp-for="VideoURL" class="form-label">URL del video</label>
                 <input asp-for="VideoURL" class="form-control" placeholder="URL del Video" />
                 <span asp-validation-for="VideoURL" class="text-danger"></span>
             </div>

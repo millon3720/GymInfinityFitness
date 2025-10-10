@@ -33,7 +33,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownClientes" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Clientes
+                                        <i class="bi bi-people-fill"></i> Clientes
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownClientes">
                                         <li>
@@ -43,13 +43,13 @@
                                             <a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Create">Agregar Cliente</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" asp-area="" asp-controller="Expedientes" asp-action="Create">Agregar Medidas Corporales</a>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Expedientes" asp-action="Create"><i class="bi bi-bar-chart-fill"></i> Agregar Medidas Corporales</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownEntrenadores" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Entrenadores
+                                        <i class="bi bi-people-fill"></i> Entrenadores
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownEntrenadores">
                                         <li>
@@ -63,7 +63,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownRutinas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Rutinas
+                                        <i class="bi-clipboard-check"></i> Rutinas
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownRutinas">
                                         <li>
@@ -77,7 +77,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownEjercicios" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Ejercicios
+                                        <i class="bi bi-barbell"></i> Ejercicios
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdownEjercicios">
                                         <li>
@@ -91,7 +91,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownPlanNutricionales" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Plan Nutricional
+                                        <i class="bi bi-clipboard-heart"></i> Plan Nutricional
                                     </a>
                                     <ul class=" dropdown-menu" aria-labelledby="navbarDropdownPlanNutricionales">
                                         <li>
@@ -105,7 +105,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownInventario" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Control de Inventario
+                                        <i class="bi bi-box-seam"></i> Control de Inventario
                                     </a>
                                     <ul class=" dropdown-menu" aria-labelledby="navbarDropdownInventario">
                                         <li>
@@ -119,7 +119,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownEventos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Eventos
+                                        <i class="bi bi-calendar-event"></i> Eventos
                                     </a>
                                     <ul class=" dropdown-menu" aria-labelledby="navbarDropdownEventos">
                                         <li>
@@ -133,7 +133,7 @@
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownFacturacion" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Facturacion
+                                        <i class="bi bi-receipt-cutoff"></i> Facturacion
                                     </a>
                                     <ul class=" dropdown-menu" aria-labelledby="navbarDropdownFacturacion">
                                         <li>
@@ -145,13 +145,14 @@
 
                                     </ul>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Asistencias" asp-action="RegistrarAsistencia"><i class="bi bi-clock-history"></i> Registro de Asistencia</a>
+                                </li>
                             </ul>
                             <ul class="navbar-nav ml-auto">
+                                
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Asistencias" asp-action="RegistrarAsistencia"> Registro de Asistencia</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Logout"> Salir</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
                                 </li>
                             </ul>
                         </div>
@@ -174,34 +175,34 @@
                                     <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="EditCliente" asp-route-id="@idUsuario">Informacion Personal</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="EditCliente" asp-route-id="@idUsuario"><i class="bi bi-people-fill"></i> Informacion Personal</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Expedientes" asp-action="MedidasCliente" asp-route-id="@idUsuario">Medidas Corporales</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Expedientes" asp-action="MedidasCliente" asp-route-id="@idUsuario"><i class="bi bi-bar-chart-fill"></i> Medidas Corporales</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Lesiones" asp-action="LesionesCliente" asp-route-id="@idUsuario">Mis Lesiones</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Lesiones" asp-action="LesionesCliente" asp-route-id="@idUsuario"> <i class="bi bi-clipboard-plus"></i> Mis Lesiones</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Rutinas" asp-action="RutinaCliente" asp-route-id="@idUsuario">Mis Rutinas</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Rutinas" asp-action="RutinaCliente" asp-route-id="@idUsuario"><i class="bi-clipboard-check"></i> Mis Rutinas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="PlanesNutricionales" asp-action="PlanCliente" asp-route-id="@idUsuario">Planes Nutricionales</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="PlanesNutricionales" asp-action="PlanCliente" asp-route-id="@idUsuario"><i class="bi bi-clipboard-heart"></i> Planes Nutricionales</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Eventos" asp-action="EventoCliente" asp-route-id="@idUsuario">Proximos Eventos</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Eventos" asp-action="EventoCliente" asp-route-id="@idUsuario"><i class="bi bi-calendar-event"></i> Proximos Eventos</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Facturas" asp-action="FacturasCliente" asp-route-id="@idUsuario">Mis Facturas</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Facturas" asp-action="FacturasCliente" asp-route-id="@idUsuario"><i class="bi bi-receipt-cutoff"></i> Mis Facturas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="AsistenciaCliente" asp-route-id="@idUsuario">Mi Asistencia</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="AsistenciaCliente" asp-route-id="@idUsuario"><i class="bi bi-clock-history"></i> Mi Asistencia</a>
                                 </li>
                             </ul>
                             <ul class="navbar-nav ml-auto">
 
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Logout"> Salir</a>
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
                                 </li>
                             </ul>
                         </div>

@@ -14,67 +14,31 @@ namespace Tesina.Controllers
     {
         private readonly GymDbContext _context;
         private readonly GenerarFacturaPDF _pdf;
-
         public FacturasController(GymDbContext context, GenerarFacturaPDF pdf)
         {
             _context = context; 
             _pdf = pdf;
 
         }
-
-       
-        // GET: Facturas
-        public async Task<IActionResult> Index()
-        {
-            var gymDbContext = _context.Facturas.Include(f => f.Usuario);
-            return View(await gymDbContext.ToListAsync());
-        }
-        public async Task<IActionResult> FacturasCliente(int? id)
-        {
-            var gymDbContext = _context.Facturas.Where(f => f.IdUsuario==id).OrderByDescending(e => e.Fecha);
-            return View(await gymDbContext.ToListAsync());
-        }
-        // GET: Facturas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-                return NotFound();
-
-            var factura = await _context.Facturas
-                .Include(f => f.Usuario)
-                .Include(f => f.DetallesFactura)
-                    .ThenInclude(d => d.ProductoServicio)
-                .FirstOrDefaultAsync(f => f.IdFactura == id);
-
-            if (factura == null)
-                return NotFound();
-
-            return View(factura);
-        }
-        // GET: Facturas/Create
-        public async Task<IActionResult> Create()
+        private async Task RecargarListas(FacturaViewModel model)
         {
             var productos = await _context.ProductosServicios
                 .Include(p => p.Inventario)
                 .ToListAsync();
 
-            var viewModel = new FacturaViewModel
-            {
-                Factura = new Facturas { Fecha = DateTime.Now },
-                Detalles = new List<DetalleFactura> { new DetalleFactura() },
-                UsuariosDisponibles = await _context.Usuarios
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.IdUsuario.ToString(),
-                        Text = u.NombreCompleto.ToString()
-                    }).ToListAsync(),
-                ProductosDisponibles = productos
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.IdProductoServicio.ToString(),
-                        Text = p.Nombre
-                    }).ToList()
-            };
+            model.UsuariosDisponibles = await _context.Usuarios
+                .Select(u => new SelectListItem
+                {
+                    Value = u.IdUsuario.ToString(),
+                    Text = u.NombreCompleto.ToString()
+                }).ToListAsync();
+
+            model.ProductosDisponibles = productos
+                .Select(p => new SelectListItem
+                {
+                    Value = p.IdProductoServicio.ToString(),
+                    Text = p.Nombre
+                }).ToList();
 
             ViewBag.ProductosExtendidos = productos.Select(p => new
             {
@@ -84,10 +48,13 @@ namespace Tesina.Controllers
                 tipo = p.Tipo,
                 stock = p.Inventario?.CantidadDisponible ?? 0
             }).ToList();
-
-            return View(viewModel);
         }
-        // POST: Facturas/Create
+        private bool FacturasExists(int id)
+        {
+            return _context.Facturas.Any(e => e.IdFactura == id);
+        }
+
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FacturaViewModel model)
@@ -228,84 +195,6 @@ namespace Tesina.Controllers
             TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction(nameof(Index));
         }
-        private async Task RecargarListas(FacturaViewModel model)
-        {
-            var productos = await _context.ProductosServicios
-                .Include(p => p.Inventario)
-                .ToListAsync();
-
-            model.UsuariosDisponibles = await _context.Usuarios
-                .Select(u => new SelectListItem
-                {
-                    Value = u.IdUsuario.ToString(),
-                    Text = u.NombreCompleto.ToString()
-                }).ToListAsync();
-
-            model.ProductosDisponibles = productos
-                .Select(p => new SelectListItem
-                {
-                    Value = p.IdProductoServicio.ToString(),
-                    Text = p.Nombre
-                }).ToList();
-
-            ViewBag.ProductosExtendidos = productos.Select(p => new
-            {
-                id = p.IdProductoServicio,
-                nombre = p.Nombre,
-                precio = p.Precio,
-                tipo = p.Tipo,
-                stock = p.Inventario?.CantidadDisponible ?? 0
-            }).ToList();
-        }
-        // GET: Facturas/Edit/5
-        public async Task<IActionResult> Edit(int id)
-        {
-            var factura = await _context.Facturas
-                .Include(f => f.Usuario)
-                .Include(f => f.DetallesFactura)
-                .ThenInclude(d => d.ProductoServicio)
-                .ThenInclude(p => p.Inventario)
-                .FirstOrDefaultAsync(f => f.IdFactura == id);
-
-            if (factura == null)
-                return NotFound();
-
-            var productos = await _context.ProductosServicios
-                .Include(p => p.Inventario)
-                .ToListAsync();
-
-            var viewModel = new FacturaViewModel
-            {
-                Factura = factura,
-                Detalles = factura.DetallesFactura.ToList(),
-                UsuariosDisponibles = await _context.Usuarios
-                    .Select(u => new SelectListItem
-                    {
-                        Value = u.IdUsuario.ToString(),
-                        Text = u.NombreCompleto
-                    }).ToListAsync(),
-                ProductosDisponibles = productos
-                    .Select(p => new SelectListItem
-                    {
-                        Value = p.IdProductoServicio.ToString(),
-                        Text = p.Nombre
-                    }).ToList()
-            };
-
-            ViewBag.ProductosExtendidos = productos.Select(p => new
-            {
-                id = p.IdProductoServicio,
-                nombre = p.Nombre,
-                precio = p.Precio,
-                tipo = p.Tipo,
-                stock = p.Inventario?.CantidadDisponible ?? 0
-            }).ToList();
-
-            return View(viewModel);
-        }
-        // POST: Facturas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(FacturaViewModel model)
@@ -415,7 +304,129 @@ namespace Tesina.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // GET: Facturas/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var facturas = await _context.Facturas.FindAsync(id);
+            if (facturas != null)
+            {
+                _context.Facturas.Remove(facturas);
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Alerta"] = "✅ La Factura se elimino del sistema.";
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> Index()
+        {
+            var gymDbContext = _context.Facturas.Include(f => f.Usuario);
+            return View(await gymDbContext.ToListAsync());
+        }
+        public async Task<IActionResult> FacturasCliente(int? id)
+        {
+            var gymDbContext = _context.Facturas.Where(f => f.IdUsuario == id).OrderByDescending(e => e.Fecha);
+            return View(await gymDbContext.ToListAsync());
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var factura = await _context.Facturas
+                .Include(f => f.Usuario)
+                .Include(f => f.DetallesFactura)
+                    .ThenInclude(d => d.ProductoServicio)
+                .FirstOrDefaultAsync(f => f.IdFactura == id);
+
+            if (factura == null)
+                return NotFound();
+
+            return View(factura);
+        }
+        public async Task<IActionResult> Create()
+        {
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            var viewModel = new FacturaViewModel
+            {
+                Factura = new Facturas { Fecha = DateTime.Now },
+                Detalles = new List<DetalleFactura> { new DetalleFactura() },
+                UsuariosDisponibles = await _context.Usuarios
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.IdUsuario.ToString(),
+                        Text = u.NombreCompleto.ToString()
+                    }).ToListAsync(),
+                ProductosDisponibles = productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.IdProductoServicio.ToString(),
+                        Text = p.Nombre
+                    }).ToList()
+            };
+
+            ViewBag.ProductosExtendidos = productos.Select(p => new
+            {
+                id = p.IdProductoServicio,
+                nombre = p.Nombre,
+                precio = p.Precio,
+                tipo = p.Tipo,
+                stock = p.Inventario?.CantidadDisponible ?? 0
+            }).ToList();
+
+            return View(viewModel);
+        }
+        public async Task<IActionResult> Edit(int id)
+        {
+            var factura = await _context.Facturas
+                .Include(f => f.Usuario)
+                .Include(f => f.DetallesFactura)
+                .ThenInclude(d => d.ProductoServicio)
+                .ThenInclude(p => p.Inventario)
+                .FirstOrDefaultAsync(f => f.IdFactura == id);
+
+            if (factura == null)
+                return NotFound();
+
+            var productos = await _context.ProductosServicios
+                .Include(p => p.Inventario)
+                .ToListAsync();
+
+            var viewModel = new FacturaViewModel
+            {
+                Factura = factura,
+                Detalles = factura.DetallesFactura.ToList(),
+                UsuariosDisponibles = await _context.Usuarios
+                    .Select(u => new SelectListItem
+                    {
+                        Value = u.IdUsuario.ToString(),
+                        Text = u.NombreCompleto
+                    }).ToListAsync(),
+                ProductosDisponibles = productos
+                    .Select(p => new SelectListItem
+                    {
+                        Value = p.IdProductoServicio.ToString(),
+                        Text = p.Nombre
+                    }).ToList()
+            };
+
+            ViewBag.ProductosExtendidos = productos.Select(p => new
+            {
+                id = p.IdProductoServicio,
+                nombre = p.Nombre,
+                precio = p.Precio,
+                tipo = p.Tipo,
+                stock = p.Inventario?.CantidadDisponible ?? 0
+            }).ToList();
+
+            return View(viewModel);
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -433,24 +444,6 @@ namespace Tesina.Controllers
 
             return View(facturas);
         }
-        // POST: Facturas/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var facturas = await _context.Facturas.FindAsync(id);
-            if (facturas != null)
-            {
-                _context.Facturas.Remove(facturas);
-            }
-
-            await _context.SaveChangesAsync(); 
-            TempData["Alerta"] = "✅ La Factura se elimino del sistema.";
-            return RedirectToAction(nameof(Index));
-        }
-        private bool FacturasExists(int id)
-        {
-            return _context.Facturas.Any(e => e.IdFactura == id);
-        }
+        #endregion
     }
 }

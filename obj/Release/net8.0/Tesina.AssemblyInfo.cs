@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Tesina")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+100c28f6fdb101f3be98a8a75a6fe6267e37f9b3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ce58b0d06a5708e38e32d5edd4c80ba5011b422e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Tesina")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Tesina")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

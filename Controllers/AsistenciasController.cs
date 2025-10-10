@@ -13,45 +13,18 @@ namespace Tesina.Controllers
     public class AsistenciasController : Controller
     {
         private readonly GymDbContext _context;
-
         public AsistenciasController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: Asistencias
-        public async Task<IActionResult> Index()
+        private bool AsistenciasExists(int id)
         {
-            var gymDbContext = _context.Asistencias.Include(a => a.Usuario);
-            return View(await gymDbContext.ToListAsync());
+            return _context.Asistencias.Any(e => e.IdAsistencia == id);
         }
 
-        // GET: Asistencias/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var asistencias = await _context.Asistencias
-                .Include(a => a.Usuario)
-                .FirstOrDefaultAsync(m => m.IdAsistencia == id);
-            if (asistencias == null)
-            {
-                return NotFound();
-            }
-
-            return View(asistencias);
-        }
-
-        // GET: Asistencias/Create
-        public IActionResult RegistrarAsistencia()
-        {
-            return View();
-        }
-
+        #region Mantenimientos
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegistrarAsistencia(string CodigoUsuario)
         {
             if (string.IsNullOrWhiteSpace(CodigoUsuario) || CodigoUsuario.Length != 4 || !CodigoUsuario.All(char.IsDigit))
@@ -114,11 +87,6 @@ namespace Tesina.Controllers
             await _context.SaveChangesAsync();
             return View(viewModel);
         }
-
-
-        // POST: Asistencias/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdAsistencia,IdUsuario,FechaIngreso,FechaSalida")] Asistencias asistencias)
@@ -130,29 +98,16 @@ namespace Tesina.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", asistencias.IdUsuario);
-            return View(asistencias);
-        }
-
-        // GET: Asistencias/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                return NotFound();
-            }
+                return View(asistencias);
 
-            var asistencias = await _context.Asistencias.FindAsync(id);
-            if (asistencias == null)
+            }
+            else
             {
-                return NotFound();
+                return RedirectToAction("Login", "Login");
             }
-            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", asistencias.IdUsuario);
-            return View(asistencias);
         }
-
-        // POST: Asistencias/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdAsistencia,IdUsuario,FechaIngreso,FechaSalida")] Asistencias asistencias)
@@ -185,8 +140,94 @@ namespace Tesina.Controllers
             ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", asistencias.IdUsuario);
             return View(asistencias);
         }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var asistencias = await _context.Asistencias.FindAsync(id);
+            if (asistencias != null)
+            {
+                _context.Asistencias.Remove(asistencias);
+            }
 
-        // GET: Asistencias/Delete/5
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Views
+        public async Task<IActionResult> Index()
+        {
+            var gymDbContext = _context.Asistencias.Include(a => a.Usuario);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await gymDbContext.ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var asistencias = await _context.Asistencias
+                .Include(a => a.Usuario)
+                .FirstOrDefaultAsync(m => m.IdAsistencia == id);
+            if (asistencias == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(asistencias);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public IActionResult RegistrarAsistencia()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return View();
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var asistencias = await _context.Asistencias.FindAsync(id);
+            if (asistencias == null)
+            {
+                return NotFound();
+            }
+            ViewData["IdUsuario"] = new SelectList(_context.Usuarios, "IdUsuario", "Cedula", asistencias.IdUsuario);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(asistencias);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -201,28 +242,16 @@ namespace Tesina.Controllers
             {
                 return NotFound();
             }
-
-            return View(asistencias);
-        }
-
-        // POST: Asistencias/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var asistencias = await _context.Asistencias.FindAsync(id);
-            if (asistencias != null)
+            if (User.Identity.IsAuthenticated)
             {
-                _context.Asistencias.Remove(asistencias);
+                return View(asistencias);
+
             }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
-
-        private bool AsistenciasExists(int id)
-        {
-            return _context.Asistencias.Any(e => e.IdAsistencia == id);
-        }
+        #endregion       
     }
 }

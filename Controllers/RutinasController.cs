@@ -14,39 +14,16 @@ namespace Tesina.Controllers
     public class RutinasController : Controller
     {
         private readonly GymDbContext _context;
-
         public RutinasController(GymDbContext context)
         {
             _context = context;
         }
-
-        // GET: Rutinas
-        public async Task<IActionResult> Index()
+        private bool RutinaExists(int id)
         {
-            return View(await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync());
-        }
-  
-        // GET: mostrar la vista
-        public async Task<IActionResult> AsignarRutina(int IdUsuario)
-        {
-            var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
-
-            var model = new AsignarRutinaViewModel
-            {
-                IdUsuario = IdUsuario,
-                FechaAsignacion = DateTime.Now,
-                RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
-                {
-                    IdRutina = r.IdRutina,
-                    Nombre = r.Nombre,
-                    Descripcion = r.Descripcion
-                }).OrderBy(a => a.Nombre).ToList()
-            };
-
-            return View(model);
+            return _context.Rutinas.Any(e => e.IdRutina == id);
         }
 
-        // POST: guardar la asignación
+        #region Mantenimientos
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GuardarAsignar(AsignarRutinaViewModel model)
@@ -95,51 +72,6 @@ namespace Tesina.Controllers
             TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction("Details", "Usuarios", new { id = model.IdUsuario });
         }
-        
-        // GET: Rutinas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var rutina = await _context.Rutinas
-                .Include(r => r.RutinaEjercicio)
-                .ThenInclude(re => re.Ejercicio)
-                .FirstOrDefaultAsync(m => m.IdRutina == id);
-
-            if (rutina == null)
-            {
-                return NotFound();
-            }
-
-            return View(rutina);
-        }
-        public async Task<IActionResult> RutinaCliente(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-             var clienteRutina = await _context.ClienteRutina
-                .Include(cr => cr.Rutina)                       
-                .ThenInclude(r => r.RutinaEjercicio)            
-                .ThenInclude(re => re.Ejercicio)                
-                .FirstOrDefaultAsync(cr => cr.IdUsuario == id);
-
-            return View(clienteRutina);
-        }
-        public async Task<IActionResult> Create()
-        {
-            var ejercicios = await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync();
-            ViewBag.Ejercicios = new SelectList(ejercicios, "IdEjercicio", "Nombre");
-
-            var viewModel = new RutinaCreateViewModel();
-            return View(viewModel);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(RutinaCreateViewModel model)
@@ -183,38 +115,6 @@ namespace Tesina.Controllers
             TempData["Alerta"] = "✅ Información guardada con éxito.";
             return RedirectToAction("Index");
         }
-
-
-        // GET: Rutinas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var rutina = await _context.Rutinas
-                .Include(r => r.RutinaEjercicio)
-                .FirstOrDefaultAsync(r => r.IdRutina == id);
-
-            if (rutina == null) return NotFound();
-
-            var viewModel = new RutinaCreateViewModel
-            {
-                Rutina = rutina,
-                Ejercicios = rutina.RutinaEjercicio.Select(e => new RutinaEjercicioInput
-                {
-                    IdEjercicio = e.IdEjercicio,
-                    Series = e.Series,
-                    Repeticiones = e.Repeticiones,
-                    DescansoSegundos = e.DescansoSegundos,
-                    DiaSemana = e.DiaSemana
-                }).ToList()
-            };
-
-            ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync(), "IdEjercicio", "Nombre");
-            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
-
-            return View(viewModel);
-        }
-        // POST: Rutinas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, RutinaCreateViewModel model)
@@ -271,27 +171,6 @@ namespace Tesina.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-
-        // GET: Rutinas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var rutina = await _context.Rutinas
-                .FirstOrDefaultAsync(m => m.IdRutina == id);
-            if (rutina == null)
-            {
-                return NotFound();
-            }
-
-            return View(rutina);
-        }
-
-        // POST: Rutinas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -307,10 +186,167 @@ namespace Tesina.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+        #endregion
 
-        private bool RutinaExists(int id)
+        #region Views
+        public async Task<IActionResult> Index()
         {
-            return _context.Rutinas.Any(e => e.IdRutina == id);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync());
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
         }
+        public async Task<IActionResult> AsignarRutina(int IdUsuario)
+        {
+            var rutinas = await _context.Rutinas.OrderBy(a => a.Nombre).ToListAsync();
+
+            var model = new AsignarRutinaViewModel
+            {
+                IdUsuario = IdUsuario,
+                FechaAsignacion = DateTime.Now,
+                RutinasDisponibles = rutinas.Select(r => new RutinaItemViewModel
+                {
+                    IdRutina = r.IdRutina,
+                    Nombre = r.Nombre,
+                    Descripcion = r.Descripcion
+                }).OrderBy(a => a.Nombre).ToList()
+            };
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(model);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var rutina = await _context.Rutinas
+                .Include(r => r.RutinaEjercicio)
+                .ThenInclude(re => re.Ejercicio)
+                .FirstOrDefaultAsync(m => m.IdRutina == id);
+
+            if (rutina == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(rutina);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> RutinaCliente(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var clienteRutina = await _context.ClienteRutina
+               .Include(cr => cr.Rutina)
+               .ThenInclude(r => r.RutinaEjercicio)
+               .ThenInclude(re => re.Ejercicio)
+               .FirstOrDefaultAsync(cr => cr.IdUsuario == id);
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(clienteRutina);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Create()
+        {
+            var ejercicios = await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync();
+            ViewBag.Ejercicios = new SelectList(ejercicios, "IdEjercicio", "Nombre");
+
+            var viewModel = new RutinaCreateViewModel();
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var rutina = await _context.Rutinas
+                .Include(r => r.RutinaEjercicio)
+                .FirstOrDefaultAsync(r => r.IdRutina == id);
+
+            if (rutina == null) return NotFound();
+
+            var viewModel = new RutinaCreateViewModel
+            {
+                Rutina = rutina,
+                Ejercicios = rutina.RutinaEjercicio.Select(e => new RutinaEjercicioInput
+                {
+                    IdEjercicio = e.IdEjercicio,
+                    Series = e.Series,
+                    Repeticiones = e.Repeticiones,
+                    DescansoSegundos = e.DescansoSegundos,
+                    DiaSemana = e.DiaSemana
+                }).ToList()
+            };
+
+            ViewBag.ejerciciosList = new SelectList(await _context.Ejercicios.OrderBy(a => a.Nombre).ToListAsync(), "IdEjercicio", "Nombre");
+            ViewBag.DiasSemana = new SelectList(new[] { "Seleccione un día", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo" });
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(viewModel);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var rutina = await _context.Rutinas
+                .FirstOrDefaultAsync(m => m.IdRutina == id);
+            if (rutina == null)
+            {
+                return NotFound();
+            }
+            if (User.Identity.IsAuthenticated)
+            {
+                return View(rutina);
+            }
+            else
+            {
+                return RedirectToAction("Login", "Login");
+            }
+        }
+        #endregion        
     }
 }
