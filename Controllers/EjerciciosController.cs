@@ -91,7 +91,7 @@ namespace Tesina.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return View(await _context.Ejercicios.ToListAsync());
+                return View(await _context.Ejercicios.OrderBy(e => e.Nombre).ToListAsync());
 
             }
             else
@@ -107,7 +107,7 @@ namespace Tesina.Controllers
             }
 
             var ejercicio = await _context.Ejercicios
-                .FirstOrDefaultAsync(m => m.IdEjercicio == id);
+                .OrderBy(e => e.Nombre).FirstOrDefaultAsync(m => m.IdEjercicio == id);
             if (ejercicio == null)
             {
                 return NotFound();

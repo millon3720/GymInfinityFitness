@@ -3,7 +3,7 @@ GO
 USE GymInfinityFitness;
 GO
 
--- Usuarios generales
+ Usuarios generales
 CREATE TABLE Usuarios (
     IdUsuario INT PRIMARY KEY IDENTITY(1000,1),
     Cedula NVARCHAR(20) UNIQUE NOT NULL,
@@ -25,6 +25,16 @@ CREATE TABLE UsuariosLogin (
     FOREIGN KEY (IdUsuario) REFERENCES Usuarios(IdUsuario) ON DELETE CASCADE
 );
 GO
+INSERT INTO Usuarios (Cedula, NombreCompleto, FechaNacimiento, Correo, Telefono, Direccion, Rol, Estado)
+VALUES ('123456789', 'Carlos Pérez', '1985-06-15', 'josed200096@gmail.com', '8888-1234', 'San José, Costa Rica', 'Entrenador', 1);
+
+-- Obtener el IdUsuario recién creado
+DECLARE @IdEntrenador INT = SCOPE_IDENTITY();
+
+-- Insertar credenciales de acceso para el entrenador
+INSERT INTO UsuariosLogin (IdUsuario, Contrasena, Usuario)
+VALUES (@IdEntrenador, 'contrasenaSegura123', 'josed200096@gmail.com');
+go
 CREATE TABLE Expedientes (
     IdExpediente INT PRIMARY KEY IDENTITY(1,1),
     IdUsuario INT,
