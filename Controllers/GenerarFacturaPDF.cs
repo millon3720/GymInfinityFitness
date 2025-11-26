@@ -156,7 +156,7 @@ namespace Tesina.Controllers
             mensaje.Body = builder.ToMessageBody();
 
             using var cliente = new SmtpClient();
-            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.Auto);
             await cliente.AuthenticateAsync(_email.User, _email.Password);
             await cliente.SendAsync(mensaje);
             await cliente.DisconnectAsync(true);
@@ -190,7 +190,7 @@ namespace Tesina.Controllers
             try
             {
                
-                await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+                await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.Auto);
                 await cliente.AuthenticateAsync(_email.User, _email.Password);
                 await cliente.SendAsync(mensaje);
                 await cliente.DisconnectAsync(true);
@@ -229,7 +229,7 @@ namespace Tesina.Controllers
             mensaje.Body = builder.ToMessageBody();
 
             using var cliente = new SmtpClient();
-            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.Auto);
             await cliente.AuthenticateAsync(_email.User, _email.Password);
             await cliente.SendAsync(mensaje);
             await cliente.DisconnectAsync(true);
