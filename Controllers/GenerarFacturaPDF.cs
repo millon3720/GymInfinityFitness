@@ -187,10 +187,21 @@ namespace Tesina.Controllers
             mensaje.Body = builder.ToMessageBody();
 
             using var cliente = new SmtpClient();
-            await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
-            await cliente.AuthenticateAsync(_email.User, _email.Password);
-            await cliente.SendAsync(mensaje);
-            await cliente.DisconnectAsync(true);
+            try
+            {
+               
+                await cliente.ConnectAsync(_email.Host, _email.Port, MailKit.Security.SecureSocketOptions.StartTls);
+                await cliente.AuthenticateAsync(_email.User, _email.Password);
+                await cliente.SendAsync(mensaje);
+                await cliente.DisconnectAsync(true);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("❌ Error al enviar correo: " + ex.Message);
+                throw;
+            }
+
+            
         }
         public async Task EnviarNotificacionRegistroAsync(string correoDestino, string nombreUsuario, string contrasenaTemporal)
         {
